@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Can Be Fluent</string>
+    <string name="community" translatable="false">Community</string>
+    <string name="All" translatable="false">All</string>
+    <string name="NEAR" translatable="false">NEAR ME</string>
+    <string name="location" translatable="false">MY LOCATION</string>
+    <string name="chat" translatable="false">Chats</string>
+
+</resources>
