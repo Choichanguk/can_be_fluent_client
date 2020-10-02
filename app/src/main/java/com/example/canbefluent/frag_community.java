@@ -53,31 +53,31 @@ public class frag_community extends Fragment {
             }
         });
 
-        RetrofitClient retrofitClient = new RetrofitClient();
-        Call<PostResult> call = retrofitClient.service.getPosts();
-
-        //Enqueue로 비동기 통신 실행.
-        call.enqueue(new Callback<PostResult>() {
-            //통신 완료 후 이벤트 처리 위한 Callback 리스너 onResponse, onFailure 등록
-            @Override
-            public void onResponse(Call<PostResult> call, Response<PostResult> response) {
-                if(response.isSuccessful()){
-                    //정상적으로 통신 성공
-                    PostResult result = response.body();
-                    Log.e("main", "onResponse: 성공, 결과\n" + result.toString());
-                }
-                else{
-                    //통신이 실패할 경우
-                    Log.e("main", "onResponse 실패");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PostResult> call, Throwable t) {
-                //통신실패 (인터넷 끊김, 예외 발생 등 시스템적인 이유)
-                Log.e("main", "onFailure" + t.getMessage());
-            }
-        });
+//        RetrofitClient retrofitClient = new RetrofitClient();
+//        Call<PostResult> call = retrofitClient.service.getPosts();
+//
+//        //Enqueue로 비동기 통신 실행.
+//        call.enqueue(new Callback<PostResult>() {
+//            //통신 완료 후 이벤트 처리 위한 Callback 리스너 onResponse, onFailure 등록
+//            @Override
+//            public void onResponse(Call<PostResult> call, Response<PostResult> response) {
+//                if(response.isSuccessful()){
+//                    //정상적으로 통신 성공
+//                    PostResult result = response.body();
+//                    Log.e("main", "onResponse: 성공, 결과\n" + result.toString());
+//                }
+//                else{
+//                    //통신이 실패할 경우
+//                    Log.e("main", "onResponse 실패");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<PostResult> call, Throwable t) {
+//                //통신실패 (인터넷 끊김, 예외 발생 등 시스템적인 이유)
+//                Log.e("main", "onFailure" + t.getMessage());
+//            }
+//        });
 
         return rootView;
     }

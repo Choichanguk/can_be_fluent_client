@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.canbefluent">
 
-
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -13,17 +12,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Register_setLanguage" />
-        <activity android:name=".Register_setProfile" />
-        <activity android:name=".Register_setId" />
-        <activity android:name=".Login" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".countryListActivity" android:theme="@style/Theme.AppCompat.Light.Dialog" >
+        </activity>
+        <activity android:name=".datePickerActivity" android:theme="@style/Theme.AppCompat.Light.Dialog" />
+        <activity android:name=".Register_setLanguage" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Register_setProfile" />
+        <activity android:name=".Register_setId" />
+        <activity android:name=".Login">
+
+        </activity>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
