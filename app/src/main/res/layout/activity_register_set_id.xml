@@ -60,12 +60,12 @@
         android:id="@+id/btn_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="556dp"
+        android:layout_marginTop="24dp"
         android:text="다음"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.69"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName3" />
 
     <EditText
         android:id="@+id/editTextTextEmailAddress"
@@ -114,7 +114,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="TextView"
         app:layout_constraintEnd_toEndOf="@+id/id"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/id"
@@ -124,8 +123,18 @@
         android:id="@+id/pw_check_txt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="TextView"
         app:layout_constraintEnd_toEndOf="@+id/re_pw"
         app:layout_constraintStart_toStartOf="@+id/re_pw"
         app:layout_constraintTop_toBottomOf="@+id/re_pw" />
+
+    <Button
+        android:id="@+id/btn_previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="이전"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.312"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName3" />
 </androidx.constraintlayout.widget.ConstraintLayout>

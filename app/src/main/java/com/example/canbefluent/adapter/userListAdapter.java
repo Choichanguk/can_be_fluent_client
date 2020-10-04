@@ -1,0 +1,113 @@
+package com.example.canbefluent.adapter;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.example.canbefluent.R;
+import com.example.canbefluent.items.language_item;
+import com.example.canbefluent.items.user_item;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHolder>{
+
+    private ArrayList<user_item> mData = null ;
+    private Context context;
+
+    // 리스너 객체 참조를 저장하는 변수
+    private userListAdapter.OnItemClickListener mListener = null ;
+
+    public userListAdapter(ArrayList<user_item> list){
+        mData = list;
+        Log.e("adapter", "data size: " + mData.size());
+    }
+
+    // OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
+    public void setOnItemClickListener(userListAdapter.OnItemClickListener listener) {
+        this.mListener = listener ;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View v, int position) ;
+    }
+
+    // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
+    @NonNull
+    @Override
+    public userListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        context = parent.getContext() ;
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
+
+        View view = inflater.inflate(R.layout.user_list_item, parent, false) ;
+        userListAdapter.ViewHolder vh = new userListAdapter.ViewHolder(view) ;
+        return vh ;
+    }
+
+    // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
+    @Override
+    public void onBindViewHolder(@NonNull userListAdapter.ViewHolder holder, int position) {
+        user_item item = mData.get(position) ;
+        String url = "http://3.34.44.183/profile_img/" + item.getProfile_img();
+
+        holder.user_name.setText(item.getFirst_name());
+        Log.e("adapter", "url: " + url);
+//        Picasso.get()
+//                .load(url)
+//
+////                .rotate(90f) // 사진 파일을 회전해줍시다. Operator 끝났습니다.
+//                .into(holder.profile_img);
+
+        Glide.with(context)
+                .load(url)
+                .into(holder.profile_img);
+    }
+
+    // getItemCount() - 전체 데이터 갯수 리턴.
+    @Override
+    public int getItemCount() {
+        return 100;
+    }
+
+
+    // 아이템 뷰를 저장하는 뷰홀더 클래스.
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView profile_img;
+        TextView user_name, intro;
+
+
+        ViewHolder(View itemView) {
+            super(itemView) ;
+
+            // 뷰 객체에 대한 참조. (hold strong reference)
+//            country_name = itemView.findViewById(R.id.country_name) ;
+//            lang_name = itemView.findViewById(R.id.language);
+//            lang_level = itemView.findViewById(R.id.level);
+            profile_img = itemView.findViewById(R.id.profile_img);
+            user_name = itemView.findViewById(R.id.user_name);
+            intro = itemView.findViewById(R.id.intro);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition() ;
+                    if (pos != RecyclerView.NO_POSITION) {
+                        // 리스너 객체의 메서드 호출.
+                        if (mListener != null) {
+                            mListener.onItemClick(v, pos) ;
+                        }
+                    }
+                }
+            });
+        }
+    }
+}

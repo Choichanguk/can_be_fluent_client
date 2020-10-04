@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.pojoClass;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -21,6 +21,5 @@ public class PostResult {
     @Override
     public String toString() {
         return  userID;
-
     }
 }

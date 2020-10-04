@@ -23,7 +23,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:paddingVertical="15dp"
-            android:text="All" />
+            android:text="All"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/btn_nearMe"
@@ -31,16 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-
+            android:textStyle="bold"
             android:paddingVertical="15dp"
             android:text="NEAR ME" />
-
-        <Button
-            android:id="@+id/retrofit_exam"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="retrofit exam" />
 
 
     </LinearLayout>
@@ -62,7 +56,7 @@
             app:layout_constraintTop_toTopOf="@+id/nearMe_view">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/recycler_allUser"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
@@ -102,6 +96,7 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_NearUser"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 

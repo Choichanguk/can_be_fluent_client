@@ -1,5 +1,6 @@
 package com.example.canbefluent;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,44 +10,69 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.canbefluent.adapter.countryListAdapter;
+import com.example.canbefluent.items.language_item;
 
 import java.util.ArrayList;
 
 public class countryListActivity extends AppCompatActivity {
     private static final String TAG = "countryListActivity";
+    private static final int GET_LEVEL = 6;
+
     RecyclerView country_list;
     countryListAdapter adapter;
     ArrayList<String> list;
     SearchView search_country;
 
+    String country_name;
+    String level;
+    String type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_country_list);
         Intent intent = getIntent();
         list = (ArrayList<String>) intent.getSerializableExtra("country list");
+        type = intent.getStringExtra("type");
         Log.e("country", " " + list.size());
-
-
+        Log.e("type", " " + type);
 
         country_list = findViewById(R.id.country_list_recycle); // 국가 리스트를 보여주는 recycler View
         country_list.setLayoutManager(new LinearLayoutManager(this));
         adapter = new countryListAdapter(list);
-        adapter.setOnItemClickListener(new countryListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
-                String country_name = list.get(position);
 
-                // 유저가 선택한 국가를 Register_setLanguage로 넘겨준다.
-                Intent intent = new Intent();
-                intent.putExtra("name", country_name);
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        });
+        // 모어(natice)를 선택할 땐 난이도를 선택하는 다이얼로그가 뜨지 않고, 연습언어(practice)를 선택할때만 난이도를 선택할 수 있는 다이얼로그가 띄워진다.
+        if(type.equals("native")){
+            adapter.setOnItemClickListener(new countryListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
+                    Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
+                    country_name = list.get(position);
+
+                    // 유저가 선택한 국가를 Register_setLanguage로 넘겨준다.
+                    Intent intent = new Intent();
+                    intent.putExtra("name", country_name);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            });
+        }
+        else if(type.equals("practice")){
+            adapter.setOnItemClickListener(new countryListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
+                    Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
+                    country_name = list.get(position);
+
+                    // 난이도를 선택하는 lang_level_popup 팝업 액티비티로 이동한다.
+                    Intent intent = new Intent(getApplicationContext(), lang_level_popup.class);
+                    startActivityForResult(intent, GET_LEVEL);
+                }
+            });
+        }
+
         country_list.setAdapter(adapter);
 
         search_country= findViewById(R.id.search_country);  // 국가 검색 창
@@ -66,18 +92,18 @@ public class countryListActivity extends AppCompatActivity {
         });
     }
 
-//    private ArrayList<String> filter(ArrayList<String> items, String query) {
-//        query = query.toLowerCase();
-//
-//        final ArrayList<String> list2 = new ArrayList<>();
-//        if (!query.equals("")) {
-//
-//            for(int i=0; i<items.size(); i++){
-//                if(items.get(i).toLowerCase().contains(query)){
-//                    list2.add(items.get(i));
-//                }
-//            }
-//        }
-//        return list2;
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == GET_LEVEL){
+            level = data.getStringExtra("level");
+            Log.e(TAG, "level: " + level);
+            Intent intent = new Intent();
+            intent.putExtra("name", country_name);
+            intent.putExtra("level", level);
+            setResult(RESULT_OK, intent);
+
+            finish();
+        }
+    }
 }
