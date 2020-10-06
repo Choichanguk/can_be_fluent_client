@@ -42,6 +42,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingVertical="15dp"
@@ -99,8 +100,8 @@
                         android:layout_gravity="center"
                         android:layout_marginBottom="10dp"
                         android:adjustViewBounds="true"
-                        android:background="@drawable/btn_shape"
                         android:scaleType="fitCenter"
+                        android:background="@drawable/btn_shape"
                         app:srcCompat="@drawable/ic_baseline_videocam_24" />
 
                     <TextView

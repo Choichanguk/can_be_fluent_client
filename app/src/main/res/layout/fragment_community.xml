@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_marginTop="70dp"
+
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -24,7 +24,9 @@
             android:gravity="center"
             android:paddingVertical="15dp"
             android:text="All"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:background="?attr/selectableItemBackground"
+            android:textColor="#36A2A6"/>
 
         <TextView
             android:id="@+id/btn_nearMe"
@@ -34,7 +36,9 @@
             android:gravity="center"
             android:textStyle="bold"
             android:paddingVertical="15dp"
-            android:text="NEAR ME" />
+            android:text="NEAR ME"
+            android:background="?attr/selectableItemBackground"
+            android:textColor="#747575"/>
 
 
     </LinearLayout>
@@ -79,19 +83,41 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    android:text="MY LOCATION" />
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="MY LOCATION"
+                        android:layout_gravity="center"/>
+
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:text="Osan-si, Korea, Republic Of" />
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:text="Osan-si, Korea, Republic Of"
+                        android:textStyle="bold"/>
+
+                    <ImageButton
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/btn_refresh"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/btn_shape"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_baseline_refresh_24" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -29,7 +29,7 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
 
     public userListAdapter(ArrayList<user_item> list){
         mData = list;
-        Log.e("adapter", "data size: " + mData.size());
+//        Log.e("adapter", "data size: " + mData.size());
     }
 
     // OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
@@ -60,7 +60,7 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
         String url = "http://3.34.44.183/profile_img/" + item.getProfile_img();
 
         holder.user_name.setText(item.getFirst_name());
-        Log.e("adapter", "url: " + url);
+//        Log.e("adapter", "url: " + url);
 //        Picasso.get()
 //                .load(url)
 //
@@ -70,19 +70,27 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
         Glide.with(context)
                 .load(url)
                 .into(holder.profile_img);
+
+        if(item.getDistance() != 0.0d){
+            int distance = Integer.parseInt(String.valueOf(Math.round(item.getDistance())));
+            holder.distance.setText(distance + "km");
+        }
+        else{
+            holder.distance.setText("");
+        }
     }
 
     // getItemCount() - 전체 데이터 갯수 리턴.
     @Override
     public int getItemCount() {
-        return 100;
+        return mData.size();
     }
 
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView profile_img;
-        TextView user_name, intro;
+        TextView user_name, intro, distance;
 
 
         ViewHolder(View itemView) {
@@ -95,6 +103,7 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
             profile_img = itemView.findViewById(R.id.profile_img);
             user_name = itemView.findViewById(R.id.user_name);
             intro = itemView.findViewById(R.id.intro);
+            distance = itemView.findViewById(R.id.distance);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

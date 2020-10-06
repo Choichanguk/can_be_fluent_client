@@ -204,8 +204,8 @@ public class Register_setProfile extends AppCompatActivity {
                 int day = data.getIntExtra("mDay", 0);
 
                 year_str = Integer.toString(year);
-                month_str = Integer.toString(month);
-                day_str = Integer.toString(day);
+                month_str = String.format("%02d", month);
+                day_str = String.format("%02d", day);
 
                 String dateToBirth = Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day);
                 date_to_birth.setText(dateToBirth);

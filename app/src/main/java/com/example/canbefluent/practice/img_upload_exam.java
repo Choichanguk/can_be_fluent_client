@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.practice;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.example.canbefluent.R;
 import com.example.canbefluent.pojoClass.PostResult;
 import com.example.canbefluent.pojoClass.imgUploadResult;
 import com.example.canbefluent.retrofit.RetrofitClient;

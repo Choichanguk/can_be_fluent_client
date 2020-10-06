@@ -15,6 +15,15 @@ public class user_item implements Serializable {
     String native_lang1, native_lang2, practice_lang1, practice_lang2;
     String practice_lang1_level, practice_lang2_level;
     String result;
+    double distance;
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
 
     public String getResult() {
         return result;

@@ -25,6 +25,7 @@ public class Login extends AppCompatActivity {
     private static final String TAG = "Login";
     Button btn_register, btn_login;
     EditText user_id, user_pw;
+    sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +56,6 @@ public class Login extends AppCompatActivity {
                 Log.e(TAG, "id: " + id);
                 Log.e(TAG, "pw: " + pw);
 
-
                 if(id.equals("") || pw.equals("")){
                     alertDialog("write id");
                 }
@@ -76,7 +76,16 @@ public class Login extends AppCompatActivity {
                             }
                             assert user_item != null;
                             String result = user_item.getResult();
-                            if(result.equals("success")){   // 결과 값이 success면 user_item 객체를 main activity에 넘겨준다.
+                            if(result.equals("success")){
+                                // 결과 값이 success면
+                                // 1. shared에 유저의 아이디와 로그인 상태를 저장한다.
+                                // 2. user_item 객체를 main activity에 넘겨준다.
+
+                                sharedPreference = new sharedPreference();
+                                sharedPreference.saveUserId(getApplicationContext(), user_item.getUser_id());   //shared에 유저 아이디 저장
+                                sharedPreference.saveUserPw(getApplicationContext(), user_item.getUser_pw());   //shared에 유저 비밀번호 저장
+                                sharedPreference.saveLoginStatus(getApplicationContext(), true);    // shared에 로그인 상태 저장
+
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.putExtra("user item", user_item);
                                 startActivity(intent);

@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.practice;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.canbefluent.R;
 import com.example.canbefluent.adapter.userListAdapter;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.retrofit.RetrofitClient;
