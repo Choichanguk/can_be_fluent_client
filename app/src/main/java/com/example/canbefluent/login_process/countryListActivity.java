@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.canbefluent.R;
 import com.example.canbefluent.adapter.countryListAdapter;
-import com.example.canbefluent.items.language_item;
 
 import java.util.ArrayList;
 

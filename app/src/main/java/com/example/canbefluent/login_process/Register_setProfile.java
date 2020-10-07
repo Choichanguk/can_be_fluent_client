@@ -1,19 +1,14 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,14 +19,9 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.canbefluent.R;
 import com.example.canbefluent.items.user_item;
-
-import java.io.File;
-import java.io.InputStream;
-
-import okhttp3.MultipartBody;
 
 public class Register_setProfile extends AppCompatActivity {
     private static final String TAG = "Register_setProfile";

@@ -13,13 +13,13 @@
         android:layout_marginTop="140dp"
         android:layout_marginBottom="62dp"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
+        app:layout_constraintBottom_toTopOf="@+id/signInButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
+        android:id="@+id/signInButton"
         android:layout_width="119dp"
         android:layout_height="0dp"
         android:layout_marginBottom="486dp"

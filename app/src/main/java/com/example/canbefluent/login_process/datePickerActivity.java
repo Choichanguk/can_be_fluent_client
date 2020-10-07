@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
+
+import com.example.canbefluent.R;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

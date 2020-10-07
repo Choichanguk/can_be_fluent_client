@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,19 +13,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.example.canbefluent.MainActivity;
+import com.example.canbefluent.R;
 import com.example.canbefluent.adapter.languageListAdapter;
 import com.example.canbefluent.items.language_item;
 import com.example.canbefluent.items.user_item;
-import com.example.canbefluent.pojoClass.PostResult;
 import com.example.canbefluent.pojoClass.getCountryNameResult;
 import com.example.canbefluent.pojoClass.getRegisterUserResult;
-import com.example.canbefluent.pojoClass.imgUploadResult;
 import com.example.canbefluent.retrofit.RetrofitClient;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;

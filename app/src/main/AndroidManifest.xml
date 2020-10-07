@@ -17,32 +17,37 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".google_login_exam"></activity>
-        <activity android:name=".splashActivity">
+        <activity android:name=".login_process.choice_register_option"></activity>
+        <activity android:name=".login_process.login_first">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".google_logout_exam" />
+        <activity android:name=".google_login_exam" />
+        <activity android:name=".splashActivity" />
         <activity android:name=".practice_autoGPS" />
         <activity android:name=".practice.gps_practice" />
         <activity android:name=".user_profile_activity" />
         <activity android:name=".practice.practice_img_upload" />
         <activity
-            android:name=".lang_level_popup"
+            android:name=".login_process.lang_level_popup"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
         <activity android:name=".practice.img_upload_exam" />
         <activity
-            android:name=".countryListActivity"
+            android:name=".login_process.countryListActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
         <activity
-            android:name=".datePickerActivity"
+            android:name=".login_process.datePickerActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
-        <activity android:name=".Register_setLanguage" />
-        <activity android:name=".Register_setProfile" />
-        <activity android:name=".Register_setId" />
-        <activity android:name=".Login"></activity>
+        <activity android:name=".login_process.Register_setLanguage" />
+        <activity android:name=".login_process.Register_setProfile" />
+        <activity android:name=".login_process.Register_setId" />
+        <activity android:name=".login_process.Login">
+
+        </activity>
         <activity android:name=".MainActivity" />
     </application>
 

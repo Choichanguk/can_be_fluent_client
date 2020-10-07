@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import android.annotation.SuppressLint;
 import android.content.ContentUris;

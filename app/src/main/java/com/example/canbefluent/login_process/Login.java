@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,11 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.canbefluent.MainActivity;
+import com.example.canbefluent.R;
 import com.example.canbefluent.items.user_item;
-import com.example.canbefluent.pojoClass.PostResult;
 import com.example.canbefluent.retrofit.RetrofitClient;
-
-import java.util.ArrayList;
+import com.example.canbefluent.sharedPreference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +25,7 @@ public class Login extends AppCompatActivity {
     private static final String TAG = "Login";
     Button btn_register, btn_login;
     EditText user_id, user_pw;
-    sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
+    com.example.canbefluent.sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,5 +125,7 @@ public class Login extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
 
         alertDialog.show();
+
+
     }
 }

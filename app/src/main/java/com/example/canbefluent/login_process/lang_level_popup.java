@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import com.example.canbefluent.R;
 
 public class lang_level_popup extends AppCompatActivity {
     Button btn_ok;

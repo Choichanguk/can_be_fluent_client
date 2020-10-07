@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.canbefluent.R;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.PostResult;
 import com.example.canbefluent.retrofit.RetrofitClient;

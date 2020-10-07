@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.login_process;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,44 +6,61 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
+import com.example.canbefluent.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserInfo;
 
-public class google_login_exam extends AppCompatActivity{
-
-    TextView updateUI;
+public class choice_register_option extends AppCompatActivity {
+    SignInButton btn_register_google;   // 구글 로그인 버튼
+    Button btn_register_direct;
+    private static final String TAG = "choice_register_option";
 
     private FirebaseAuth mAuth = null;  // 파이어베이스 인증 객체
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;     // 구글 로그인 결과 코드
-    private SignInButton signInButton;  // 구글 로그인 버튼
-
-    private static final String TAG = "google_login_exam";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_google_login_exam);
-        updateUI = findViewById(R.id.updateUI);
+        setContentView(R.layout.activity_choice_register_option);
+
+        btn_register_direct = findViewById(R.id.btn_register_direct);
+        btn_register_google = findViewById(R.id.btn_register_google);
+
+        // 구글 로그인 버튼의 text를 바꿔준다.
+        setGooglePlusButtonText(btn_register_google, "구글 계정으로 가입");
+
+        btn_register_direct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(choice_register_option.this, Register_setId.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_register_google.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
+            }
+        });
+
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -54,40 +71,8 @@ public class google_login_exam extends AppCompatActivity{
 
         mAuth = FirebaseAuth.getInstance();
 
-        // Set the dimensions of the sign-in button.
-        SignInButton signInButton = findViewById(R.id.signInButton);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "signInButton click");
-                signIn();
-            }
-        });
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-
-        // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-//        //로그인 한 후 바로 다음 화면으로 이동하게 하는 로직
-//        if (mAuth.getCurrentUser() != null) {
-//            FirebaseUser account = mAuth.getCurrentUser();
-//
-//            Task<GetTokenResult> token = account.getIdToken(true);
-//            Log.e(TAG, "meta data: " + account.getUid());
-//            Intent intent = new Intent(getApplication(), google_logout_exam.class);
-//            token.toString();
-////            zzu@f16e492
-//            startActivity(intent);
-//            finish();
-//        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // 이미 사인한 구글 id가 있는지 조회한 후, 없다면 account에 null 값 할당
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        updateUI(account);
     }
 
     private void signIn() {
@@ -96,12 +81,7 @@ public class google_login_exam extends AppCompatActivity{
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    /**
-     * 구글 로그인 인증을 요청했을 때 결과 값을 되돌려 받는 곳
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
+    // 구글 로그인 버튼을 누른후 결과를 받는 메서드
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -140,6 +120,8 @@ public class google_login_exam extends AppCompatActivity{
         }
     }
 
+    // 구글 로그인 후 firebase에 인증을 받는 메서드
+    // 순서 설명
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.e(TAG, "firebaseAuthWithGoogle");
         final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -162,24 +144,31 @@ public class google_login_exam extends AppCompatActivity{
 //                                            Log.d(TAG, "User re-authenticated.");
 //                                        }
 //                                    });
-
-                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
 //                            Snackbar.make(findViewById(R.id.layout_main), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
                     }
                 });
     }
 
-    public void updateUI(FirebaseUser user){
-        Log.e(TAG, "updateUI");
-        if (user != null) {
 
-            Intent intent = new Intent(this, google_logout_exam.class);
-            startActivity(intent);
-            finish();
+    /**
+     * 구글 로그인 버튼 텍스트 변경 메서드
+     * @param signInButton
+     * @param buttonText
+     */
+    protected void setGooglePlusButtonText(SignInButton signInButton, String buttonText) {
+        // Search all the views inside SignInButton for TextView
+        for (int i = 0; i < signInButton.getChildCount(); i++) {
+            View v = signInButton.getChildAt(i);
+
+            // if the view is instance of TextView then change the text SignInButton
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setText(buttonText);
+                return;
+            }
         }
     }
 }
