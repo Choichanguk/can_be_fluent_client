@@ -121,6 +121,15 @@ public class frag_community extends Fragment {
                         user_item item = all_user_list.get(position);
                         Intent intent = new Intent(getActivity(), user_profile_activity.class);
                         intent.putExtra("user item", item);
+                        Log.e(TAG, "first: " + item.getFirst_name());
+                        Log.e(TAG, "last: " + item.getLast_name());
+                        Log.e(TAG, "sex: " + item.getSex());
+                        Log.e(TAG, "profile: " + item.getProfile_img());
+//                        Log.e(TAG, "year: " + item.getYear());
+                        Log.e(TAG, "year: " + item.getYear());
+                        Log.e(TAG, "month: " + item.getMonth());
+                        Log.e(TAG, "day: " + item.getDay());
+
                         startActivity(intent);
                     }
                 });

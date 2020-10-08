@@ -33,7 +33,7 @@ public class choice_register_option extends AppCompatActivity {
     private static final String TAG = "choice_register_option";
 
     private FirebaseAuth mAuth = null;  // 파이어베이스 인증 객체
-    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInClient mGoogleSignInClient = null;
     private static final int RC_SIGN_IN = 9001;     // 구글 로그인 결과 코드
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +77,9 @@ public class choice_register_option extends AppCompatActivity {
 
     private void signIn() {
         Log.e(TAG, "singIn");
+        if (mGoogleSignInClient != null){
+            mGoogleSignInClient.signOut();
+        }
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -106,9 +109,9 @@ public class choice_register_option extends AppCompatActivity {
 
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
-            Log.e(TAG, "e mail: " + account.getEmail());
-            Log.e(TAG, "e mail: " + account.getFamilyName());
-            Log.e(TAG, "e mail: " + account.getGivenName());
+//            Log.e(TAG, "e mail: " + account.getEmail());
+//            Log.e(TAG, "e mail: " + account.getFamilyName());
+//            Log.e(TAG, "e mail: " + account.getGivenName());
 
             firebaseAuthWithGoogle(account);
 //            account.getIdToken();
@@ -122,7 +125,7 @@ public class choice_register_option extends AppCompatActivity {
 
     // 구글 로그인 후 firebase에 인증을 받는 메서드
     // 순서 설명
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
         Log.e(TAG, "firebaseAuthWithGoogle");
         final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -131,19 +134,25 @@ public class choice_register_option extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-//                            Snackbar.make(findViewById(R.id.layout_main), "Authentication Successed.", Snackbar.LENGTH_SHORT).show();
-                            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
-//                            UserInfo userInfo = (UserInfo) user.getProviderData();
+                            String UID = user.getUid();
+                            String first_name = acct.getGivenName();
+                            String last_name = acct.getFamilyName();
+                            user.getUid();
+                            Log.e(TAG, "first: " + first_name);
+                            Log.e(TAG, "last: " + last_name);
+                            Log.e(TAG, "UID: " + UID);
 
-                            // Prompt the user to re-provide their sign-in credentials
-//                            user.reauthenticate(credential)
-//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<Void> task) {
-//                                            Log.d(TAG, "User re-authenticated.");
-//                                        }
-//                                    });
+                            Intent intent = new Intent(choice_register_option.this, Register_setProfile.class);
+                            intent.putExtra("first_name", first_name);
+                            intent.putExtra("last_name", last_name);
+                            intent.putExtra("UID", UID);
+                            intent.putExtra("type", "google register");
+                            startActivity(intent);
+
+
+
                         } else {
                             // If sign in fails, display a message to the user.
 //                            Snackbar.make(findViewById(R.id.layout_main), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();

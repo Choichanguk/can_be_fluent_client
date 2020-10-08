@@ -52,7 +52,6 @@ public class user_profile_activity extends AppCompatActivity {
 
         // 유저 나이 세팅
         age = findViewById(R.id.age);
-
         String birthDate = user_item.getYear() + user_item.getMonth() + user_item.getDay();
         int age_int = getAge(birthDate);
         age.setText(" ," + age_int);
@@ -102,7 +101,7 @@ public class user_profile_activity extends AppCompatActivity {
     /**
      * 생년월일을 파라미터로 주면 만 나이를 리턴하는 메서드
      * @param birthDate 유저의 생년월일 ex) 19931213
-     * @return 만 나이
+     * @return 26(만 나이)
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static int getAge(String birthDate) {
@@ -117,7 +116,6 @@ public class user_profile_activity extends AppCompatActivity {
         if (parsedBirthDate.plusYears(Age).isAfter(now)) {
             Age = Age -1;
         }
-
         return Age;
     }
 

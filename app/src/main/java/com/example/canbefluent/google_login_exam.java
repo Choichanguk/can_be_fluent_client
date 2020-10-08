@@ -126,9 +126,9 @@ public class google_login_exam extends AppCompatActivity{
 
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
-            Log.e(TAG, "e mail: " + account.getEmail());
-            Log.e(TAG, "e mail: " + account.getFamilyName());
-            Log.e(TAG, "e mail: " + account.getGivenName());
+//            Log.e(TAG, "e mail: " + account.getEmail());
+//            Log.e(TAG, "e mail: " + account.getFamilyName());
+//            Log.e(TAG, "e mail: " + account.getGivenName());
 
             firebaseAuthWithGoogle(account);
 //            account.getIdToken();

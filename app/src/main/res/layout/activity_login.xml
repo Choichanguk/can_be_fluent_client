@@ -6,15 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".login_process.Login">
 
-    <Button
+    <TextView
         android:id="@+id/btn_register"
-        android:layout_width="0dp"
+        android:layout_width="180dp"
         android:layout_height="38dp"
-        android:text="Register"
-        app:layout_constraintEnd_toEndOf="@+id/btn_login"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/btn_login"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="새 계정 만들기"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signInButton" />
 
     <TextView
         android:id="@+id/textView"
@@ -54,23 +55,26 @@
 
     <Button
         android:id="@+id/btn_login"
-        android:layout_width="180dp"
+        android:layout_width="230dp"
         android:layout_height="44dp"
         android:layout_marginTop="524dp"
         android:text="Log in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#C3F1F1"/>
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/signInButton"
+        android:layout_width="240dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="8dp"
         android:text="Google"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_register" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
 
     <TextView
         android:id="@+id/textView2"

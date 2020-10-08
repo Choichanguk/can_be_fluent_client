@@ -64,5 +64,14 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     implementation 'androidx.multidex:multidex:2.0.1'
+//
+//    def activity_version = "1.1.0"
+//
+//    // Java language implementation
+//    implementation "androidx.activity:activity:$activity_version"
+
+    implementation 'com.soundcloud.android:android-crop:1.0.1@aar'
+
+//    api 'com.theartofdev.edmodo:android-image-cropper:'
 
 }

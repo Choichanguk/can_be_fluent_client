@@ -64,6 +64,7 @@ public class Register_setId extends AppCompatActivity {
                     user_item.setUser_pw(pw.getText().toString());
                     Intent intent = new Intent(getApplicationContext(), Register_setProfile.class);
                     intent.putExtra("user item", user_item);
+                    intent.putExtra("type", "direct register");
                     startActivity(intent);
                 }
                 else if(!isCheckDuple){

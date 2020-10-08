@@ -47,7 +47,10 @@ public class Register_setLanguage extends AppCompatActivity {
     private static final int GET_LEARN = 5;
     private static final String TAG = "Register_setLanguage";
 
+    String type;    //회원가입 유형
+
     user_item user_item = new user_item();    //유저 데이터가 담기는 객체
+    File tempFile;  // 받아온 이미지를 저장하는 임시 파일
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class Register_setLanguage extends AppCompatActivity {
 
         Intent intent = getIntent();
         user_item = (user_item) intent.getSerializableExtra("user item");
+        type = intent.getStringExtra("type");
 
         /**
          * 국가 이름을 제공하는 api로부터 국가 이름을 가져온 후 country_list에 담아준다.
@@ -194,14 +198,22 @@ public class Register_setLanguage extends AppCompatActivity {
 
                     // user_info 객체에 담긴 프로필 이미지 path를 통해 file 객체를 만든다.
                     // Hash map에 file 객체를 담아 서버에 보내준다.
-                    File file = new File(user_item.getProfile_img());
-                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                    MultipartBody.Part uploadedFile = MultipartBody.Part.createFormData("uploaded_file", file.getPath(), requestFile);
+                    tempFile = user_item.getTmpFile();
+//                    File file = new File(user_item.getProfile_img());
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), tempFile);
+                    MultipartBody.Part uploadedFile = MultipartBody.Part.createFormData("uploaded_file", tempFile.getPath(), requestFile);
 
                     // 서버로 보낼 multipart 파라미터를 hash맵에 key, value 형태로 담아준다.
                     HashMap<String, RequestBody> params = new HashMap<>();
-                    params.put("user_id", RequestBody.create(MediaType.parse("text/plain"), user_item.getUser_id()));
-                    params.put("user_pw", RequestBody.create(MediaType.parse("text/plain"), user_item.getUser_pw()));
+                    if(type.equals("direct register")){     // 직접 가입 시, 유저의 id pw를 보낸다.
+                        params.put("type", RequestBody.create(MediaType.parse("text/plain"), "direct"));
+                        params.put("user_id", RequestBody.create(MediaType.parse("text/plain"), user_item.getUser_id()));
+                        params.put("user_pw", RequestBody.create(MediaType.parse("text/plain"), user_item.getUser_pw()));
+                    }
+                    else if(type.equals("google register")){    // 구글아이디로 가입 시, 유저의 UID를 보낸다.
+                        params.put("type", RequestBody.create(MediaType.parse("text/plain"), "google"));
+                        params.put("UID", RequestBody.create(MediaType.parse("text/plain"), user_item.getUID()));
+                    }
                     params.put("sex", RequestBody.create(MediaType.parse("text/plain"), user_item.getSex()));
                     params.put("year", RequestBody.create(MediaType.parse("text/plain"), user_item.getYear()));
                     params.put("month", RequestBody.create(MediaType.parse("text/plain"), user_item.getMonth()));
@@ -233,7 +245,9 @@ public class Register_setLanguage extends AppCompatActivity {
 
                             assert result != null;
                             if(result.toString().equals("success")){
+                                tempFile.delete();
                                 alertDialog("success register", 0);
+
                             }
                             else{
 

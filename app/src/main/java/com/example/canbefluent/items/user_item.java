@@ -3,6 +3,7 @@ package com.example.canbefluent.items;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.File;
 import java.io.Serializable;
 
 public class user_item implements Serializable {
@@ -15,6 +16,25 @@ public class user_item implements Serializable {
     String native_lang1, native_lang2, practice_lang1, practice_lang2;
     String practice_lang1_level, practice_lang2_level;
     String result;
+    String UID;
+    File tmpFile;
+
+    public File getTmpFile() {
+        return tmpFile;
+    }
+
+    public void setTmpFile(File tmpFile) {
+        this.tmpFile = tmpFile;
+    }
+
+    public String getUID() {
+        return UID;
+    }
+
+    public void setUID(String UID) {
+        this.UID = UID;
+    }
+
     double distance;
 
     public double getDistance() {

@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera2" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -17,7 +21,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".login_process.choice_register_option"></activity>
+        <activity android:name=".crop_practice">
+
+        </activity>
+        <activity android:name=".practice.permission_practice">
+
+        </activity>
+        <activity android:name=".login_process.choice_register_option" />
         <activity android:name=".login_process.login_first">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,10 +55,25 @@
         <activity android:name=".login_process.Register_setLanguage" />
         <activity android:name=".login_process.Register_setProfile" />
         <activity android:name=".login_process.Register_setId" />
-        <activity android:name=".login_process.Login">
-
-        </activity>
+        <activity android:name=".login_process.Login" />
         <activity android:name=".MainActivity" />
+
+        <activity
+            android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.canbefluent.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
     </application>
 
 </manifest>
