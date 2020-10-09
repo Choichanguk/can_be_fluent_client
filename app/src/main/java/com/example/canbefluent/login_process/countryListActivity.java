@@ -47,9 +47,9 @@ public class countryListActivity extends AppCompatActivity {
         if(type.equals("native")){
             adapter.setOnItemClickListener(new countryListAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(View v, int position) {
-                    Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
-                    country_name = list.get(position);
+                public void onItemClick(View v, int position, String lang_name) {
+//                    Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
+                    country_name = lang_name;
 
                     // 유저가 선택한 국가를 Register_setLanguage로 넘겨준다.
                     Intent intent = new Intent();
@@ -62,9 +62,9 @@ public class countryListActivity extends AppCompatActivity {
         else if(type.equals("practice")){
             adapter.setOnItemClickListener(new countryListAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(View v, int position) {
-                    Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
-                    country_name = list.get(position);
+                public void onItemClick(View v, int position, String lang_name) {
+//                    Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
+                    country_name = lang_name;
 
                     // 난이도를 선택하는 lang_level_popup 팝업 액티비티로 이동한다.
                     Intent intent = new Intent(getApplicationContext(), lang_level_popup.class);
@@ -85,7 +85,8 @@ public class countryListActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.filter(newText);
+                adapter.getFilter().filter(newText);
+//                adapter.filter(newText);
                 Log.e("country", " " + list.size());
                 return true;
             }

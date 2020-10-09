@@ -2,15 +2,14 @@ package com.example.canbefluent.pojoClass;
 
 import com.google.gson.annotations.SerializedName;
 
-public class getCountryNameResult {
+public class getLanguageNameResult {
 
-    @SerializedName("name")
+    @SerializedName("lang_name")
     private String name;
 
     @Override
     public String toString() {
         return  name;
-
     }
 
 }

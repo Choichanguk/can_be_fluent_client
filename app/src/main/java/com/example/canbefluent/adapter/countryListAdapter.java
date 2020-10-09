@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,18 +16,21 @@ import com.example.canbefluent.R;
 
 import java.util.ArrayList;
 
-public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.ViewHolder> {
-    private ArrayList<String> mData = null ;
-    private ArrayList<String> mDataCopy = null ;
-    private ArrayList<String> mDataClone = null ;
+public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.ViewHolder> implements Filterable {
+    private static final String TAG = "countryListAdapter";
+
+    ArrayList<String> unFilteredlist;
+    ArrayList<String> filteredList;
+//    private ArrayList<String> mDataClone = null ;
 
     // 리스너 객체 참조를 저장하는 변수
     private OnItemClickListener mListener = null ;
 
     public countryListAdapter(ArrayList<String> list){
-        mData = list;
-        mDataCopy = list;
-        mDataClone = list;
+        Log.e(TAG, "countryListAdapter");
+        this.filteredList = list;
+        this.unFilteredlist = list;
+//        mDataClone = list;
     }
 
     // OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
@@ -34,7 +39,7 @@ public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View v, int position) ;
+        void onItemClick(View v, int positionm, String lang_name) ;
     }
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
@@ -52,14 +57,14 @@ public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String name = mData.get(position) ;
+        String name = filteredList.get(position) ;
         holder.country_name.setText(name);
     }
 
     // getItemCount() - 전체 데이터 갯수 리턴.
     @Override
     public int getItemCount() {
-        return mData.size();
+        return filteredList.size();
     }
 
 
@@ -80,7 +85,7 @@ public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.
                     if (pos != RecyclerView.NO_POSITION) {
                         // 리스너 객체의 메서드 호출.
                         if (mListener != null) {
-                            mListener.onItemClick(v, pos) ;
+                            mListener.onItemClick(v, pos, filteredList.get(pos)) ;
                         }
                     }
                 }
@@ -88,31 +93,63 @@ public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.
         }
     }
 
+
+//    public void filter(String text) {
+//        Log.e(TAG, "filter");
+//
+////        Log.e("adapter", text);
+//        if(text.isEmpty()){
+////            Log.e("empty", text);
+//            Log.e("size", String.valueOf(mDataCopy.size()));
+//            mData.clear();
+//            mData.addAll(mDataCopy);
+//        } else{
+//            ArrayList<String> result = new ArrayList<>();
+//            text = text.toLowerCase();
+//            for(int i=0; i<mDataCopy.size(); i++){
+//                if(mDataCopy.get(i).toLowerCase().contains(text)){
+//                    result.add(mDataCopy.get(i));
+//                }
+//            }
+//            mData.clear();
+//            mData.addAll(result);
+//        }
+//        notifyDataSetChanged();
+//    }
+
     /**
      * 검색 결과에 따라 필터링 해주는 메서드
-     * @param text
+     //     * @param text
      */
-    public void filter(String text) {
-
-        Log.e("adapter", text);
-        if(text.isEmpty()){
-            Log.e("empty", text);
-            Log.e("size", String.valueOf(mDataCopy.size()));
-            mData.clear();
-            mData.addAll(mDataClone);
-        } else{
-            ArrayList<String> result = new ArrayList<>();
-            text = text.toLowerCase();
-            for(int i=0; i<mDataCopy.size(); i++){
-                if(mDataCopy.get(i).toLowerCase().contains(text)){
-                    result.add(mDataCopy.get(i));
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charString = constraint.toString();
+                if (charString.isEmpty()) {
+                    filteredList = unFilteredlist;
+                } else {
+                    ArrayList<String> filteringList = new ArrayList<>();
+                    for (String name : unFilteredlist) {
+                        if (name.toLowerCase().contains(charString.toLowerCase())) {
+                            filteringList.add(name);
+                        }
+                    }
+                    filteredList = filteringList;
                 }
-            }
-            mData.clear();
-            mData.addAll(result);
-        }
-        notifyDataSetChanged();
-    }
 
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                filteredList = (ArrayList<String>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
 
 }

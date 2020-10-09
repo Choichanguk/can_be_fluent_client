@@ -2,7 +2,7 @@ package com.example.canbefluent.retrofit;
 
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.PostResult;
-import com.example.canbefluent.pojoClass.getCountryNameResult;
+import com.example.canbefluent.pojoClass.getLanguageNameResult;
 import com.example.canbefluent.pojoClass.getRegisterUserResult;
 import com.example.canbefluent.pojoClass.imgUploadResult;
 
@@ -34,8 +34,8 @@ public interface RetrofitInterface {
     @GET("get_user_info.php/")  // 모든 유저의 데이터를 받아오는 메서드(로그인 후 보여질 유저 목록을 만들기 위해)
     Call<ArrayList<user_item>> get_allUserInfo();
 
-    @GET("rest/v2/all/")
-    Call<ArrayList<getCountryNameResult>> getCountryName(@Query("name") String type);
+    @GET("languages.php/")
+    Call<ArrayList<getLanguageNameResult>> getLanguageName();
 
     @GET("login_process.php/")
     Call<user_item[]> login_process(@Query("user_id") String user_id, @Query("user_pw") String user_pw);

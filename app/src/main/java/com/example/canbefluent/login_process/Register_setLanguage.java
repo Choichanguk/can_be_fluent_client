@@ -18,7 +18,7 @@ import com.example.canbefluent.R;
 import com.example.canbefluent.adapter.languageListAdapter;
 import com.example.canbefluent.items.language_item;
 import com.example.canbefluent.items.user_item;
-import com.example.canbefluent.pojoClass.getCountryNameResult;
+import com.example.canbefluent.pojoClass.getLanguageNameResult;
 import com.example.canbefluent.pojoClass.getRegisterUserResult;
 import com.example.canbefluent.retrofit.RetrofitClient;
 
@@ -62,21 +62,21 @@ public class Register_setLanguage extends AppCompatActivity {
         type = intent.getStringExtra("type");
 
         /**
-         * 국가 이름을 제공하는 api로부터 국가 이름을 가져온 후 country_list에 담아준다.
+         * 서버로부터 전 세계 언어 종류 데이터를 받아온다.
          */
         RetrofitClient retrofitClient = new RetrofitClient();
-        Call<ArrayList<getCountryNameResult>> call = retrofitClient.service2.getCountryName("name;");
+        Call<ArrayList<getLanguageNameResult>> call = retrofitClient.service.getLanguageName();
 
         //Enqueue로 비동기 통신 실행.
-        call.enqueue(new Callback<ArrayList<getCountryNameResult>>() {
+        call.enqueue(new Callback<ArrayList<getLanguageNameResult>>() {
 
             //통신 완료 후 이벤트 처리 위한 Callback 리스너 onResponse, onFailure 등록
             @Override
-            public void onResponse(Call<ArrayList<getCountryNameResult>> call, Response<ArrayList<getCountryNameResult>> response) {
+            public void onResponse(Call<ArrayList<getLanguageNameResult>> call, Response<ArrayList<getLanguageNameResult>> response) {
                 if(response.isSuccessful()){
 
                     //정상적으로 통신 성공
-                    ArrayList<getCountryNameResult> result = response.body();
+                    ArrayList<getLanguageNameResult> result = response.body();
 
                     //api로부터 가져온 국가 리스트를 country_list에 담는다.
                     if(result != null){
@@ -92,13 +92,13 @@ public class Register_setLanguage extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<getCountryNameResult>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<getLanguageNameResult>> call, Throwable t) {
                 //통신실패 (인터넷 끊김, 예외 발생 등 시스템적인 이유)
                 Log.e("main", "onFailure" + t.getMessage());
             }
         });
 
-        btn_set_native = findViewById(R.id.btn_set_native);   // 구사 가능 언어를 추가하는 버튼
+        btn_set_native = findViewById(R.id.btn_set_native);   // 모어를 추가하는 버튼
         btn_set_learn = findViewById(R.id.btn_set_learn);   // 학습 언어를 추가하는 버튼
 
         btn_set_native.setOnClickListener(new View.OnClickListener() {
@@ -272,10 +272,8 @@ public class Register_setLanguage extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(data != null){
-            if(requestCode == GET_NATIVE){
+            if(requestCode == GET_NATIVE){  // native language 선택 결과 코드
                 String country_name = data.getStringExtra("name");
-
-
 
                 language_item item = new language_item();
                 item.setLang_name(country_name);
@@ -289,7 +287,7 @@ public class Register_setLanguage extends AppCompatActivity {
                 }
 
             }
-            else if(requestCode == GET_LEARN){
+            else if(requestCode == GET_LEARN){ // practice language 선택 결과 코드
                 String country_name = data.getStringExtra("name");
                 String level = data.getStringExtra("level");
 
@@ -308,7 +306,13 @@ public class Register_setLanguage extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * 해당 액티비티에 필요한 다이얼로그를 띄워주는 메서드
+     * 회원가입 성공 다이얼로그
+     * 선택 언어 삭제 시 뜨는 다이얼로그
+     * @param type  - 다이얼로그 타입
+     * @param position  - 리사이클러뷰 아이템 position
+     */
     public void alertDialog(final String type, final int position) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
