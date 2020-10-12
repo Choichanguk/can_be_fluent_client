@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,14 +55,20 @@ public class MainActivity extends AppCompatActivity {
         // user_item에 담긴 데이터를 세팅해준다.
         profile_img = findViewById(R.id.profile_img);
 
-//        Picasso.get()
-//                .load(url)
-////                .rotate(90f) // 사진 파일을 회전해줍시다. Operator 끝났습니다.
-//                .into(profile_img);
-
         Glide.with(this)
                 .load(url)
                 .into(profile_img);
+
+        // 클릭 시 유저 정보를 인텐트에 담아 내 프로필 화면으로 보낸다.
+        profile_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, my_profile.class);
+                intent.putExtra("user item", user_item);
+                startActivity(intent);
+
+            }
+        });
 
 
 

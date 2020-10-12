@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login_process.Register_setLanguage">
+    tools:context=".login_process.Register_setLanguage"
+    android:background="#BAE0F3">
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
@@ -20,7 +21,7 @@
         <TextView
             android:id="@+id/textView"
             android:layout_width="150dp"
-            android:layout_height="match_parent"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
             android:gravity="center"
@@ -31,9 +32,10 @@
         <ImageButton
             android:id="@+id/btn_set_native"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
 
-            app:srcCompat="@drawable/ic_baseline_add_24" />
+            app:srcCompat="@drawable/ic_baseline_add_24"
+            android:background="#F4F7F8"/>
     </LinearLayout>
 
     <TextView
@@ -71,7 +73,7 @@
         <TextView
             android:id="@+id/textView11"
             android:layout_width="150dp"
-            android:layout_height="match_parent"
+            android:layout_height="30dp"
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
@@ -82,8 +84,9 @@
         <ImageButton
             android:id="@+id/btn_set_learn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_baseline_add_24" />
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/ic_baseline_add_24"
+            android:background="#F4F7F8"/>
 
     </LinearLayout>
 
@@ -98,8 +101,9 @@
 
     <Button
         android:id="@+id/btn_finish"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:background="#F4F7F8"
         android:layout_marginTop="584dp"
         android:text="완료"
         app:layout_constraintEnd_toEndOf="parent"
@@ -109,8 +113,9 @@
 
     <Button
         android:id="@+id/btn_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:background="#F4F7F8"
         android:layout_marginTop="584dp"
         android:text="이전"
         app:layout_constraintEnd_toEndOf="parent"

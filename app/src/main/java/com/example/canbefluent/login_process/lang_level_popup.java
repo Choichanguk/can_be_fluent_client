@@ -26,7 +26,7 @@ public class lang_level_popup extends AppCompatActivity {
         Beginner = findViewById(R.id.Beginner);
         Intermediate = findViewById(R.id.Intermediate);
         Advanced = findViewById(R.id.Advanced);
-        Native = findViewById(R.id.Native);
+//        Native = findViewById(R.id.Native);
 
         radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);
         Beginner.setChecked(true);
@@ -55,9 +55,9 @@ public class lang_level_popup extends AppCompatActivity {
             else if(i == R.id.Advanced){
                 Level = "Advanced";
             }
-            else if(i == R.id.Native){
-                Level = "Native";
-            }
+//            else if(i == R.id.Native){
+//                Level = "Native";
+//            }
         }
     };
 }

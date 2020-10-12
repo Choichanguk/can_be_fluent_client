@@ -6,15 +6,34 @@
     android:layout_height="match_parent"
     tools:context=".login_process.lang_level_popup"
     android:orientation="vertical">
-    <TextView
-        android:layout_width="250dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set level"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="30sp"
-        android:paddingVertical="15dp"
-        android:background="@drawable/border_layout"/>
+        android:orientation="horizontal"
+        android:background="@drawable/border_layout">
+
+
+
+        <TextView
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="Set level"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:paddingVertical="15dp"
+            />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/ic_baseline_help_outline_24"
+            android:background="@drawable/btn_shape"/>
+
+
+    </LinearLayout>
+
 
 <!--    <LinearLayout-->
 <!--        android:layout_width="wrap_content"-->
@@ -78,12 +97,12 @@
                 android:text="Advanced"
                 android:background="@drawable/border_layout"/>
 
-            <RadioButton
-                android:id="@+id/Native"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Native"
-                android:background="@drawable/border_layout"/>
+<!--            <RadioButton-->
+<!--                android:id="@+id/Native"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:text="Native"-->
+<!--                android:background="@drawable/border_layout"/>-->
         </RadioGroup>
     </LinearLayout>
 
@@ -91,9 +110,6 @@
         android:id="@+id/btn_ok"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:text="확인" />
-
-
-
-
+        android:text="확인"
+        android:background="#F4F7F8"/>
 </LinearLayout>

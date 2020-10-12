@@ -1,6 +1,8 @@
 package com.example.canbefluent.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -42,6 +45,7 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
     }
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @NonNull
     @Override
     public userListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -54,6 +58,7 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
     }
 
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(@NonNull userListAdapter.ViewHolder holder, int position) {
         user_item item = mData.get(position) ;
@@ -78,6 +83,10 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
         else{
             holder.distance.setText("");
         }
+
+        holder.native_lang1.setText(item.getNative_lang1());
+        holder.practice_lang1.setText(item.getPractice_lang1());
+        holder.practice_lang1_level.setText(item.getPractice_lang1_level());
     }
 
     // getItemCount() - 전체 데이터 갯수 리턴.
@@ -88,9 +97,14 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
 
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView profile_img;
-        TextView user_name, intro, distance;
+
+
+
+
+        TextView user_name, intro, distance, native_lang1, practice_lang1, practice_lang1_level;
 
 
         ViewHolder(View itemView) {
@@ -104,6 +118,13 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
             user_name = itemView.findViewById(R.id.user_name);
             intro = itemView.findViewById(R.id.intro);
             distance = itemView.findViewById(R.id.distance);
+            native_lang1 = itemView.findViewById(R.id.lang_native1);
+            practice_lang1 = itemView.findViewById(R.id.lang_practice1);
+            practice_lang1_level = itemView.findViewById(R.id.lang_practice1_level);
+
+            GradientDrawable drawable= (GradientDrawable) context.getDrawable(R.drawable.img_round);
+            profile_img.setBackground(drawable);
+            profile_img.setClipToOutline(true);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -1,6 +1,7 @@
 package com.example.canbefluent;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.canbefluent.adapter.userListAdapter;
 import com.example.canbefluent.items.user_item;
+import com.example.canbefluent.login_process.Login;
 import com.example.canbefluent.practice.GpsTracker;
 import com.example.canbefluent.practice.gps_practice;
 import com.example.canbefluent.retrofit.RetrofitClient;
@@ -58,6 +60,7 @@ public class frag_community extends Fragment {
 
     RetrofitClient retrofitClient;
     Call<ArrayList<user_item>> call_all_user, call_near_user;
+
     /**
      * gps 관련 변수
      */
@@ -71,7 +74,8 @@ public class frag_community extends Fragment {
     // 내 앱에는 ACCESS_COARSE_LOCATION만 있어도 될듯
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-
+    String user_id;
+    sharedPreference sharedPreference;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -82,6 +86,11 @@ public class frag_community extends Fragment {
         all_user_list = new ArrayList<>();
         near_user_list = new ArrayList<>();
         Log.e(TAG, "onCreateView");
+
+        sharedPreference = new sharedPreference();
+        user_id = sharedPreference.loadUserId(getContext());    // 쉐어드에 저장된 유저의 id를 가져온다.
+        Log.e(TAG, "user id: " + user_id);
+
 
         /**
          * 서버로부터 모든 유저의 정보를 불러온다.
@@ -97,12 +106,13 @@ public class frag_community extends Fragment {
                 // 리사이클러뷰에 all_user_list를 보여준다.
                 assert result != null;
                 all_user_list.addAll(result);
-//                Log.e(TAG, "user list size: " + all_user_list.size());
-
-                for (int i=0; i<all_user_list.size(); i++){
-//                    Log.e(TAG, "img: " + all_user_list.get(i).getProfile_img());
-
+                for(int i=0; i<all_user_list.size(); i++){
+                    if(all_user_list.get(i).getUser_id().equals(user_id)){
+                        all_user_list.remove(i);
+                        break;
+                    }
                 }
+
                 //recycler
                 recycler_allUser = view.findViewById(R.id.recycler_allUser);
 
@@ -154,7 +164,7 @@ public class frag_community extends Fragment {
                 nearMe_view.setVisibility(View.INVISIBLE);
 
                 btn_all.setTextColor(Color.parseColor("#36A2A6"));
-                btn_nearMe.setTextColor(Color.parseColor("#747575"));
+                btn_nearMe.setTextColor(Color.parseColor("#000000"));
             }
         });
 
@@ -166,28 +176,50 @@ public class frag_community extends Fragment {
             @Override
             public void onClick(View v) {
 
-                // 서버로부터 근처 유저 리스트를 받아왔으면 바로 리사이클러뷰를 띄운다.
-                // 받아오지 못했으면 gps 켜져있는지 확인 후 서버로부터 근처 유저 리스트를 받아온다.
+                // 내 기기 위치정보에 접근 권한이 허용되었는지 체크 후, 허용 되어있지 않다면 권한을 요청한다.
+                // 그 후 gps가 켜져있지 않다면 gps를 사용할 지 다이얼로그를 띄워준다.
+                // 1. 기기 위치 접근 권한 check
+                // 2. 체크되어 있으면 gps 켜져있는지 check
+                // gps 켜져 있으면 위도 경도 구하기 - checkRunTimePermission();
+                // gps 안켜져 있으면 gps 사용 요청 다이얼로그 띄우기
                 if(near_user_list.size() == 0){
-                    // 기기에서 GPS_PROVIDER or NETWORK_PROVIDER를 제공 하는지 체크한다.
-                    // 둘 다 제공하지 않으면 gps를 설정할 지 물어보는 다이얼로그를 띄운다.
-                    // 둘 중 하나라도 제공하면
-                    if (!checkLocationServicesStatus()) {
+                    if(check_LocationAccess_Permission(PERMISSIONS_REQUEST_CODE)){     //기기 위치 접근 권한 check
 
-//                    Log.e("provider check", "false");
-                        showDialogForLocationServiceSetting();
-                    }else {
-//                    Log.e("provider check", "true");
-                        checkRunTimePermission();
+                        if (checkLocationServicesStatus()) {
+                            //gps 켜져 있으면 위도 경도 구하기 - checkRunTimePermission();
+//                    checkRunTimePermission();
+                            all_view.setVisibility(View.INVISIBLE);
+                            nearMe_view.setVisibility(View.VISIBLE);
+                            btn_all.setTextColor(Color.parseColor("#000000"));
+                            btn_nearMe.setTextColor(Color.parseColor("#F33AB5"));
+
+                            Log.e(TAG, "onRequestPermissionsResult 퍼미션 존재");
+                            gpsTracker = new GpsTracker(getActivity());
+
+                            double latitude = gpsTracker.getLatitude();
+                            double longitude = gpsTracker.getLongitude();
+
+                            String address = getCurrentAddress(latitude, longitude);
+                            address_view.setText(address);
+                            Toast.makeText(getActivity(), "위치가 업데이트 되었습니다.", Toast.LENGTH_SHORT).show();
+                            get_nearUser_from_server(latitude, longitude);
+                            Log.e(TAG, "위도: " + latitude + "/ 경도: " + longitude);
+
+
+                        }else {
+                            // gps 안켜져 있으면 gps 사용 요청 다이얼로그 띄우기
+                            showDialogForLocationServiceSetting();
+
+                        }
+
                     }
                 }
-
-                all_view.setVisibility(View.INVISIBLE);
-                nearMe_view.setVisibility(View.VISIBLE);
-
-                btn_all.setTextColor(Color.parseColor("#747575"));
-                btn_nearMe.setTextColor(Color.parseColor("#F33AB5"));
-
+                else{
+                    all_view.setVisibility(View.INVISIBLE);
+                    nearMe_view.setVisibility(View.VISIBLE);
+                    btn_all.setTextColor(Color.parseColor("#000000"));
+                    btn_nearMe.setTextColor(Color.parseColor("#F33AB5"));
+                }
             }
         });
 
@@ -195,13 +227,7 @@ public class frag_community extends Fragment {
         btn_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!checkLocationServicesStatus()) {
-
-                    showDialogForLocationServiceSetting();
-                }else {
-
-                    checkRunTimePermission();
-                }
+                check_LocationAccess_Permission(PERMISSIONS_REQUEST_CODE);
             }
         });
         return view;
@@ -273,12 +299,6 @@ public class frag_community extends Fragment {
         // LocationManager를 통해 폰에서 제공하는 모든 location관련 provider를 가져올 수 있다.
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
 
-        //
-        List<String> providerList = locationManager.getAllProviders();
-        for (int i=0; i<providerList.size(); i++){
-//            Log.e("checkLocationServices", "provider: " + providerList.get(i));
-        }
-
         // GPS_PROVIDER: GPS와 network를 활용해 위치를 확인. 정확 but 배터리 소모 심함
         // NETWORK_PROVIDER: network만 활용해 위치를 확인. 부정확 but 배터리 소모 적음
         // 어떤 provider로 위치를 측정할 지 정해서 우선순위를 줘야함
@@ -292,9 +312,8 @@ public class frag_community extends Fragment {
         Log.e(TAG, "showDialogForLocationServiceSetting 실행");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("위치 서비스 비활성화");
-        builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
-                + "위치 설정을 수정하실래요?");
+        builder.setTitle("GPS 비활성화");
+        builder.setMessage("해당 기능을 사용하기 위해서는 GPS 서비스가 필요합니다.");
         builder.setCancelable(true);
         builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
             @Override
@@ -324,12 +343,30 @@ public class frag_community extends Fragment {
 
             case GPS_ENABLE_REQUEST_CODE:
 
-                //사용자가 GPS 활성 시켰는지 검사
+                //GPS가 활성화 되었는지 검사
                 if (checkLocationServicesStatus()) {
                     if (checkLocationServicesStatus()) {
 
+                        /////////////////////////////////////////////////
                         Log.d("@@@", "onActivityResult : GPS 활성화 되있음");
-                        checkRunTimePermission();
+
+                        all_view.setVisibility(View.INVISIBLE);
+                        nearMe_view.setVisibility(View.VISIBLE);
+                        btn_all.setTextColor(Color.parseColor("#747575"));
+                        btn_nearMe.setTextColor(Color.parseColor("#F33AB5"));
+
+                        Log.e(TAG, "onRequestPermissionsResult 퍼미션 존재");
+                        gpsTracker = new GpsTracker(getActivity());
+
+                        double latitude = gpsTracker.getLatitude();
+                        double longitude = gpsTracker.getLongitude();
+                        get_nearUser_from_server(latitude, longitude);
+                        String address = getCurrentAddress(latitude, longitude);
+                        address_view.setText(address);
+                        Toast.makeText(getActivity(), "위치가 업데이트 되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        Log.e(TAG, "위도: " + latitude + "/ 경도: " + longitude);
+
                         return;
                     }
                 }
@@ -337,97 +374,6 @@ public class frag_community extends Fragment {
                 break;
         }
     }
-
-    void checkRunTimePermission(){
-        Log.e(TAG, "checkRunTimePermission 실행");
-        // 런타임 퍼미션 처리
-        // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
-        // 앱에 권한이 있는 경우  PackageManager.PERMISSION_GRANTED 를 반환하고, 권한이 없는 경우  PERMISSION_DENIED를 반환
-
-        int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION);
-
-
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
-
-            // 2. 이미 퍼미션을 가지고 있다면
-            // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
-            // 3.  위치 값을 가져올 수 있음
-            Log.e(TAG, "checkRunTimePermission 퍼미션 존재");
-            gpsTracker = new GpsTracker(getActivity());
-
-            double latitude = gpsTracker.getLatitude();
-            double longitude = gpsTracker.getLongitude();
-            String address = getCurrentAddress(latitude, longitude);
-            address_view.setText(address);
-            Toast.makeText(getActivity(), "위치가 업데이트 되었습니다.", Toast.LENGTH_SHORT).show();
-
-            // gpsTracker로부터 얻은 위도, 경도를 서버로 보내서 저장
-            call_near_user = retrofitClient.service.get_nearUserInfo(latitude, longitude);
-            call_near_user.enqueue(new Callback<ArrayList<user_item>>() {
-                @Override
-                public void onResponse(Call<ArrayList<user_item>> call, Response<ArrayList<user_item>> response) {
-                    near_user_list = response.body();
-                    Log.e(TAG, "near user list size: " + near_user_list.size());
-
-                    recycler_nearUser = view.findViewById(R.id.recycler_NearUser);
-                    nearUser_adapter = new userListAdapter(near_user_list);
-                    nearUser_adapter.setOnItemClickListener(new userListAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View v, int position) {
-
-                            // 유저 리스트에서 선택한 유저의 정보를 담은 객체를 인텐트에 담아 user_profile_activity로 보낸다.
-                            user_item item = near_user_list.get(position);
-                            Intent intent = new Intent(getActivity(), user_profile_activity.class);
-                            intent.putExtra("user item", item);
-                            startActivity(intent);
-                        }
-                    });
-                    recycler_nearUser.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    recycler_nearUser.setAdapter(nearUser_adapter);
-
-                }
-
-                @Override
-                public void onFailure(Call<ArrayList<user_item>> call, Throwable t) {
-
-                }
-            });
-
-
-            Log.e(TAG, "위도: " + latitude + "/ 경도: " + longitude);
-//            Toast.makeText(getActivity() ,"위도: " + latitude + "/ 경도: " + longitude, Toast.LENGTH_SHORT).show();
-
-
-        } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
-//            Log.e("isExist", "false");
-            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])) {
-
-                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
-                Toast.makeText(getActivity(), "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG).show();
-
-                // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS,
-                        PERMISSIONS_REQUEST_CODE);
-
-
-
-            } else {
-                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
-                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                // requestPermissions(): 권한요청 메서드
-                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS,
-                        PERMISSIONS_REQUEST_CODE);
-            }
-
-        }
-
-    }
-
 
     /**
      * ActivityCompat.requestPermissions를 사용한 퍼미션 요청의 결과를 리턴받는 메소드.
@@ -452,37 +398,39 @@ public class frag_community extends Fragment {
                 }
             }
 
-
+            // 모든 퍼미션을 허용했다면
             if ( check_result ) {
 
-                Log.e(TAG, "onRequestPermissionsResult 퍼미션 존재");
-                gpsTracker = new GpsTracker(getActivity());
+                /**
+                 *
+                 */
+                //체크되어 있으면 gps 켜져있는지 check
+                if (checkLocationServicesStatus()) {
+                    //gps 켜져 있으면 위도 경도 구하기 - checkRunTimePermission();
+//                    checkRunTimePermission();
+                    all_view.setVisibility(View.INVISIBLE);
+                    nearMe_view.setVisibility(View.VISIBLE);
+                    btn_all.setTextColor(Color.parseColor("#000000"));
+                    btn_nearMe.setTextColor(Color.parseColor("#F33AB5"));
 
-                double latitude = gpsTracker.getLatitude();
-                double longitude = gpsTracker.getLongitude();
+                    Log.e(TAG, "onRequestPermissionsResult 퍼미션 존재");
+                    gpsTracker = new GpsTracker(getActivity());
 
-                Log.e(TAG, "위도: " + latitude + "/ 경도: " + longitude);
-                //위치 값을 가져올 수 있음
-                ;
-            }
-            else {
-                // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
-                // shouldShowRequestPermissionRationale: Gets whether you should show UI with rationale before requesting a permission.
-                // 이전에 앱이 이 권한을 요청했고 사용자가 요청을 거부한 경우, 이 메서드는 true를 반환
-                // 과거에 사용자가 권한 요청을 거절하고 권한 요청 시스템 대화상자에서 Don't ask again 옵션을 선택한 경우, 이 메서드는 false를 반환
-                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[1])) {
+                    double latitude = gpsTracker.getLatitude();
+                    double longitude = gpsTracker.getLongitude();
 
-                    Toast.makeText(getActivity(), "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.", Toast.LENGTH_LONG).show();
+                    String address = getCurrentAddress(latitude, longitude);
+                    address_view.setText(address);
+                    Toast.makeText(getActivity(), "위치가 업데이트 되었습니다.", Toast.LENGTH_SHORT).show();
+                    get_nearUser_from_server(latitude, longitude);
+                    Log.e(TAG, "위도: " + latitude + "/ 경도: " + longitude);
 
 
                 }else {
-
-                    Toast.makeText(getActivity(), "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ", Toast.LENGTH_LONG).show();
-
+                    // gps 안켜져 있으면 gps 사용 요청 다이얼로그 띄우기
+                    showDialogForLocationServiceSetting();
                 }
             }
-
         }
     }
 
@@ -540,8 +488,71 @@ public class frag_community extends Fragment {
     }
 
 
+    /**
+     * 내 위치 기기에 접근할 수 있도록 하는 권한이 허용되었는지 체크
+     */
+    public boolean check_LocationAccess_Permission(int request_code){
+        Log.e("permission: ", "check_LocationAccess_Permission");
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("permission: ", "false");
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, request_code);
+            return false;
+        }
+        else{
+            Log.e("permission: ", "true");
+            return true;
+        }
+    }
 
+    /**
+     * 서버로 현재 위치의 위도, 경도를 보내고 서버에서 정렬해준 near user list를 받아오는 메서드
+     * 서버에선 위도와 경도를 통해 유저 사이의 거리를 계산 후, 가까운 순서대로 정렬한 리스트를 보내준다.
+     * @param latitude 위도
+     * @param longitude 경도
+     */
+    public void get_nearUser_from_server(double latitude, double longitude){
 
+        // gpsTracker로부터 얻은 위도, 경도를 서버로 보내서 저장
+        call_near_user = retrofitClient.service.get_nearUserInfo(latitude, longitude, user_id);
+        call_near_user.enqueue(new Callback<ArrayList<user_item>>() {
+            @Override
+            public void onResponse(Call<ArrayList<user_item>> call, Response<ArrayList<user_item>> response) {
+                near_user_list = response.body();
 
+                assert near_user_list != null;
+
+                for (int i = 0; i<near_user_list.size(); i++){
+                    if(user_id.equals(near_user_list.get(i).getUser_id())){
+                        near_user_list.remove(i);
+                        Log.e(TAG, "for문 들어옴");
+                        break;
+                    }
+                }
+                Log.e(TAG, "near user list size: " + near_user_list.size());
+
+                recycler_nearUser = view.findViewById(R.id.recycler_NearUser);
+                nearUser_adapter = new userListAdapter(near_user_list);
+                nearUser_adapter.setOnItemClickListener(new userListAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View v, int position) {
+
+                        // 유저 리스트에서 선택한 유저의 정보를 담은 객체를 인텐트에 담아 user_profile_activity로 보낸다.
+                        user_item item = near_user_list.get(position);
+                        Intent intent = new Intent(getActivity(), user_profile_activity.class);
+                        intent.putExtra("user item", item);
+                        startActivity(intent);
+                    }
+                });
+                recycler_nearUser.setLayoutManager(new LinearLayoutManager(getActivity()));
+                recycler_nearUser.setAdapter(nearUser_adapter);
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<user_item>> call, Throwable t) {
+
+            }
+        });
+    }
 
 }

@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/community"
         android:enabled="true"
-        android:title="Community"/>
+        android:icon="@drawable/ic_baseline_group_24"
+        app:itemIconTint="@color/colorAccent"
+        android:title="Community" />
 
     <item
         android:id="@+id/chats"
         android:enabled="true"
-        android:title="Chats"/>
+        android:icon="@drawable/ic_baseline_chat_bubble_24"
+        app:itemIconTint="@color/colorAccent"
+        android:title="Chats" />
 
     <item
         android:id="@+id/random_call"
         android:enabled="true"
-        android:title="Random Call"/>
+        android:icon="@drawable/ic_baseline_local_phone_24"
+        app:itemIconTint="@color/colorAccent"
+        android:title="Random Call" />
 </menu>

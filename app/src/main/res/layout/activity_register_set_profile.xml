@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login_process.Register_setProfile">
+    tools:context=".login_process.Register_setProfile"
+    android:background="#BAE0F3">
 
     <TextView
         android:id="@+id/textView13"
@@ -28,7 +29,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:src="@drawable/profile_img" />
 
     <EditText
         android:id="@+id/edit_first_name"
@@ -128,42 +129,53 @@
 
     <ImageButton
         android:id="@+id/btn_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/profile_img"
         app:layout_constraintStart_toEndOf="@+id/profile_img"
         app:layout_constraintTop_toTopOf="@+id/profile_img"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_baseline_add_a_photo_24" />
+        app:srcCompat="@drawable/ic_baseline_add_a_photo_24"
+        android:background="@drawable/btn_shape"/>
 
     <ImageButton
         android:id="@+id/btn_gallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/btn_camera"
         app:layout_constraintStart_toEndOf="@+id/btn_camera"
         app:layout_constraintTop_toTopOf="@+id/btn_camera"
-        app:srcCompat="@drawable/ic_baseline_add_photo_alternate_24" />
+        app:srcCompat="@drawable/ic_baseline_add_photo_alternate_24"
+        android:background="@drawable/btn_shape"/>
 
     <Button
         android:id="@+id/btn_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
         android:layout_marginTop="20dp"
         android:text="다음"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.674"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        android:background="#F4F7F8"/>
 
     <Button
         android:id="@+id/btn_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:background="#F4F7F8"
         android:layout_marginTop="20dp"
         android:text="이전"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.312"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

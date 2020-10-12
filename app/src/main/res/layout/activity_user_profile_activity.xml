@@ -39,7 +39,8 @@
                     android:paddingVertical="15dp"
                     android:text="name"
                     android:textSize="25sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="#000000"/>
 
                 <TextView
                     android:id="@+id/age"
@@ -48,7 +49,8 @@
                     android:paddingVertical="15dp"
                     android:text=" ,26"
                     android:textSize="25sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="#000000"/>
 
 
             </LinearLayout>
@@ -74,7 +76,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profile_img"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:textColor="#000000"/>
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -109,7 +112,8 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="영상통화"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="#000000"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -134,7 +138,8 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="영상통화"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="#000000"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -159,7 +164,8 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="메시지"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="#000000"/>
                 </LinearLayout>
 
 
@@ -179,7 +185,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="10dp"
-                android:background="@drawable/border_bottom"/>
+                android:background="@drawable/border_bottom"
+                android:textColor="#000000"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout2"
@@ -202,7 +209,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.08"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textColor="#000000"/>
 
                 <TextView
                     android:id="@+id/native_lang1"
@@ -247,7 +255,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.089"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textColor="#000000"/>
 
                 <LinearLayout
                     android:id="@+id/linearLayout5"

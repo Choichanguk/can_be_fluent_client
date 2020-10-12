@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -42,7 +44,7 @@ public class Login extends AppCompatActivity {
     Button btn_login;
     TextView btn_register;
     EditText user_id, user_pw;
-    com.example.canbefluent.sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
+    sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
 
     // 구글 로그인 연동을 위한 변수
     private FirebaseAuth mAuth = null;  // 파이어베이스 인증 객체
@@ -58,7 +60,15 @@ public class Login extends AppCompatActivity {
         user_id = findViewById(R.id.user_id);
         user_pw = findViewById(R.id.user_pw);
 
+
+
         btn_register = findViewById(R.id.btn_register);
+
+        String mystring = "새 계정 만들기";
+        SpannableString content = new SpannableString(mystring);
+        content.setSpan(new UnderlineSpan(), 0, mystring.length(), 0);
+        btn_register.setText(content);
+
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,6 +154,9 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "signInButton click");
+                if(mAuth != null){
+                    signOut();
+                }
                 signIn();
             }
         });
@@ -154,6 +167,7 @@ public class Login extends AppCompatActivity {
 
     private void signIn() {
         Log.e(TAG, "singIn");
+
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -202,7 +216,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
         Log.e(TAG, "firebaseAuthWithGoogle");
         final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -212,8 +226,8 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
 //                            Snackbar.make(findViewById(R.id.layout_main), "Authentication Successed.", Snackbar.LENGTH_SHORT).show();
-                            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
-                            FirebaseUser user = mAuth.getCurrentUser();
+//                            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
+                            final FirebaseUser user = mAuth.getCurrentUser();
                             String UID = user.getUid();
 
                             Log.e(TAG, "서버로 보내는 UID: " + UID);
@@ -238,10 +252,11 @@ public class Login extends AppCompatActivity {
                                         // 2. user_item 객체를 main activity에 넘겨준다.
 
                                         sharedPreference = new sharedPreference();
-                                        sharedPreference.saveUserId(getApplicationContext(), user_item.getUID());   //shared에 유저 UID 저장
+                                        sharedPreference.saveUserId(getApplicationContext(), user_item.getUser_id());   //shared에 유저 UID 저장
 //                                        sharedPreference.saveUserPw(getApplicationContext(), user_item.getUser_pw());   //shared에 유저 비밀번호 저장
                                         sharedPreference.saveLoginStatus(getApplicationContext(), true);    // shared에 로그인 상태 저장
-
+                                        String user_id = sharedPreference.loadUserId(Login.this);
+                                        Log.e(TAG, "user id: " + user_id);
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                         intent.putExtra("user item", user_item);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -249,7 +264,8 @@ public class Login extends AppCompatActivity {
                                         finish();
                                     }
                                     else if(result.equals("fail")){ // 결과 값이 fail이면 로그인 실패 다이얼로그를 띄워준다.
-                                        alertDialog("login fail");
+                                        alertDialog(acct);
+//                                        alertDialog("google login fail");
                                     }
                                 }
 
@@ -271,12 +287,51 @@ public class Login extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if(type.equals("write id")){
             builder.setTitle("").setMessage("아이디 or 비밀번호를 입력해주세요.");
+            builder.setPositiveButton("확인", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                }
+            });
         }
         else if(type.equals("login fail")){
             builder.setTitle("").setMessage("아이디 or 비밀번호가 일치하지 않습니다.");
-        }
 
+        }
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+
+        alertDialog.show();
+    }
+
+    public void alertDialog(final GoogleSignInAccount acct){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("").setMessage("가입된 아이디가 존재하지 않습니다. 새로운 아이디를 등록하시겠습니까?");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+                FirebaseUser user = mAuth.getCurrentUser();
+                final String UID = user.getUid();
+                final String first_name = acct.getGivenName();
+                final String last_name = acct.getFamilyName();
+
+                Intent intent = new Intent(Login.this, Register_setProfile.class);
+                intent.putExtra("first_name", first_name);
+                intent.putExtra("last_name", last_name);
+                intent.putExtra("UID", UID);
+                intent.putExtra("type", "google register");
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int id)
             {
@@ -287,4 +342,27 @@ public class Login extends AppCompatActivity {
 
         alertDialog.show();
     }
+
+
+    // 로그아웃 함수
+    private void signOut() {
+        FirebaseAuth.getInstance().signOut();
+        mGoogleSignInClient.signOut();
+
+    }
+
+    // 회원탈퇴 함수
+    private void revokeAccess() {
+        mAuth.getCurrentUser().delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            mGoogleSignInClient.revokeAccess();
+                            Log.d(TAG, "User account deleted.");
+                        }
+                    }
+                });
+    }
+
 }

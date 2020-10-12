@@ -1,4 +1,4 @@
-package com.example.canbefluent;
+package com.example.canbefluent.practice;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.canbefluent.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -47,6 +48,8 @@ public class google_logout_exam extends AppCompatActivity {
                 revokeAccess();
             }
         });
+
+        Log.e(TAG, "UID: " + mAuth.getUid());
     }
 
     // 로그아웃 함수

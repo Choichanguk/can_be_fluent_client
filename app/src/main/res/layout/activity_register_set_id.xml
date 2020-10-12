@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login_process.Register_setId">
+    tools:context=".login_process.Register_setId"
+    android:background="#BAE0F3">
 
     <TextView
         android:id="@+id/textView13"
@@ -23,14 +24,15 @@
         android:id="@+id/id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="172dp"
+        android:layout_marginTop="244dp"
         android:ems="10"
         android:hint="ID"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <EditText
         android:id="@+id/pw"
@@ -56,58 +58,64 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pw" />
 
+    <!--    <EditText-->
+<!--        android:id="@+id/editTextTextEmailAddress"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="440dp"-->
+<!--        android:ems="10"-->
+<!--        android:hint="e-mail"-->
+<!--        android:inputType="textEmailAddress"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.497"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/editTextTextPersonName3"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:ems="10"-->
+<!--        android:hint="인증번호"-->
+<!--        android:inputType="textPersonName"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/button5"-->
+<!--        android:layout_width="67dp"-->
+<!--        android:layout_height="51dp"-->
+<!--        android:text="인증번호 보내기"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName3"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName3"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />-->
+
     <Button
         android:id="@+id/btn_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="512dp"
         android:text="다음"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.69"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName3" />
-
-    <EditText
-        android:id="@+id/editTextTextEmailAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="440dp"
-        android:ems="10"
-        android:hint="e-mail"
-        android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/editTextTextPersonName3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="인증번호"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="67dp"
-        android:layout_height="51dp"
-        android:text="인증번호 보내기"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName3"
-        app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName3"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#F4F7F8"
+        />
 
     <Button
         android:id="@+id/btn_checkId"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:text="check"
+        android:layout_width="64dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:background="#F4F7F8"
+        android:text="중복확인"
         app:layout_constraintBottom_toBottomOf="@+id/id"
         app:layout_constraintStart_toEndOf="@+id/id"
-        app:layout_constraintTop_toTopOf="@+id/id" />
+        app:layout_constraintTop_toTopOf="@+id/id"
+        app:layout_constraintVertical_bias="0.533" />
 
     <TextView
         android:id="@+id/id_check_txt"
@@ -129,12 +137,13 @@
 
     <Button
         android:id="@+id/btn_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="512dp"
         android:text="이전"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.312"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName3" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#F4F7F8"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

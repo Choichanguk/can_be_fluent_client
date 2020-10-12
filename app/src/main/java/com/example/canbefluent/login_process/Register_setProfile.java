@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 import com.example.canbefluent.ImageResizeUtils;
 import com.example.canbefluent.R;
-import com.example.canbefluent.crop_practice;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.permission_class;
 import com.soundcloud.android.crop.Crop;
@@ -37,7 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class Register_setProfile extends AppCompatActivity {
     private static final String TAG = "Register_setProfile";

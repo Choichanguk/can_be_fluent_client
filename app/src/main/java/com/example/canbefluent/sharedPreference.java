@@ -10,6 +10,8 @@ public class sharedPreference {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 
+
+
     public static void saveUserId(Context context, String ID){
         SharedPreferences sharedPreferences = getPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();

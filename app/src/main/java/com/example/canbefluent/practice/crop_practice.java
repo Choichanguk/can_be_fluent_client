@@ -1,12 +1,10 @@
-package com.example.canbefluent;
+package com.example.canbefluent.practice;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -23,15 +21,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.canbefluent.pojoClass.getRegisterUserResult;
+import com.example.canbefluent.ImageResizeUtils;
+import com.example.canbefluent.R;
+import com.example.canbefluent.permission_class;
 import com.example.canbefluent.pojoClass.imgUploadResult;
-import com.example.canbefluent.practice.permission_practice;
 import com.example.canbefluent.retrofit.RetrofitClient;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -65,7 +63,10 @@ public class crop_practice extends AppCompatActivity {
         btn_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                permission_class.check_Storage_Permission(MY_PERMISSION_STORAGE);
+
+                if(permission_class.check_Storage_Permission(MY_PERMISSION_STORAGE)){
+                    goToAlbum();
+                }
 
             }
         });
@@ -74,7 +75,10 @@ public class crop_practice extends AppCompatActivity {
         btn_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                permission_class.check_camera_Permission(MY_PERMISSION_CAMERA);
+
+                if( permission_class.check_camera_Permission(MY_PERMISSION_CAMERA)){
+                    takePhoto();
+                }
             }
         });
 

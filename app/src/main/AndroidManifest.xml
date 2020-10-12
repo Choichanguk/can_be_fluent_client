@@ -21,20 +21,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".crop_practice">
+        <activity android:name=".practice.socket_practice">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".practice.permission_practice">
-
-        </activity>
+        <activity android:name=".my_profile" />
+        <activity android:name=".practice.crop_practice" />
+        <activity android:name=".practice.permission_practice" />
         <activity android:name=".login_process.choice_register_option" />
         <activity android:name=".login_process.login_first">
-
         </activity>
-        <activity android:name=".google_logout_exam" />
-        <activity android:name=".google_login_exam" />
+        <activity android:name=".practice.google_logout_exam"></activity>
+        <activity android:name=".practice.google_login_exam" />
         <activity android:name=".splashActivity" />
-        <activity android:name=".practice_autoGPS" />
+        <activity android:name=".practice.practice_autoGPS" />
         <activity android:name=".practice.gps_practice" />
         <activity android:name=".user_profile_activity" />
         <activity android:name=".practice.practice_img_upload" />
@@ -48,18 +51,11 @@
         <activity
             android:name=".login_process.datePickerActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
-        <activity android:name=".login_process.Register_setLanguage">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".login_process.Register_setLanguage" />
         <activity android:name=".login_process.Register_setProfile" />
         <activity android:name=".login_process.Register_setId" />
         <activity android:name=".login_process.Login" />
         <activity android:name=".MainActivity" />
-
         <activity
             android:name="com.soundcloud.android.crop.CropImageActivity"
             android:screenOrientation="portrait"
@@ -70,12 +66,10 @@
             android:authorities="com.example.canbefluent.provider"
             android:exported="false"
             android:grantUriPermissions="true">
-
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
     </application>
 
 </manifest>

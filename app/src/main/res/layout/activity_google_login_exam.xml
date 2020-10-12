@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".google_login_exam">
+    tools:context=".practice.google_login_exam">
 
     <TextView
         android:id="@+id/updateUI"

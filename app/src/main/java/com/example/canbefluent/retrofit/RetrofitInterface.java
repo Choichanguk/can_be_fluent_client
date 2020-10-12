@@ -44,7 +44,7 @@ public interface RetrofitInterface {
     Call<user_item[]> login_process(@Query("UID") String UID);
 
     @GET("update_address.php/")
-    Call<ArrayList<user_item>> get_nearUserInfo(@Query("latitude") double latitude, @Query("longitude") double longitude);
+    Call<ArrayList<user_item>> get_nearUserInfo(@Query("latitude") double latitude, @Query("longitude") double longitude, @Query("user_id") String user_id);
 
     @Multipart
     @POST("upload_img.php/")
@@ -53,8 +53,4 @@ public interface RetrofitInterface {
     @Multipart
     @POST("register_user.php/")
     Call<getRegisterUserResult> register_user(@Part MultipartBody.Part File, @PartMap HashMap<String, RequestBody> fields);
-//    @Path("post") String post
-
-
-
 }

@@ -17,13 +17,13 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/profile_img"
-            android:layout_width="95dp"
-            android:layout_height="95dp"
+            android:layout_width="105dp"
+            android:layout_height="105dp"
+            android:layout_margin="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars"
-            android:layout_margin="10dp"/>
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/user_name"
@@ -33,10 +33,12 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:text="Andrew"
-            android:textStyle="bold"
             android:textSize="17sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/profile_img"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="#000000"/>
+
 
         <TextView
             android:id="@+id/intro"
@@ -45,54 +47,95 @@
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:text="I wanna be your friend"
+            android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profile_img"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.506"
-            android:textSize="15sp"/>
+            app:layout_constraintVertical_bias="0.494" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="80dp"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.086"
             app:layout_constraintStart_toEndOf="@+id/profile_img"
-            app:layout_constraintTop_toTopOf="parent">
-            <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.963">
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NATIVE"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="108dp"
-                tools:layout_editor_absoluteY="80dp"
-                android:layout_gravity="center"/>
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                app:srcCompat="@drawable/ic_launcher_background"
-                android:layout_marginLeft="5dp"/>
+                <TextView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:text="NATIVE:"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="108dp"
+                    tools:layout_editor_absoluteY="80dp" />
 
-            <TextView
+
+                <TextView
+                    android:id="@+id/lang_native1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:text="PRACTICE"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="108dp"
+                    tools:layout_editor_absoluteY="80dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LEARNS"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:layout_marginLeft="20dp"
-                tools:layout_editor_absoluteX="108dp"
-                tools:layout_editor_absoluteY="80dp"
-                android:layout_gravity="center"/>
+                android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                app:srcCompat="@drawable/ic_launcher_background"
-                android:layout_marginLeft="5dp"/>
+                <TextView
+                    android:layout_width="65dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="PRACTICE:"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="108dp"
+                    tools:layout_editor_absoluteY="80dp" />
 
+
+                <TextView
+                    android:id="@+id/lang_practice1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:text="PRACTICE"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="108dp"
+                    tools:layout_editor_absoluteY="80dp" />
+
+                <TextView
+                    android:id="@+id/lang_practice1_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:text="PRACTICE"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="108dp"
+                    tools:layout_editor_absoluteY="80dp" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -103,9 +146,9 @@
             android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
             android:text="5km"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:textStyle="bold"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
