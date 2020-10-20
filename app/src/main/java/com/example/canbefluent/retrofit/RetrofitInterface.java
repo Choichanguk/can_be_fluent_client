@@ -2,8 +2,12 @@ package com.example.canbefluent.retrofit;
 
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.PostResult;
+import com.example.canbefluent.pojoClass.getChatList;
 import com.example.canbefluent.pojoClass.getLanguageNameResult;
+import com.example.canbefluent.pojoClass.getMsgList;
 import com.example.canbefluent.pojoClass.getRegisterUserResult;
+import com.example.canbefluent.pojoClass.getResult;
+import com.example.canbefluent.pojoClass.getRoomList;
 import com.example.canbefluent.pojoClass.imgUploadResult;
 
 import java.util.ArrayList;
@@ -25,7 +29,6 @@ public interface RetrofitInterface {
     //{post} > @Path()의 괄호 안에 들어오는 값이 {}안으로 들어감
 
     @GET("index.php/")  // 모든 유저의 id값만 받아오는 메서드(id 중복체크를 위해)
-
     //Call<PostResult> > Call은 응답이 왔을 때  Callback으로 불려질 타입 / PostResult > 요청 GET에 대한 응답데이터를 받아서 DTO 객체화할 클래스 타입 지정
     //getPosts > 메소드 명. 자유롭게 설정 가능, 통신에 영향x
     //@Path("post") String post > 매개변수. 매개변수 post가 @Path("post")를 보고 @GET 내부 {post}에 대입
@@ -37,11 +40,30 @@ public interface RetrofitInterface {
     @GET("languages.php/")
     Call<ArrayList<getLanguageNameResult>> getLanguageName();
 
+    // 일반 아이디로 로그인 할때
     @GET("login_process.php/")
     Call<user_item[]> login_process(@Query("user_id") String user_id, @Query("user_pw") String user_pw);
 
+    // 구글 아이디로 로그인 할 때
     @GET("login_process.php/")
     Call<user_item[]> login_process(@Query("UID") String UID);
+
+    // 서버로부터 선택한 채팅방 정보를 가져올 때
+    @GET("chat_room.php/")
+    Call<ArrayList<getRoomList>> get_room_info(@Query("sender_index") String sender_index, @Query("receiver_index") String receiver_index);
+
+    // 서버로부터 채팅방 목록 가져올 때
+    @GET("room_list.php/")
+    Call<ArrayList<getRoomList>> get_room_list(@Query("user_index") String user_index);
+
+    // 서버로부터 해당 인덱스의 채팅방 정보 가져올 때
+    @GET("room_list.php/")
+    Call<ArrayList<getRoomList>> get_room_info_from_noti(@Query("room_index") String room_index, @Query("user_index") String user_index);
+
+    // 서버로부터 채팅방 목록 가져올 때
+    @GET("msg_list.php/")
+    Call<ArrayList<getMsgList>> get_msg_list(@Query("room_index") String room_index, @Query("user_index") String user_index);
+
 
     @GET("update_address.php/")
     Call<ArrayList<user_item>> get_nearUserInfo(@Query("latitude") double latitude, @Query("longitude") double longitude, @Query("user_id") String user_id);
@@ -53,4 +75,8 @@ public interface RetrofitInterface {
     @Multipart
     @POST("register_user.php/")
     Call<getRegisterUserResult> register_user(@Part MultipartBody.Part File, @PartMap HashMap<String, RequestBody> fields);
+
+    @GET("update_token.php/")
+    Call<getResult> update_token(@Query("user_id") String user_id, @Query("token") String token);
+
 }

@@ -33,6 +33,13 @@ public class sharedPreference {
         editor.apply();
     }
 
+    public static void saveUserIndex(Context context, String index){
+        SharedPreferences sharedPreferences = getPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("user_index", index);
+        editor.apply();
+    }
+
     public static String loadUserId(Context context) {
         SharedPreferences sharedPreferences = getPreferences(context);
         String user_id = sharedPreferences.getString("user_id", null);
@@ -57,5 +64,15 @@ public class sharedPreference {
         SharedPreferences sharedPreferences = getPreferences(context);
         Boolean is_login = sharedPreferences.getBoolean("is_login", false);
         return is_login;
+    }
+
+    public static String loadUserIndex(Context context) {
+        SharedPreferences sharedPreferences = getPreferences(context);
+        String user_index = sharedPreferences.getString("user_index", null);
+
+        if(user_index == null){
+            user_index = "";
+        }
+        return user_index;
     }
 }

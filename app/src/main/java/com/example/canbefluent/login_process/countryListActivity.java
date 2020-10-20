@@ -39,7 +39,7 @@ public class countryListActivity extends AppCompatActivity {
         Log.e("country", " " + list.size());
         Log.e("type", " " + type);
 
-        country_list = findViewById(R.id.country_list_recycle); // 국가 리스트를 보여주는 recycler View
+        country_list = findViewById(R.id.country_list); // 국가 리스트를 보여주는 recycler View
         country_list.setLayoutManager(new LinearLayoutManager(this));
         adapter = new countryListAdapter(list);
 

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.Serializable;
 
 public class user_item implements Serializable {
+    String user_index;
     String user_id;
     String user_pw;
     String year, month, day;
@@ -17,7 +18,26 @@ public class user_item implements Serializable {
     String practice_lang1_level, practice_lang2_level;
     String result;
     String UID;
+    String token;
     File tmpFile;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+
+    public String getUser_index() {
+        return user_index;
+    }
+
+    public void setUser_index(String user_index) {
+        this.user_index = user_index;
+    }
+
 
     public File getTmpFile() {
         return tmpFile;

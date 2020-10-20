@@ -34,8 +34,10 @@ public class splashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         sharedPreference = new sharedPreference();
         isLogin = sharedPreference.loadLoginStatus(getApplicationContext());
-        isLogin = false;
+        Log.e(TAG, "isLogin: " + isLogin);
+//        isLogin = false;
         if(isLogin){
+            Log.e(TAG, "if true");
             user_id = sharedPreference.loadUserId(getApplicationContext());
             user_pw = sharedPreference.loadUserPw(getApplicationContext());
             RetrofitClient retrofitClient = new RetrofitClient();
@@ -44,6 +46,7 @@ public class splashActivity extends AppCompatActivity {
             call.enqueue(new Callback<user_item[]>() { // 서버로부터 결과 값을 받는 callback 함수
                 @Override
                 public void onResponse(Call<user_item[]> call, Response<user_item[]> response) {
+                    Log.e(TAG, "onResponse");
                     user_item[] user_item_arr = response.body();
                     user_item user_item = new user_item();
 //                            Log.e(TAG, "user_item: " + result);
@@ -54,7 +57,9 @@ public class splashActivity extends AppCompatActivity {
                     }
                     assert user_item != null;
                     String result = user_item.getResult();
+                    sharedPreference.saveUserIndex(splashActivity.this, user_item.getUser_index());
                     if(result.equals("success")){
+                        Log.e(TAG, "onResponse success");
                         // 결과 값이 success면
                         // 1. shared에 유저의 아이디와 로그인 상태를 저장한다.
                         // 2. user_item 객체를 main activity에 넘겨준다.
@@ -65,7 +70,7 @@ public class splashActivity extends AppCompatActivity {
                         finish();
                     }
                     else if(result.equals("fail")){ // 결과 값이 fail이면 로그인 실패 다이얼로그를 띄워준다.
-                        alertDialog("login fail");
+//                        alertDialog("login fail");
                     }
                 }
 
@@ -76,6 +81,7 @@ public class splashActivity extends AppCompatActivity {
             });
         }
         else{
+            Log.e(TAG, "if false");
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
             finish();

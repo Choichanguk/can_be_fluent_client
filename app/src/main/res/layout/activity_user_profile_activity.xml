@@ -149,7 +149,7 @@
                     android:orientation="vertical">
 
                     <ImageButton
-                        android:id="@+id/imageButton5"
+                        android:id="@+id/btn_msg"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center"

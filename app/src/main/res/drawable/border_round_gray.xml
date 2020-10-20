@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- 내부 색상 설정 -->
+    <solid android:color="#C9CBCC" />
+    <!-- 테두리 두께 및 색상 설정 -->
+    <stroke
+        android:width="2dp"
+        android:color="#ffffff" />
+    <!-- 모서리 둥근 정도 설정 -->
+
+    <corners android:bottomRightRadius="20dp"
+        android:bottomLeftRadius="20dp"
+        android:topRightRadius="20dp"
+        android:topLeftRadius="20dp"/>
+</shape>

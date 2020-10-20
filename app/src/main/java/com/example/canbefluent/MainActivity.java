@@ -1,15 +1,24 @@
 package com.example.canbefluent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,10 +26,15 @@ import com.bumptech.glide.Glide;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.PostResult;
 import com.example.canbefluent.retrofit.RetrofitClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,15 +49,45 @@ public class MainActivity extends AppCompatActivity {
     private frag_chats frag_chats;
     private frag_randomCall frag_randomCall;
     TextView title;
-    user_item user_item;
+    public static user_item user_item;  // 현재 접속한 유저의 정보를 담은 객체
     ImageView profile_img;
-    String url = "http://3.34.44.183/profile_img/";  // 서버로부터 프로필 이미지를 가져오는 url 뒤에 파일 이름을 붙여서 사용.
+    String url = "http://3.35.4.134/profile_img/";  // 서버로부터 프로필 이미지를 가져오는 url 뒤에 파일 이름을 붙여서 사용.
 
+    Button btn_exam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e(TAG, "getInstanceId failed", task.getException());
+
+                            return;
+                        }
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                        Log.e(TAG, "token: " + token);
+                    }
+                });
+
+
+        /**
+         * 브로드캐스트 리시버 등록
+         */
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
+                new IntentFilter("blackJinData"));
+
+//        /**
+//         * client socket service 실행
+//         */
+//        Intent service_intent = new Intent(MainActivity.this, socket_service.class);
+//        startService(service_intent);
 
         Intent intent = getIntent();
         user_item = (user_item) intent.getSerializableExtra("user item");
@@ -69,6 +113,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        /**
+         * fcm 기기 고유 토큰을 가져온다.
+         * 가져온 토큰은 서버에 저장해야함 - MyFireBaseMessagingService.class의 sendRegistrationToServer메서드 에서
+         */
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                        Log.e(TAG, "token: " + token);
+                    }
+                });
 
 
 
@@ -111,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+//
     }
 
     @Override
@@ -118,4 +183,52 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
         
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //브로드캐스트 리시버 해제
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+
+        // 클라리언트 소켓 서비스 종료 (실행중이라면)
+        if(isRunningService()){
+            Intent intent = new Intent(MainActivity.this, socket_service.class); // 이동할 컴포넌트
+            stopService(intent); // 서비스 종료
+        }
+    }
+
+    /**
+     * 브로드캐스트 예제
+     * 브로드캐스트 수신자
+     */
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // intent ..
+            String data1 = intent.getStringExtra("data1");
+            String data2 = intent.getStringExtra("data2");
+            String data3 = intent.getStringExtra("data3");
+            Log.e(TAG, "data1: " + data1 + " /data2: " + data2 + " /data3: " + data3);
+            Log.e(TAG, "브로드캐스트 수신 완료");
+        }
+    };
+
+    /**
+     * 서비스가 실행중인지 알려주는 메서드
+     * @return true or false
+     */
+    public Boolean isRunningService(){
+        Log.e(TAG, "이름: " + socket_service.class.getName());
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (socket_service.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return  false;
+    }
+
+
 }

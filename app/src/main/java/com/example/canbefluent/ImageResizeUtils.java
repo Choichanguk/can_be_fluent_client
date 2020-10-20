@@ -11,6 +11,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+//import sun.rmi.runtime.Log;
+
 /**
  * 이미지의 사이즈를 커스텀마이징 할 수 있다.
  * 카메라 촬영일 경우 회전 각도를 가져와 이미지를 회전시킨다.

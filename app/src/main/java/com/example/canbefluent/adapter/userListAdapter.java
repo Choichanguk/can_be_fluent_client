@@ -62,7 +62,7 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull userListAdapter.ViewHolder holder, int position) {
         user_item item = mData.get(position) ;
-        String url = "http://3.34.44.183/profile_img/" + item.getProfile_img();
+        String url = "http://3.35.4.134/profile_img/" + item.getProfile_img();
 
         holder.user_name.setText(item.getFirst_name());
 //        Log.e("adapter", "url: " + url);

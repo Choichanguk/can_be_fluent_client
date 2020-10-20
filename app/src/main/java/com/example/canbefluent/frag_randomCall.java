@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+//import javax.swing.text.View;
+
 public class frag_randomCall extends Fragment {
     private View view;
 

@@ -22,7 +22,7 @@ public class my_profile extends AppCompatActivity {
     ImageButton btn_back;
 
     TextView name;
-    String url = "http://3.34.44.183/profile_img/";
+    String url = "http://3.35.4.134/profile_img/";
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {

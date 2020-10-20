@@ -118,6 +118,7 @@ public class Login extends AppCompatActivity {
                                 sharedPreference.saveUserId(getApplicationContext(), user_item.getUser_id());   //shared에 유저 아이디 저장
                                 sharedPreference.saveUserPw(getApplicationContext(), user_item.getUser_pw());   //shared에 유저 비밀번호 저장
                                 sharedPreference.saveLoginStatus(getApplicationContext(), true);    // shared에 로그인 상태 저장
+                                sharedPreference.saveUserIndex(getApplicationContext(), user_item.getUser_index()); // user index 저장
 
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.putExtra("user item", user_item);
