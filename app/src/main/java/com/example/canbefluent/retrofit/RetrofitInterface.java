@@ -3,6 +3,7 @@ package com.example.canbefluent.retrofit;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.PostResult;
 import com.example.canbefluent.pojoClass.getChatList;
+import com.example.canbefluent.pojoClass.getImgList;
 import com.example.canbefluent.pojoClass.getLanguageNameResult;
 import com.example.canbefluent.pojoClass.getMsgList;
 import com.example.canbefluent.pojoClass.getRegisterUserResult;
@@ -12,6 +13,7 @@ import com.example.canbefluent.pojoClass.imgUploadResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -78,5 +80,9 @@ public interface RetrofitInterface {
 
     @GET("update_token.php/")
     Call<getResult> update_token(@Query("user_id") String user_id, @Query("token") String token);
+
+    @Multipart
+    @POST("chat_img_upload.php/")
+    Call<ArrayList<getImgList>> uploadMultiple(@Part("room_index") RequestBody room_index, @Part("user_index") RequestBody user_index, @Part("status") RequestBody status, @Part("size") RequestBody size, @Part List<MultipartBody.Part> parts);
 
 }

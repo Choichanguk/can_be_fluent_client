@@ -88,7 +88,7 @@ public class roomListAdapter extends RecyclerView.Adapter<roomListAdapter.ViewHo
     @Override
     public void onBindViewHolder(roomListAdapter.ViewHolder holder, int position) {
         getRoomList item = mData.get(position) ;
-        String url = "http://3.35.4.134/profile_img/" + item.getProfile_img();
+        String url = "http://52.78.58.117/profile_img/" + item.getProfile_img();
 
         long time = Long.parseLong(item.getTime());
 

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     TextView title;
     public static user_item user_item;  // 현재 접속한 유저의 정보를 담은 객체
     ImageView profile_img;
-    String url = "http://3.35.4.134/profile_img/";  // 서버로부터 프로필 이미지를 가져오는 url 뒤에 파일 이름을 붙여서 사용.
+    String url = "http://52.78.58.117/profile_img/";  // 서버로부터 프로필 이미지를 가져오는 url 뒤에 파일 이름을 붙여서 사용.
 
     Button btn_exam;
 

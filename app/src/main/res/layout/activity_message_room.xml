@@ -54,7 +54,7 @@
         android:id="@+id/msg_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9">
+        android:layout_weight="10">
     </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
@@ -65,31 +65,133 @@
         android:background="@drawable/border_layout"
         android:orientation="horizontal">
 
-
         <ImageButton
-            android:id="@+id/imageButton6"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_close_option"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/btn_shape"
-            app:srcCompat="@drawable/ic_baseline_camera_alt_24" />
+            app:srcCompat="@drawable/ic_baseline_cancel_24"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/btn_open_option"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@drawable/btn_shape"
+            app:srcCompat="@drawable/ic_baseline_add_circle_outline_24" />
 
         <EditText
             android:id="@+id/edit_msg"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="7"
             android:ems="10"
             android:inputType="textPersonName" />
 
         <ImageButton
             android:id="@+id/btn_send"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/btn_shape"
             app:srcCompat="@drawable/ic_baseline_reply_24" />
+
+
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/img_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:background="@drawable/border_layout"/>
+
+    <LinearLayout
+        android:id="@+id/msg_option"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btn_album"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="40dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:background="@drawable/btn_shape"
+                app:srcCompat="@drawable/ic_baseline_add_photo_alternate_24" />
+
+            <ImageButton
+                android:id="@+id/btn_camera"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="40dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:background="@drawable/btn_shape"
+                app:srcCompat="@drawable/ic_baseline_add_a_photo_24" />
+
+
+            <ImageButton
+                android:id="@+id/btn_record"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="40dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_baseline_keyboard_voice_24"
+                android:background="@drawable/btn_shape"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="앨범"/>
+            <TextView
+
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="카메라"/>
+            <TextView
+
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="음성메세지"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
 
 
 </LinearLayout>

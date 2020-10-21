@@ -91,7 +91,7 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
         else{
-            String url = "http://3.35.4.134/profile_img/" + profile_img;
+            String url = "http://52.78.58.117/profile_img/" + profile_img;
             ChatMessageViewHolder holder1 = (ChatMessageViewHolder) holder;
             holder1.msg.setText(item.getMessage());
             holder1.time.setText(time_str);

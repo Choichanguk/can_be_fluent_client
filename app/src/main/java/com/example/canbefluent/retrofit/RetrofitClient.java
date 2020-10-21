@@ -42,7 +42,7 @@ public class RetrofitClient {
 
     //Retrofit.Build를 통해 Retrofit 인스턴스 생성
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://3.35.4.134") //baseUrl 등록(반드시 '/'로 마무리 해야함)
+            .baseUrl("http://52.78.58.117") //baseUrl 등록(반드시 '/'로 마무리 해야함)
             .addConverterFactory(GsonConverterFactory.create(gson)) // JSON을 변환해줄 Gson 변환기 등록
             .client(provideOkHttpClient(provideLoggingInterceptor()))
             .build();

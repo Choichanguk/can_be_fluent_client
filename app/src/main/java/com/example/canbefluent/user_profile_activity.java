@@ -32,7 +32,7 @@ public class user_profile_activity extends AppCompatActivity {
     private static final String TAG = "user_profile_activity";
     user_item user_item;
     CircleImageView profile_img;
-    String url = "http://3.35.4.134/profile_img/";
+    String url = "http://52.78.58.117/profile_img/";
     TextView name, native_lang1, native_lang2, practice_lang1, practice_lang2, practice_lang1_level, practice_lang2_level, age;
     LinearLayout linearLayout;
     ImageButton btn_back, btn_msg;
