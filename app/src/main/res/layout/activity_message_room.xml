@@ -10,8 +10,7 @@
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="70dp"
         android:background="@drawable/border_layout">
 
         <ImageButton
@@ -26,7 +25,7 @@
         <TextView
             android:id="@+id/name"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginLeft="30dp"
             android:layout_weight="5"
             android:paddingVertical="15dp"
@@ -54,14 +53,14 @@
         android:id="@+id/msg_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10">
+        android:layout_weight="10"
+        android:background="#EDEFEE">
     </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
         android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="60dp"
         android:background="@drawable/border_layout"
         android:orientation="horizontal">
 

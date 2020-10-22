@@ -12,7 +12,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/border_round"
         android:paddingVertical="5dp"
-        android:paddingLeft="15dp"
+        android:paddingHorizontal="15dp"
         android:text="TextView"
         android:textColor="#ffffff"
         android:textSize="17sp"

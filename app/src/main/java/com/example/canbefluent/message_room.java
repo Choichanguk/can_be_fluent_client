@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -92,12 +93,12 @@ public class message_room extends AppCompatActivity {
 //    ArrayList<getChatList> chatLists = new ArrayList<>();
 
 
-    ArrayList<getMsgList> msgLists = new ArrayList<>();
+    ArrayList<msg_item> msgLists = new ArrayList<>();
     RecyclerView chat_recycler;
     chatRoomAdapter chatRoomAdapter;
 
     RetrofitClient retrofitClient;
-    Call<ArrayList<getMsgList>> call;   // 메세지 정보를 불러ㅇ
+    Call<ArrayList<msg_item>> call;   // 메세지 정보를 불러ㅇ
     Call<ArrayList<getRoomList>> call2;
     Call<ArrayList<getImgList>> call3;
 
@@ -110,7 +111,7 @@ public class message_room extends AppCompatActivity {
         setContentView(R.layout.activity_message_room);
 
         msg_option_layout = findViewById(R.id.msg_option);
-
+        my_user_index = sharedPreference.loadUserIndex(message_room.this);
         Intent intent = getIntent();
 
         String type = intent.getStringExtra("type");
@@ -158,9 +159,6 @@ public class message_room extends AppCompatActivity {
 
 //        user_id = my_info.getUser_id();
 //        String my_first_name = my_info.getFirst_name();
-
-        my_user_index = sharedPreference.loadUserIndex(message_room.this);
-
         edit_msg = findViewById(R.id.edit_msg);
         btn_send = findViewById(R.id.btn_send);
         btn_send.setOnClickListener(new View.OnClickListener() {
@@ -170,6 +168,7 @@ public class message_room extends AppCompatActivity {
 
                 // 메세지, 이미지, 음성녹음 파일로 메세지 타입을 구분한다.
                 // 입력한 문자열을 가져온다.
+
 
                 if(imgList.size() > 0){     // 이미지 리스트에 이미지 uri가 담겨있다면 이미지 전송 로직을 실행
                     // 서버로 선택한 이미지들을 보내 db에 저장시킨다.
@@ -186,10 +185,12 @@ public class message_room extends AppCompatActivity {
                         }
                     }
 
+                    final long time = System.currentTimeMillis(); // 메세지를 보낸 시간
                     // create a map of data to pass along
                     RequestBody room_Index = createPartFromString(room_index);
                     RequestBody user_index = createPartFromString(my_user_index);
-                    RequestBody status;
+                    RequestBody Time = createPartFromString(time+"");
+                    RequestBody status; // 메세지 타입 - img
 
                     if(curPerson == 1){
                         status = createPartFromString("no read");
@@ -197,54 +198,96 @@ public class message_room extends AppCompatActivity {
                     else{
                         status = createPartFromString("read");
                     }
-                    RequestBody size = createPartFromString(""+parts.size());
+                    RequestBody size = createPartFromString(""+parts.size());   // 보내는 이미지 개수
 
                     Log.e(TAG, "이미지 전송 room_Index: " + room_Index.toString());
                     Log.e(TAG, "이미지 전송 user_index: " + user_index.toString());
                     Log.e(TAG, "이미지 전송 status: " + status.toString());
                     Log.e(TAG, "이미지 전송 parts size: " + parts.size());
 
-//                    retrofitClient = new RetrofitClient();
-//                    call3 =retrofitClient.service.uploadMultiple(room_Index, user_index, status, size, parts);
-//                    call3.enqueue(new Callback<ArrayList<getImgList>>() {
-//                        @Override
-//                        public void onResponse(Call<ArrayList<getImgList>> call, Response<ArrayList<getImgList>> response) {
-//                            Log.e(TAG, "onResponse");
-//                            Log.e(TAG, "img list size: " + response.body().size());
-//                        }
-//
-//                        @Override
-//                        public void onFailure(Call<ArrayList<getImgList>> call, Throwable t) {
-//                            Log.e(TAG, "onResponse");
-//                        }
-//                    });
+                    retrofitClient = new RetrofitClient();
+                    call3 =retrofitClient.service.uploadMultiple(room_Index, user_index, status, size, Time, parts);
+                    call3.enqueue(new Callback<ArrayList<getImgList>>() {
+                        @Override
+                        public void onResponse(Call<ArrayList<getImgList>> call, Response<ArrayList<getImgList>> response) {
+                            ArrayList<getImgList> lists = response.body();
+                            Log.e(TAG, "onResponse");
+                            Log.e(TAG, "img list size: " + response.body().size());
 
+                            // 서버로부터 저장된 이미지 이름을 받아오면 이미지 이름을 msg 객체로 담아 msg_list에 담는다.
+                            // adapter에 notify 해준다.
+                            assert lists != null;
+                            ArrayList<String> uri_list = new ArrayList<>();
+                            if(lists.size() > 0){
+                                for (int i = 0; i < lists.size(); i++){
+                                    uri_list.add(lists.get(i).getFile_name());
 
+                                    msg_item item = new msg_item();
+                                    item.setType("img");
+                                    item.setMessage(lists.get(i).getFile_name());
+                                    item.setTime(time);
+                                    item.setUser_index(my_user_index);
+                                    item.setRoom_index(room_index);
+                                    if(curPerson == 1){
+                                        item.setStatus("no read");
+                                    }
+                                    else{
+                                        item.setStatus("read");
+                                    }
+                                    msgLists.add(item);
+                                }
+
+                                // 서버로 파일 이름이 담기 리스트를 담은 객체를 보낸다.
+                                msg_item item1 = new msg_item();
+                                item1.setType("img");
+                                item1.setImg_list(uri_list);
+                                item1.setTime(time);
+                                item1.setUser_index(my_user_index);
+                                item1.setRoom_index(room_index);
+
+                                // 서버로 이미지 메세지 객체를 보낸다.
+                                SendToServerThread thread=new SendToServerThread(client_socket, item1);
+                                thread.start();
+
+                                chatRoomAdapter = new chatRoomAdapter(msgLists, my_user_index, message_room.this, profile_img);
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(message_room.this);
+                                linearLayoutManager.setStackFromEnd(true);
+                                chat_recycler.setLayoutManager(linearLayoutManager);
+                                chat_recycler.setAdapter(chatRoomAdapter);
+                            }
+
+                            // 서버로부터 이미지 저장 확인 되면 imgList를 초기화하고, 이미지를 보여주는 가로 리사이클러뷰 창을 닫는다.
+                            imgList = new ArrayList<>();
+                            img_list_recycler.setVisibility(View.GONE);
+                            edit_msg.setFocusableInTouchMode (true);
+                            edit_msg.setFocusable(true);
+                        }
+
+                        @Override
+                        public void onFailure(Call<ArrayList<getImgList>> call, Throwable t) {
+                            Log.e(TAG, "onFailure: " + t.getMessage());
+                        }
+                    });
                 }
                 else{   // 일반 문자 메시지 전송
-                    msg_item item = new msg_item();
-                    item.setMsg(edit_msg.getText().toString());
-                    item.setTime(System.currentTimeMillis());
-                    item.setType("msg");
 
-                    // 송신 스레드 가동
-                    // msg객체를 보낸다.
-                    SendToServerThread thread=new SendToServerThread(client_socket, item);
-                    thread.start();
+                    if(!edit_msg.getText().toString().equals("")){  // 빈 문자열일 경우 메세지 전송 버튼 클릭 시 아무일도 일어나지 않는다.
+                        msg_item item = new msg_item();
+                        item.setMessage(edit_msg.getText().toString());
+                        item.setTime(System.currentTimeMillis());
+                        item.setType("msg");
+                        item.setRoom_index(room_index);
+                        item.setUser_index(my_user_index);
+
+                        // 송신 스레드 가동
+                        // msg객체를 보낸다.
+                        SendToServerThread thread=new SendToServerThread(client_socket, item);
+                        thread.start();
+                    }
+
                 }
-//                String msg = edit_msg.getText().toString();
-//                long curTime = System.currentTimeMillis();
             }
         });
-
-
-        /**
-         * 리사이클러뷰, 어댑터 등록
-         */
-        chat_recycler = findViewById(R.id.msg_recycler);
-        chatRoomAdapter = new chatRoomAdapter(msgLists, my_user_index, message_room.this, profile_img);
-        chat_recycler.setLayoutManager(new LinearLayoutManager(message_room.this));
-        chat_recycler.setAdapter(chatRoomAdapter);
 
 
         btn_open_option = findViewById(R.id.btn_open_option);
@@ -254,6 +297,7 @@ public class message_room extends AppCompatActivity {
                 msg_option_layout.setVisibility(View.VISIBLE);
                 btn_close_option.setVisibility(View.VISIBLE);
                 btn_open_option.setVisibility(View.GONE);
+                chat_recycler.scrollToPosition(chat_recycler.getAdapter().getItemCount() - 1);
             }
         });
 
@@ -353,7 +397,6 @@ public class message_room extends AppCompatActivity {
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-//        intent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(Intent.createChooser(intent,"다중 선택은 '포토'를 선택하세요."), 1111);
     }
 
@@ -371,10 +414,6 @@ public class message_room extends AppCompatActivity {
                     Log.e("1. single choice", String.valueOf(data.getData()));
                     Uri imageUri = data.getData();
                     imgList.add(imageUri);
-
-
-//                    listView.setAdapter(mAdapter);
-//                    Toast.makeText(MainActivity.this, "다중 선택이 불가능한 기기입니다.", Toast.LENGTH_LONG).show();
                 }
                 else{
                     ClipData clipData = data.getClipData();
@@ -445,7 +484,7 @@ public class message_room extends AppCompatActivity {
         public void run() {
             try {
                 // 접속한다.
-                final Socket socket = new Socket("59.187.215.69", 3333);
+                final Socket socket = new Socket("52.78.58.117", 3333);
                 client_socket = socket;
 
                 Log.e(TAG, "서버와 연결 성공");
@@ -495,18 +534,6 @@ public class message_room extends AppCompatActivity {
         ObjectInputStream ois;
         public MessageThread(Socket socket) {
             this.socket = socket;
-            try {
-
-//                this.socket = socket;
-//                InputStream is =
-//                dis = new DataInputStream(is);
-
-
-
-            } catch (Exception e) {
-                Log.e(TAG, "MessageThread error1: " + e.getMessage());
-                e.printStackTrace();
-            }
         }
 
         @Override
@@ -521,48 +548,61 @@ public class message_room extends AppCompatActivity {
 
                     Log.e(TAG, "item get from server");
                     Log.e(TAG, "type: " + item.getType());
-                    Log.e(TAG, "msg: " + item.getMsg());
-                    // 서버에서 보내는 메세지 타입이 msg라면 chat msg
-                    // 타입이 user in 라면, 새 유저 입장
-                    // 타입이 user out 라면, 유저 나감
+                    Log.e(TAG, "msg: " + item.getMessage());
+
+                    // 서버에서 보내는 메세지 타입이 msg 라면, chat msg
+                    // 타입이 img 라면, 이미지
+                    // 타입이 voice 라면, 음성 녹음 파일
+                    // 타입이 user io 라면, 유저 in or 유저 out
                     if(item.getType().equals("msg")){
-                        String msg = item.getMsg();
-                        String time = item.getTime()+"";
+                        String msg = item.getMessage();
+                        long time = item.getTime();
                         String user_index = item.getUser_index();
 
                         Log.e(TAG, "index: " + user_index);
                         Log.e(TAG, "msg: " + msg);
                         Log.e(TAG, "time: " + time);
-                        Log.e(TAG, "time: " + time);
 
                         if(my_user_index.equals(user_index)){
 
-                            getMsgList item2 = new getMsgList();
-                            item2.setMessage(msg);
-                            item2.setTime(time);
-                            item2.setUser_index(user_index);
-
                             if(curPerson == 1){     // 현재 방에 나 혼자 있을 때, 읽음 처리 x
-                                item2.setStatus("no read");
+                                item.setStatus("no read");
                             }
                             else if(curPerson == 2){    // 방에 상대방이 입장해 있을 때, 읽음 처리 o
-                                item2.setStatus("read");
+                                item.setStatus("read");
                             }
-
-                            msgLists.add(item2);
+                            msgLists.add(item);
                         }
                         else {
-                            getMsgList item2 = new getMsgList();
-                            item2.setMessage(msg);
-                            item2.setTime(time);
-                            item2.setUser_index(user_index);
-                            item2.setProfile_img(profile_img);
-                            msgLists.add(item2);
+
+                            item.setProfile_img(profile_img);
+                            msgLists.add(item);
                         }
+                    }
+                    else if(item.getType().equals("img")){
+
+                        // 내가 보낸 이미지는 이미 처리됨
+                        if(!my_user_index.equals(item.getUser_index())){
+                            ArrayList<String> file_list = item.getImg_list();;
+
+                            for (int i = 0; i < file_list.size(); i++){
+                                msg_item img_item = new msg_item();
+                                img_item.setType("img");
+                                img_item.setMessage(file_list.get(i));
+                                img_item.setTime(item.getTime());
+                                img_item.setUser_index(item.getUser_index());
+                                msgLists.add(img_item);
+                                Log.e(TAG, "file name: " + file_list.get(i));
+                            }
+                        }
+
+                    }
+                    else if(item.getType().equals("voice")){
+
                     }
                     else if(item.getType().equals("user io")){  // 유저가 방에 들어오거나 나갈때 서버로부터 받는 메세지
 
-                        if(item.getMsg().equals("1")){  // 방에 사람이 한명일 때
+                        if(item.getMessage().equals("1")){  // 방에 사람이 한명일 때
                             curPerson = 1;
                         }
                         else{   // 방에 사람이 2명 일때
@@ -582,8 +622,17 @@ public class message_room extends AppCompatActivity {
                         @Override
                         public void run() {
                             // 리사이클러뷰 어댑터에 리스트에 데이터가 추가되었다고 알린다.
-                            chatRoomAdapter.notifyDataSetChanged();
-                            Log.e(TAG, "list size: " + msgLists.size());
+//                            chatRoomAdapter = new chatRoomAdapter(msgLists, my_user_index, message_room.this, profile_img);
+//                            chat_recycler.setAdapter(chatRoomAdapter);
+
+                            if(chat_recycler != null){
+                                Log.e(TAG, "list size: " + msgLists.size());
+                                chatRoomAdapter = new chatRoomAdapter(msgLists, my_user_index, message_room.this, profile_img);
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(message_room.this);
+                                linearLayoutManager.setStackFromEnd(true);
+                                chat_recycler.setLayoutManager(linearLayoutManager);
+                                chat_recycler.setAdapter(chatRoomAdapter);
+                            }
                         }
                     });
                 }
@@ -593,6 +642,8 @@ public class message_room extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+
     }
 
     /**
@@ -608,9 +659,6 @@ public class message_room extends AppCompatActivity {
             try{
                 this.socket=socket;
                 this.item = item;
-//                this.msg=msg;
-//                this.time=time;
-
             }catch (Exception e){
                 Log.e(TAG, "SendToServerThread error1: " + e.getMessage());
                 e.printStackTrace();
@@ -622,24 +670,11 @@ public class message_room extends AppCompatActivity {
             try{
 
                 oos = new ObjectOutputStream(socket.getOutputStream());
+
                 // 서버로 데이터를 보낸다.
                 Log.e(TAG, "msg 전송 전");
-
-                if(item.getType().equals("msg")){   // msg type이 msg일 때(문자 채팅)
-                    oos.writeObject(item);
-                    oos.flush();
-                }
-                else if(item.getType().equals("img")){  // msg type이 img일 때(이미지 파일)
-
-                }
-                else if(item.getType().equals("voice")){    // msg type이 voice 일 때(음성 녹음 파일)
-
-                }
-//                msg_item item = new msg_item();
-//                item.setType("msg");
-//                item.setMsg(msg);
-//                item.setTime(time);
-
+                oos.writeObject(item);
+                oos.flush();
 
                 Log.e(TAG, "msg 전송 완료");
                 runOnUiThread(new Runnable() {
@@ -675,29 +710,35 @@ public class message_room extends AppCompatActivity {
          * 전달받은 room index를 통해 서버로부터 해당 방에 존재하는 메세지 목록을 가져온다.
          * 상대방이 나에게 보낸 메세지를 모두 읽음 처리한다.
          */
+        Log.e(TAG, "my index: " + my_user_index);
         retrofitClient = new RetrofitClient();
         call = retrofitClient.service.get_msg_list(room_index, my_user_index);
-        call.enqueue(new Callback<ArrayList<getMsgList>>() {
+        call.enqueue(new Callback<ArrayList<msg_item>>() {
             @Override
-            public void onResponse(Call<ArrayList<getMsgList>> call, Response<ArrayList<getMsgList>> response) {
+            public void onResponse(Call<ArrayList<msg_item>> call, Response<ArrayList<msg_item>> response) {
                 Log.e(TAG, "onResponse");
-                ArrayList<getMsgList> result = response.body();
+                ArrayList<msg_item> result = response.body();
                 if(result != null){
                     msgLists.addAll(result);
                 }
 
-                Log.e(TAG, "msg list size: " + msgLists.size());
-                chatRoomAdapter.notifyDataSetChanged();
+                /**
+                 * 리사이클러뷰, 어댑터 등록
+                 */
+                chat_recycler = findViewById(R.id.msg_recycler);
+                chatRoomAdapter = new chatRoomAdapter(msgLists, my_user_index, message_room.this, profile_img);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(message_room.this);
+                linearLayoutManager.setStackFromEnd(true);
+                chat_recycler.setLayoutManager(linearLayoutManager);
+                chat_recycler.setAdapter(chatRoomAdapter);
 
+                Log.e(TAG, "msg list size: " + msgLists.size());
             }
 
             @Override
-            public void onFailure(Call<ArrayList<getMsgList>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<msg_item>> call, Throwable t) {
                 Log.e(TAG, "onFailure");
             }
         });
     }
-
-
-
 }

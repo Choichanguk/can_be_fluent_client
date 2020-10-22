@@ -26,7 +26,9 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".message_room" />
+        <activity android:name=".message_room"
+            android:windowSoftInputMode="adjustResize"
+            />
         <activity android:name=".fcm_exam" />
         <activity android:name=".practice.socket_practice" />
         <activity android:name=".my_profile" />

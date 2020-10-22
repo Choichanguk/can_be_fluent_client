@@ -6,6 +6,15 @@ public class getMsgList {
     String status;
     String user_index;
     String profile_img;
+    String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getProfile_img() {
         return profile_img;

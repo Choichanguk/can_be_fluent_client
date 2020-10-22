@@ -1,5 +1,6 @@
 package com.example.canbefluent.retrofit;
 
+import com.example.canbefluent.items.msg_item;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.PostResult;
 import com.example.canbefluent.pojoClass.getChatList;
@@ -64,7 +65,7 @@ public interface RetrofitInterface {
 
     // 서버로부터 채팅방 목록 가져올 때
     @GET("msg_list.php/")
-    Call<ArrayList<getMsgList>> get_msg_list(@Query("room_index") String room_index, @Query("user_index") String user_index);
+    Call<ArrayList<msg_item>> get_msg_list(@Query("room_index") String room_index, @Query("user_index") String user_index);
 
 
     @GET("update_address.php/")
@@ -83,6 +84,6 @@ public interface RetrofitInterface {
 
     @Multipart
     @POST("chat_img_upload.php/")
-    Call<ArrayList<getImgList>> uploadMultiple(@Part("room_index") RequestBody room_index, @Part("user_index") RequestBody user_index, @Part("status") RequestBody status, @Part("size") RequestBody size, @Part List<MultipartBody.Part> parts);
+    Call<ArrayList<getImgList>> uploadMultiple(@Part("room_index") RequestBody room_index, @Part("user_index") RequestBody user_index, @Part("status") RequestBody status, @Part("size") RequestBody size, @Part("time") RequestBody time, @Part List<MultipartBody.Part> parts);
 
 }
