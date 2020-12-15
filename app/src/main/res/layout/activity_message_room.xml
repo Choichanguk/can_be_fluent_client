@@ -58,7 +58,7 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
-        android:id="@+id/linearLayout6"
+        android:id="@+id/chat_layout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@drawable/border_layout"
@@ -110,6 +110,96 @@
         android:visibility="gone"
         android:background="@drawable/border_layout"/>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/record_layout"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/record_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="버튼을 눌러 녹음을 시작하세요."
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/btn_play"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/btn_shape"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/record_time"
+            app:layout_constraintVertical_bias="0.29"
+            app:srcCompat="@drawable/play" />
+
+        <ImageButton
+            android:id="@+id/record"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/btn_shape"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/record_time"
+            app:layout_constraintVertical_bias="0.29"
+            app:srcCompat="@drawable/record" />
+
+        <ImageButton
+            android:id="@+id/btn_stop"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/btn_shape"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/record_time"
+            app:layout_constraintVertical_bias="0.29"
+            app:srcCompat="@drawable/stop" />
+
+        <Button
+            android:id="@+id/btn_send_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="116dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginRight="28dp"
+            android:text="보내기"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:enabled="false"/>
+
+        <ImageButton
+            android:id="@+id/btn_close_record"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/btn_shape"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_cancel_24" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/msg_option"
         android:layout_width="match_parent"
@@ -155,6 +245,7 @@
                 android:background="@drawable/btn_shape"
                 />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="20dp"

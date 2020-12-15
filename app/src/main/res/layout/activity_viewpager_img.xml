@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".viewpager_img"
+    android:orientation="vertical">
+
+<!--    <androidx.viewpager.widget.ViewPager-->
+<!--        android:id="@+id/viewPager"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="500dp"/>-->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="500dp" />
+
+<!--    <me.relex.circleindicator.CircleIndicator-->
+<!--        android:id="@+id/indicator"-->
+<!--        app:ci_drawable="@drawable/indicater"-->
+<!--        app:ci_height="7dp"-->
+<!--        app:ci_width="7dp"-->
+<!--        app:ci_margin="4dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="48dp"/>-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewPager">
+        <me.relex.circleindicator.CircleIndicator3
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            app:ci_drawable="@drawable/navy_radius"
+            app:ci_height="7dp"
+            app:ci_margin="4dp"
+            app:ci_width="7dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

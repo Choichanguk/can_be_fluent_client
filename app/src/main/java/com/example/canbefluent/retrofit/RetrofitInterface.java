@@ -1,8 +1,11 @@
 package com.example.canbefluent.retrofit;
 
+import com.example.canbefluent.items.img_item;
 import com.example.canbefluent.items.msg_item;
 import com.example.canbefluent.items.user_item;
+import com.example.canbefluent.items.visitor_item;
 import com.example.canbefluent.pojoClass.PostResult;
+import com.example.canbefluent.pojoClass.getAudioFile;
 import com.example.canbefluent.pojoClass.getChatList;
 import com.example.canbefluent.pojoClass.getImgList;
 import com.example.canbefluent.pojoClass.getLanguageNameResult;
@@ -10,6 +13,7 @@ import com.example.canbefluent.pojoClass.getMsgList;
 import com.example.canbefluent.pojoClass.getRegisterUserResult;
 import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.pojoClass.getRoomList;
+import com.example.canbefluent.pojoClass.getStatus;
 import com.example.canbefluent.pojoClass.imgUploadResult;
 
 import java.util.ArrayList;
@@ -19,7 +23,9 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.HeaderMap;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -40,6 +46,12 @@ public interface RetrofitInterface {
     @GET("get_user_info.php/")  // 모든 유저의 데이터를 받아오는 메서드(로그인 후 보여질 유저 목록을 만들기 위해)
     Call<ArrayList<user_item>> get_allUserInfo();
 
+    @GET("get_visitor_info.php/")  // 모든 방문자의 데이터를 받아오는 메서드
+    Call<ArrayList<visitor_item>> get_visitor_Info(@Query("user_index") String user_index);
+
+//    @GET("get_user_info.php/")  // 모든 유저의 데이터를 받아오는 메서드(로그인 후 보여질 유저 목록을 만들기 위해)
+//    Call<ArrayList<user_item>> get_allUserInfo
+
     @GET("languages.php/")
     Call<ArrayList<getLanguageNameResult>> getLanguageName();
 
@@ -54,6 +66,11 @@ public interface RetrofitInterface {
     // 서버로부터 선택한 채팅방 정보를 가져올 때
     @GET("chat_room.php/")
     Call<ArrayList<getRoomList>> get_room_info(@Query("sender_index") String sender_index, @Query("receiver_index") String receiver_index);
+
+    // 서버로 프로필 방문 체크 확인할 때
+    @GET("check_visitor.php/")
+    Call<getResult> check_visit(@Query("visitor_index") String visitor_index, @Query("visited_index") String visited_index);
+
 
     // 서버로부터 채팅방 목록 가져올 때
     @GET("room_list.php/")
@@ -71,6 +88,9 @@ public interface RetrofitInterface {
     @GET("update_address.php/")
     Call<ArrayList<user_item>> get_nearUserInfo(@Query("latitude") double latitude, @Query("longitude") double longitude, @Query("user_id") String user_id);
 
+    @GET("get_images.php/")
+    Call<ArrayList<img_item>> get_images(@Query("user_index") String user_index);
+
     @Multipart
     @POST("upload_img.php/")
     Call<imgUploadResult> uploadImage(@Part MultipartBody.Part File);
@@ -82,8 +102,34 @@ public interface RetrofitInterface {
     @GET("update_token.php/")
     Call<getResult> update_token(@Query("user_id") String user_id, @Query("token") String token);
 
+    @GET("update_intro.php/")
+    Call<getResult> update_intro(@Query("user_id") String user_id, @Query("intro") String token);
+
+    @GET("update_delete_profile_image.php/")
+    Call<ArrayList<img_item>> update_delete_profile_image(@Query("user_index") String user_index, @Query("image_index") String image_index, @Query("image_name") String image_name, @Query("type") String type);
+
+
     @Multipart
     @POST("chat_img_upload.php/")
     Call<ArrayList<getImgList>> uploadMultiple(@Part("room_index") RequestBody room_index, @Part("user_index") RequestBody user_index, @Part("status") RequestBody status, @Part("size") RequestBody size, @Part("time") RequestBody time, @Part List<MultipartBody.Part> parts);
 
+    @Multipart
+    @POST("upload_img.php/")
+    Call<ArrayList<getImgList>> uploadSingle(@Part("user_index") RequestBody user_index, @Part("size") RequestBody size, @Part("time") RequestBody time, @Part List<MultipartBody.Part> parts);
+
+    @Multipart
+    @POST("upload_img2.php/")
+    Call<ArrayList<img_item>> uploadSingle2(@Part("user_index") RequestBody user_index, @Part("size") RequestBody size, @Part("time") RequestBody time, @Part List<MultipartBody.Part> parts);
+
+
+    @Multipart
+    @POST("audio_file_upload.php/")
+    Call<getStatus> uploadAudio(@Part MultipartBody.Part File, @Part("room_index") RequestBody room_index, @Part("user_index") RequestBody user_index, @Part("status") RequestBody status, @Part("time") RequestBody time, @Part("play_time") RequestBody play_time);
+
+    //영상통화 시 fcm 메시지를 보내는 메서드
+    @POST("send")
+    Call<String> sendRemoteMessage(
+            @HeaderMap HashMap<String, String> headers,
+            @Body String remoteBody
+    );
 }

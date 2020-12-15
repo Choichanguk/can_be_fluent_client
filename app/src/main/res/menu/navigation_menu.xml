@@ -6,19 +6,19 @@
         android:enabled="true"
         android:icon="@drawable/ic_baseline_group_24"
         app:itemIconTint="@color/colorAccent"
-        android:title="Community" />
+        android:title="@string/community" />
 
     <item
         android:id="@+id/chats"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_chat_bubble_24"
         app:itemIconTint="@color/colorAccent"
-        android:title="Chats" />
+        android:title="@string/chat" />
 
     <item
         android:id="@+id/random_call"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_local_phone_24"
         app:itemIconTint="@color/colorAccent"
-        android:title="Random Call" />
+        android:title="@string/random_call" />
 </menu>

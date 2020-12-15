@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.canbefluent.MyApplication;
 import com.example.canbefluent.R;
 import com.example.canbefluent.pojoClass.getRoomList;
 
@@ -88,7 +89,7 @@ public class roomListAdapter extends RecyclerView.Adapter<roomListAdapter.ViewHo
     @Override
     public void onBindViewHolder(roomListAdapter.ViewHolder holder, int position) {
         getRoomList item = mData.get(position) ;
-        String url = "http://52.78.58.117/profile_img/" + item.getProfile_img();
+        String url = MyApplication.server_url + "/profile_img/" + item.getProfile_img();
 
         long time = Long.parseLong(item.getTime());
 

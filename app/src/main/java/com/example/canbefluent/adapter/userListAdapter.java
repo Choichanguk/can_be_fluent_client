@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.canbefluent.MyApplication;
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.language_item;
 import com.example.canbefluent.items.user_item;
@@ -62,7 +63,7 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull userListAdapter.ViewHolder holder, int position) {
         user_item item = mData.get(position) ;
-        String url = "http://52.78.58.117/profile_img/" + item.getProfile_img();
+        String url = MyApplication.server_url + "/profile_img/" + item.getProfile_img();
 
         holder.user_name.setText(item.getFirst_name());
 //        Log.e("adapter", "url: " + url);
@@ -84,6 +85,7 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
             holder.distance.setText("");
         }
 
+        holder.intro.setText(item.getIntro());
         holder.native_lang1.setText(item.getNative_lang1());
         holder.practice_lang1.setText(item.getPractice_lang1());
         holder.practice_lang1_level.setText(item.getPractice_lang1_level());

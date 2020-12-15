@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.getChatList;
+import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.pojoClass.getRoomList;
 import com.example.canbefluent.retrofit.RetrofitClient;
 
@@ -32,10 +33,10 @@ public class user_profile_activity extends AppCompatActivity {
     private static final String TAG = "user_profile_activity";
     user_item user_item;
     CircleImageView profile_img;
-    String url = "http://52.78.58.117/profile_img/";
+    String url = MyApplication.server_url + "/profile_img/";
     TextView name, native_lang1, native_lang2, practice_lang1, practice_lang2, practice_lang1_level, practice_lang2_level, age;
     LinearLayout linearLayout;
-    ImageButton btn_back, btn_msg;
+    ImageButton btn_back, btn_msg, btn_videoCall, btn_voiceCall;
 
     RetrofitClient retrofitClient;
     Call<ArrayList<getRoomList>> call;
@@ -61,6 +62,15 @@ public class user_profile_activity extends AppCompatActivity {
         Glide.with(this)
                 .load(url)
                 .into(profile_img);
+
+        profile_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), viewpager_img.class);
+                intent.putExtra("user item", user_item);
+                startActivity(intent);
+            }
+        });
 
         // 유저 이름 세팅
         name = findViewById(R.id.name);
@@ -144,6 +154,42 @@ public class user_profile_activity extends AppCompatActivity {
             }
         });
 
+        /**
+         * 영상 통화 버튼
+         */
+        btn_videoCall = findViewById(R.id.videoCall);
+        btn_videoCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), OutgoingInvitationActivity.class);
+                intent.putExtra("user item", user_item);
+                intent.putExtra("type", "video");
+                startActivity(intent);
+            }
+        });
+
+        /**
+         * 방문자 표시 기능
+         * 서버로 나의 인덱스와 방문한 프로필에 해당하는 유저의 인덱스를 보내
+         * 내가 언제 이 사람의 프로필을 방문했는지 저장시킨다.
+         * 만약 이미 해당 프로필에 방문한 적이 있다면 저장시키지 않는다.
+         */
+        retrofitClient = new RetrofitClient();
+        retrofitClient.service.check_visit(MainActivity.user_item.getUser_index(), user_item.getUser_index())
+                .enqueue(new Callback<getResult>() {
+                @Override
+                public void onResponse(Call<getResult> call, Response<getResult> response) {
+                    getResult result = response.body();
+                    Log.e(TAG, "onResponse");
+                    Log.e(TAG, "result: " + result.toString());
+
+                }
+
+                @Override
+                public void onFailure(Call<getResult> call, Throwable t) {
+                    Log.e(TAG, "onFailure: " + t.getMessage());
+                }
+        });
 
 
         btn_back = findViewById(R.id.btn_back);

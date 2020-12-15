@@ -1,9 +1,39 @@
 <resources>
     <string name="app_name">Can Be Fluent</string>
-    <string name="community" translatable="false">Community</string>
-    <string name="All" translatable="false">All</string>
-    <string name="NEAR" translatable="false">NEAR ME</string>
-    <string name="location" translatable="false">MY LOCATION</string>
-    <string name="chat" translatable="false">Chats</string>
+    <string name="community">Community</string>
+    <string name="All">All</string>
+    <string name="NEAR">NEAR ME</string>
+    <string name="my_location">MY LOCATION</string>
+    <string name="chat">Chats</string>
+    <string name="random_call">Random call</string>
+    <string name="languages">Languages</string>
+    <string name="native_in">NATIVE_IN</string>
+    <string name="learning">LEARNING</string>
+    <string name="video_call">video call</string>
+    <string name="message">message</string>
+    <string name="audio_call">audio call</string>
+    <string name="following">Following</string>
+    <string name="follow">follow</string>
+    <string name="name">name</string>
+    <string name="select_language">Select Language</string>
+    <string name="im_native_in">I am native in</string>
+    <string name="im_learning_in">I am learning</string>
+    <string name="app_language">App Language</string>
+    <string name="english">English</string>
+    <string name="korean">한국어</string>
+    <string name="japanese">日本語</string>
+    <string name="photos">PHOTOS</string>
+    <string name="visitor">Visitor</string>
+    <string name="about_me">About Me</string>
+    <string name="edit">Edit</string>
+    <string name="about_me_detail">Your profile picture and more...</string>
+    <string name="languages_detail">What would you like to learn?</string>
+    <string name="following_detail">See who you follow</string>
+    <string name="visitor_detail" translatable="true">see new visitors to your profile</string>
+    <string name="ok">OK</string>
+    <string name="cancel">CANCEL</string>
+    <string name="dialog_text">Do you want to relaunch to take effect?</string>
+    <string name="visitor_message">"You had "</string>
+    <string name="visitor_message2">new visitors to your profile last week</string>
 
 </resources>

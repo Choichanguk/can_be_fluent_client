@@ -18,17 +18,19 @@ import java.io.File;
 
 public class FileUtils {
 
+
+
     private FileUtils() {} //private constructor to enforce Singleton pattern
 
     /** TAG for log messages. */
     private static final String TAG = "FileUtils";
     private static final boolean DEBUG = false; // Set to true to enable logging
 
-    static final String MIME_TYPE_AUDIO = "audio/*";
-    static final String MIME_TYPE_TEXT = "text/*";
-    static final String MIME_TYPE_IMAGE = "image/*";
-    static final String MIME_TYPE_VIDEO = "video/*";
-    static final String MIME_TYPE_APP = "application/*";
+    static public String MIME_TYPE_AUDIO = "audio/*";
+    static public String MIME_TYPE_TEXT = "text/*";
+    static public String MIME_TYPE_IMAGE = "image/*";
+    static public String MIME_TYPE_VIDEO = "video/*";
+    static public String MIME_TYPE_APP = "application/*";
 
     public static final String HIDDEN_PREFIX = ".";
 
@@ -54,7 +56,7 @@ public class FileUtils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    static File getFile (Context context, Uri uri) {
+    static public File getFile (Context context, Uri uri) {
         String path = FileUtil.getPath(uri, context);
 //        String path = getPath(context, uri);
         Log.e("getFile", "path: " + path);

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,14 +13,20 @@ import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -29,19 +36,25 @@ import android.widget.Toast;
 import com.example.canbefluent.adapter.chatRoomAdapter;
 import com.example.canbefluent.items.msg_item;
 import com.example.canbefluent.items.user_item;
+import com.example.canbefluent.pojoClass.getAudioFile;
 import com.example.canbefluent.pojoClass.getImgList;
 import com.example.canbefluent.pojoClass.getMsgList;
 import com.example.canbefluent.pojoClass.getRoomList;
+import com.example.canbefluent.pojoClass.getStatus;
 import com.example.canbefluent.retrofit.RetrofitClient;
+
+import org.w3c.dom.Text;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +88,9 @@ public class message_room extends AppCompatActivity {
     ImageButton btn_open_option;    // option버튼을 여는 버튼
     ImageButton btn_close_option;   // option 버튼을 닫는 버튼
     ImageButton btn_album, btn_camera, btn_record;
+    ImageButton btn_close_record;
+    ImageButton record, play, stop;
+    Button btn_send_audio;
     RecyclerView img_list_recycler; // 유저가 선택한 이미지를 보여주는 뷰
 
     private ArrayList<Uri> imgList = new ArrayList<>();     // 선택한 이미지들의 Uri를 담는 리스트
@@ -89,7 +105,9 @@ public class message_room extends AppCompatActivity {
 //    user_item my_info = mainActivity.user_item;     // 내 아이디 정보를 담고 있는 객체
 
 
-    LinearLayout msg_option_layout;     // 이미지, 카메라, 음성메세지를 전송할 수 있는 버튼이 있는 레이아웃
+    LinearLayout msg_option_layout, chat_layout;     // 이미지, 카메라, 음성메세지를 전송할 수 있는 버튼이 있는 레이아웃, 채팅 담당 레이아웃
+    ConstraintLayout record_layout;     // 녹음을 할 수 있는 레이아웃
+
 //    ArrayList<getChatList> chatLists = new ArrayList<>();
 
 
@@ -102,6 +120,20 @@ public class message_room extends AppCompatActivity {
     Call<ArrayList<getRoomList>> call2;
     Call<ArrayList<getImgList>> call3;
 
+    TextView record_time;   // 녹음 시간을 나타내는 뷰
+
+
+    /**
+     * 녹음할 때 사용되는 변수
+     */
+    MediaRecorder recorder;  // 녹음을 하기위한 객체
+    String filename;    // 녹음된 내용을 담는 임시 파일
+    MediaPlayer player; // 녹음 내용을 재생시키는 객체
+    int position = 0; // 다시 시작 기능을 위한 현재 재생 위치 확인 변수
+    boolean isRecording = false;
+    timeThread thread;
+    public int i = 0;  // 녹음된 시간
+    File file;
 
     int curPerson = 1;
 
@@ -111,6 +143,8 @@ public class message_room extends AppCompatActivity {
         setContentView(R.layout.activity_message_room);
 
         msg_option_layout = findViewById(R.id.msg_option);
+        record_layout = findViewById(R.id.record_layout);
+        chat_layout = findViewById(R.id.chat_layout);
         my_user_index = sharedPreference.loadUserIndex(message_room.this);
         Intent intent = getIntent();
 
@@ -118,7 +152,6 @@ public class message_room extends AppCompatActivity {
         if(type.equals("from room list")){  //메세지 버튼이나 방 목록을 통해 방에 들어왔을 경우
             room_obj = (getRoomList) intent.getSerializableExtra("room obj");
             set_room_info();
-
             /**
              * 클라이언트 소켓 생성 후 서버와 연결.
              */
@@ -198,6 +231,9 @@ public class message_room extends AppCompatActivity {
                     else{
                         status = createPartFromString("read");
                     }
+
+
+
                     RequestBody size = createPartFromString(""+parts.size());   // 보내는 이미지 개수
 
                     Log.e(TAG, "이미지 전송 room_Index: " + room_Index.toString());
@@ -327,7 +363,417 @@ public class message_room extends AppCompatActivity {
                 showChooser();
             }
         });
+
+        btn_record = findViewById(R.id.btn_record);
+        btn_record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                record_layout.setVisibility(View.VISIBLE);
+                chat_layout.setVisibility(View.GONE);
+                msg_option_layout.setVisibility(View.GONE);
+            }
+        });
+        btn_close_record = findViewById(R.id.btn_close_record);
+        btn_close_record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                record_layout.setVisibility(View.GONE);
+                chat_layout.setVisibility(View.VISIBLE);
+                btn_open_option.setVisibility(View.VISIBLE);
+                btn_close_option.setVisibility(View.GONE);
+
+                btn_send_audio.setEnabled(false);
+                play.setVisibility(View.GONE);
+                stop.setVisibility(View.GONE);
+                record.setVisibility(View.VISIBLE);
+
+                Log.e(TAG, "record time: " + i);
+                i=0; // 녹음 시간 초기화
+                if(isRecording){
+                    stopRecording();
+                }
+                record_time.setText("버튼을 눌러 녹음을 시작하세요.");
+            }
+        });
+
+        record_time = findViewById(R.id.record_time);
+
+        /**
+         * 녹음 시작 버튼
+         */
+        record = findViewById(R.id.record);
+        record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File sdcard = Environment.getExternalStorageDirectory();
+                file = new File(sdcard, "recorded.mp4");
+                filename = file.getAbsolutePath();
+                Log.d("MainActivity", "저장할 파일 명 : " + filename);
+                recordAudio();
+                record.setVisibility(View.GONE);
+                stop.setVisibility(View.VISIBLE);
+            }
+        });
+
+        /**
+         * 재생 버튼
+         */
+        play = findViewById(R.id.btn_play);
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playAudio();
+                play.setVisibility(View.GONE);
+                stop.setVisibility(View.VISIBLE);
+            }
+        });
+
+        /**
+         * 재생 정지 버튼 or 녹음 중지 버튼
+         */
+        stop = findViewById(R.id.btn_stop);
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isRecording){
+                    stopRecording();
+                    stop.setVisibility(View.GONE);
+                    play.setVisibility(View.VISIBLE);
+                }
+                else {
+                    stopAudio();
+                    stop.setVisibility(View.GONE);
+                    play.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+
+        /**
+         * 녹음파일 서버로 업로드하는 버튼
+         */
+        btn_send_audio = findViewById(R.id.btn_send_audio);
+        btn_send_audio.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View v) {
+                btn_send_audio.setEnabled(false);
+
+                play.setVisibility(View.GONE);
+                stop.setVisibility(View.GONE);
+                record.setVisibility(View.VISIBLE);
+                record_layout.setVisibility(View.GONE);
+                chat_layout.setVisibility(View.VISIBLE);
+                btn_open_option.setVisibility(View.VISIBLE);
+                btn_close_option.setVisibility(View.GONE);
+
+                Log.e(TAG, "record time: " + i);
+
+                if(isRecording){
+                    stopRecording();
+                }
+                record_time.setText("버튼을 눌러 녹음을 시작하세요.");
+
+                // 서버로 audio 파일 전송하는 로직
+                byte[] audio_byte = new byte[0];
+                try {
+                    audio_byte = Files.readAllBytes(file.toPath());
+//                    String time = getPlayTime(filename);
+                    Log.e(TAG, "byte 길이: " + audio_byte.length);
+//                    Log.e(TAG, "재생시간: " + time);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "byte 생성 에러: " + e.getMessage());
+                }
+
+                if(audio_byte != null){
+                    final long time = System.currentTimeMillis(); // 메세지를 보낸 시간
+                    // create a map of data to pass along
+                    RequestBody room_Index = createPartFromString(room_index);
+                    RequestBody user_index = createPartFromString(my_user_index);
+                    RequestBody Time = createPartFromString(time+"");
+                    RequestBody play_time = createPartFromString(i+"");
+                    RequestBody status;
+
+                    final String Status;
+                    if(curPerson == 1){
+                        Status = "no read";
+                        status = createPartFromString(Status);
+                    }
+                    else{
+                        Status = "read";
+                        status = createPartFromString(Status);
+                    }
+
+                    MultipartBody.Part part = toMultiPartFile("audio", audio_byte);
+                    RetrofitClient retrofitClient = new RetrofitClient();
+                    Call<getStatus> call = retrofitClient.service.uploadAudio(part, room_Index, user_index, status, Time, play_time);
+                    call.enqueue(new Callback<getStatus>() {
+                        @Override
+                        public void onResponse(Call<getStatus> call, Response<getStatus> response) {
+                            Log.e(TAG, "onResponse");   // error 로그
+
+                            getStatus item = response.body();
+                            Log.e(TAG, item.getMessage());  // error 로그
+                            Log.e(TAG, item.getStatus());  // error 로그
+
+                            if(item != null){
+                                // tcp 소켓으로 상대방에게 오디오파일 이름을 전달해주는 로직
+                                if(item.getStatus().equals("success")){     // 서버로부터 오디오파일 저장 완료 메시지를 받으면 msg 객체를 만들어서 tcp 서버로 전송한다.
+                                    msg_item item1 = new msg_item();
+                                    item1.setMessage(item.getMessage());
+                                    item1.setStatus(Status);
+                                    item1.setRoom_index(room_index);
+                                    item1.setUser_index(my_user_index);
+                                    item1.setType("audio");
+                                    item1.setPlay_time(i);
+                                    item1.setTime(time);
+
+                                    // msg객체를 보낸다.
+                                    SendToServerThread thread=new SendToServerThread(client_socket, item1);
+                                    thread.start(); // 송신 스레드 가동
+                                    i=0; // 녹음 시간 초기화
+                                }
+
+
+                            }
+                            else{
+                                Log.e(TAG, "response null");  // error 로그
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<getStatus> call, Throwable t) {
+                            Log.e(TAG, "onFailure");   // error 로그
+                            Log.e(TAG, t.getMessage());
+                        }
+                    });
+                }
+
+
+
+
+            }
+        });
     }
+
+    /**
+     * 녹음하는 메서드
+     */
+    private void recordAudio() {
+        recorder = new MediaRecorder();
+
+        /* 그대로 저장하면 용량이 크다.
+         * 프레임 : 한 순간의 음성이 들어오면, 음성을 바이트 단위로 전부 저장하는 것
+         * 초당 15프레임 이라면 보통 8K(8000바이트) 정도가 한순간에 저장됨
+         * 따라서 용량이 크므로, 압축할 필요가 있음 */
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC); // 어디에서 음성 데이터를 받을 것인지
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // 압축 형식 설정
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+
+        recorder.setOutputFile(filename);
+
+        thread = new timeThread();
+        isRecording = true;
+        thread.start();
+        try {
+            recorder.prepare();
+            recorder.start();
+            // 초시계 스레드 시작해야 함
+
+
+            Toast.makeText(this, "녹음 시작됨.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 녹음을 정지하는 메서드
+     */
+    private void stopRecording() {
+        if (recorder != null) {
+            recorder.stop();
+            recorder.release();
+            recorder = null;
+            isRecording = false;
+            btn_send_audio.setEnabled(true);
+            Toast.makeText(this, "녹음 중지됨.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 녹음 파일을 재생시키는 메서드
+     */
+    private void playAudio() {
+        try {
+            closePlayer();
+
+            player = new MediaPlayer();
+            player.setDataSource(filename);
+            player.prepare();
+            player.start();
+
+            playThread thread = new playThread(i);
+            thread.start();
+
+            Toast.makeText(this, "재생 시작됨.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 녹음 파일을 중지시키는 메서드
+     */
+    private void stopAudio() {
+        if (player != null && player.isPlaying()) {
+            player.stop();
+
+            Toast.makeText(this, "중지됨.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void closePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+
+    private void playAudioChat(String url) {
+        try {
+            closePlayer();
+
+            player = new MediaPlayer();
+            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            player.setDataSource(url);
+            player.prepare();
+            player.start();
+            double sec = player.getDuration()/1000.0;
+
+            Log.e("창욱", "재생시간: " + sec);
+
+            Toast.makeText(this, "재생 시작됨.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void pauseAudioChat() {
+        if (player != null) {
+            position = player.getCurrentPosition();
+            player.pause();
+
+            Toast.makeText(this, "일시정지됨.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void resumeAudioChat() {
+        if (player != null && !player.isPlaying()) {
+            player.seekTo(position);
+            player.start();
+
+            Toast.makeText(this, "재시작됨.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 녹음 시간을 측정 할 스레드 클래스
+     */
+    public class timeThread extends Thread{
+        @Override
+        public void run() {
+            i=0;
+            while(isRecording){
+                i++;
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // 화면에 초를 출력하기 위한 스레드
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int sec = (i / 100) % 60;
+                        int min = (i / 100) / 60;
+                        @SuppressLint("DefaultLocale") String result = String.format("%02d:%02d", min, sec);
+                        record_time.setText(result);
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * 플레이 시간을 측정 할 스레드 클래스
+     */
+    public class playThread extends Thread{
+        int time;
+        playThread(int time){
+            this.time = time;
+        }
+        int j=0;
+        @Override
+        public void run() {
+
+            while(j<time){
+                j++;
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // 화면에 초를 출력하기 위한 스레드
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int sec = (j / 100) % 60;
+                        int min = (j / 100) / 60;
+                        @SuppressLint("DefaultLocale") String result = String.format("%02d:%02d", min, sec);
+                        record_time.setText(result);
+                    }
+                });
+            }
+
+            handler.sendEmptyMessage(0);
+        }
+    }
+
+    Handler handler = new Handler(){
+        @SuppressLint("HandlerLeak")
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what == 0){   // Message id 가 0 이면
+                play.setVisibility(View.VISIBLE);
+                stop.setVisibility(View.GONE);
+            }
+            else if(msg.what == 1){
+                int position = msg.arg1;
+                View itemView = (View) msg.obj;
+                TextView play_time = itemView.findViewById(R.id.play_time);
+                itemView.findViewById(R.id.audio_play).setVisibility(View.VISIBLE);
+                itemView.findViewById(R.id.audio_pause).setVisibility(View.GONE);
+//                play_time.setText(msgLists.get(position).getPlay_time());
+            }
+        }
+    };
+
+    public static MultipartBody.Part toMultiPartFile(String name, byte[] byteArray) {
+        RequestBody reqFile = RequestBody.create(MediaType.parse("audio/mp4"), byteArray);
+
+        return MultipartBody.Part.createFormData(name,
+                "tmp_name", // filename, this is optional
+                reqFile);
+    }
+
+
+
 
     /**
      * Convert String and File to Multipart for Retrofit Library
@@ -468,10 +914,7 @@ public class message_room extends AppCompatActivity {
                 for (int i = 0; i < imgList.size(); i++){
                     Log.e(TAG, "uri: " + imgList.get(i).toString());
                 }
-
-
             }
-
         }
     }
 
@@ -484,7 +927,7 @@ public class message_room extends AppCompatActivity {
         public void run() {
             try {
                 // 접속한다.
-                final Socket socket = new Socket("52.78.58.117", 3333);
+                final Socket socket = new Socket(MyApplication.socket_server_url, 3333);
                 client_socket = socket;
 
                 Log.e(TAG, "서버와 연결 성공");
@@ -544,7 +987,7 @@ public class message_room extends AppCompatActivity {
                 Log.e(TAG, "MessageThread ois 생성");
                 while (isRunning){
 
-                    msg_item item = (msg_item) ois.readObject();
+                    final msg_item item = (msg_item) ois.readObject();
 
                     Log.e(TAG, "item get from server");
                     Log.e(TAG, "type: " + item.getType());
@@ -568,7 +1011,7 @@ public class message_room extends AppCompatActivity {
                             if(curPerson == 1){     // 현재 방에 나 혼자 있을 때, 읽음 처리 x
                                 item.setStatus("no read");
                             }
-                            else if(curPerson == 2){    // 방에 상대방이 입장해 있을 때, 읽음 처리 o
+                            else{    // 방에 상대방이 입장해 있을 때, 읽음 처리 o
                                 item.setStatus("read");
                             }
                             msgLists.add(item);
@@ -597,8 +1040,8 @@ public class message_room extends AppCompatActivity {
                         }
 
                     }
-                    else if(item.getType().equals("voice")){
-
+                    else if(item.getType().equals("audio")){
+                        msgLists.add(item);
                     }
                     else if(item.getType().equals("user io")){  // 유저가 방에 들어오거나 나갈때 서버로부터 받는 메세지
 
@@ -632,7 +1075,28 @@ public class message_room extends AppCompatActivity {
                                 linearLayoutManager.setStackFromEnd(true);
                                 chat_recycler.setLayoutManager(linearLayoutManager);
                                 chat_recycler.setAdapter(chatRoomAdapter);
+
+                                chatRoomAdapter.setOnItemClickListener(new chatRoomAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(View v, View itemView, int position) {
+                                        if(v.getId() == R.id.audio_play){
+                                            itemView.findViewById(R.id.audio_pause).setVisibility(View.VISIBLE);
+                                            v.setVisibility(View.GONE);
+                                            String url = "http://52.78.58.117/audio_file_upload/" + msgLists.get(position).getMessage();
+                                            Log.e(TAG, "play url: " + url);
+                                            playAudioChat(url);
+                                            playAudioThread thread = new playAudioThread(msgLists.get(position).getPlay_time(), position, itemView);
+                                            thread.start();
+                                        }
+                                        else if(v.getId() == R.id.audio_pause){
+                                            itemView.findViewById(R.id.audio_play).setVisibility(View.VISIBLE);
+                                            v.setVisibility(View.GONE);
+                                            pauseAudioChat();
+                                        }
+                                    }
+                                });
                             }
+
                         }
                     });
                 }
@@ -644,6 +1108,49 @@ public class message_room extends AppCompatActivity {
         }
 
 
+    }
+
+    /**
+     * 오디오 메시지 플레이시 돌아가는 스레드 클래스
+     */
+    public class playAudioThread extends Thread{
+        int time, position;
+        View itemView;
+        playAudioThread(int time, int position, View itemView){
+            this.time = time;
+            this.itemView = itemView;
+            this.position = position;
+        }
+        int i=0;
+        @Override
+        public void run() {
+
+            while(i<time){
+                i++;
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // 화면에 초를 출력하기 위한 스레드
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int sec = (i / 100) % 60;
+                        int min = (i / 100) / 60;
+                        @SuppressLint("DefaultLocale") String result = String.format("%02d:%02d", min, sec);
+                        TextView playtime = itemView.findViewById(R.id.play_time);
+                        playtime.setText(result);
+                    }
+                });
+            }
+            Message msg = handler.obtainMessage();
+            msg.what = 1;
+            msg.arg1 = position;
+            msg.obj = itemView;
+            handler.sendMessage(msg);
+        }
     }
 
     /**

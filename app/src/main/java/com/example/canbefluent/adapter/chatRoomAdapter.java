@@ -1,5 +1,6 @@
 package com.example.canbefluent.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -7,8 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,11 +17,9 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.canbefluent.MyApplication;
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.msg_item;
-import com.example.canbefluent.my_profile;
-import com.example.canbefluent.pojoClass.getChatList;
-import com.example.canbefluent.pojoClass.getMsgList;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +40,18 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.profile_img = profile_img;
     }
 
+    // 리스너 객체 참조를 저장하는 변수
+    private chatRoomAdapter.OnItemClickListener mListener = null ;
+
+    // OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
+    public void setOnItemClickListener(chatRoomAdapter.OnItemClickListener listener) {
+        this.mListener = listener ;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View v, View itemView, int position) ;
+    }
+
     @Override
     public int getItemViewType(int position) {
         msg_item item = mData.get(position);
@@ -55,6 +66,12 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
          }
         else if(!item.getUser_index().equals(user_index) && item.getType().equals("img")){  // 상대가 보낸 메세지 and 이미지 메세지 타입
             return 3;
+        }
+        else if(item.getUser_index().equals(user_index) && item.getType().equals("audio")){  // 내가 보낸 audio
+            return 4;
+        }
+        else if(!item.getUser_index().equals(user_index) && item.getType().equals("audio")){  // 상대가 보낸 audio
+            return 5;
         }
         else{
             return 0;
@@ -95,6 +112,21 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.opp_img_item, viewGroup, false);
                 return new ChatMessageViewHolder3(view);
+
+            // 내가 보낸 음성 메세지
+            case 4:
+                Log.e("FFFF", "온크리트뷰홀더 :" + viewType);
+                Log.e("FFFF", "온크리트뷰홀더 : 4인 경우");
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.my_audio_item, viewGroup, false);
+                return new ChatMessageViewHolder6(view);
+            // 상대가 보낸 음성 메세지
+            case 5:
+                Log.e("FFFF", "온크리트뷰홀더 :" + viewType);
+                Log.e("FFFF", "온크리트뷰홀더 : 5인 경우");
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.opp_audio_item, viewGroup, false);
+                return new ChatMessageViewHolder5(view);
         }
         view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.opp_chat_item, viewGroup, false);
@@ -125,7 +157,7 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }
             else{   // 상대방이 보낸 메세지
-                String url = "http://52.78.58.117/profile_img/" + profile_img;
+                String url = MyApplication.server_url + "/profile_img/" + profile_img;
                 ChatMessageViewHolder holder1 = (ChatMessageViewHolder) holder;
                 holder1.msg.setText(item.getMessage());
                 holder1.time.setText(time_str);
@@ -136,7 +168,7 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         // 이미지 메세지
         else if(item.getType().equals("img")){
-            String url = "http://52.78.58.117/chat_img/" + item.getMessage();
+            String url = MyApplication.server_url + "/chat_img/" + item.getMessage();
             Log.e("adpater", "url: " + url);
             GradientDrawable drawable= (GradientDrawable) mContext.getDrawable(R.drawable.img_round);
             if(item.getUser_index().equals(user_index)){    // 내가 보낸 이미지
@@ -154,7 +186,7 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .into(holder4.img_chat);
             }
             else {  // 상대방이 보낸 이미지
-                String url_profile = "http://52.78.58.117/profile_img/" + profile_img;
+                String url_profile = MyApplication.server_url + "/profile_img/" + profile_img;
                 ChatMessageViewHolder3 holder3 = (ChatMessageViewHolder3) holder;
                 holder3.img_chat.setBackground(drawable);
                 holder3.time.setText(time_str);
@@ -165,7 +197,35 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .load(url_profile)
                         .into(holder3.profile_img);
             }
+        }
+        else if(item.getType().equals("audio")){    // 음성 메시지
+            int play_time = item.getPlay_time();
+            int sec = (play_time / 100) % 60;
+            int min = (play_time / 100) / 60;
+            @SuppressLint("DefaultLocale") String result = String.format("%02d:%02d", min, sec);
 
+            if(item.getUser_index().equals(user_index)){    // 내가 보낸 음성 메시지
+                ChatMessageViewHolder6 holder6 = (ChatMessageViewHolder6) holder;
+
+                holder6.play_time.setText(result);
+                holder6.time.setText(time_str);
+                if(item.getStatus().equals("no read")){
+                    holder6.status.setText("1");
+                }
+                else{
+                    holder6.status.setText("");
+                }
+            }
+            else{   // 상대가 보낸 음성 메시지
+                ChatMessageViewHolder5 holder5 = (ChatMessageViewHolder5) holder;
+                String url_profile = MyApplication.server_url + "/profile_img/" + profile_img;
+                holder5.play_time.setText(result);
+                holder5.time.setText(time_str);
+                Glide.with(mContext)
+                        .load(url_profile)
+                        .into(holder5.profile_img);
+
+            }
         }
 
     }
@@ -234,6 +294,92 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             time = itemView.findViewById(R.id.time);
             status = itemView.findViewById(R.id.status);
             img_chat = itemView.findViewById(R.id.img_chat);
+        }
+    }
+
+    // 상대방 audio 뷰들을 바인딩 해주는 메서드.
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public class ChatMessageViewHolder5 extends RecyclerView.ViewHolder {
+
+
+        TextView play_time, time;
+        ImageButton audio_play, audio_pause;
+        ImageView profile_img;
+        public ChatMessageViewHolder5(@NonNull final View itemView) {
+            super(itemView);
+            play_time = itemView.findViewById(R.id.play_time);
+            audio_play = itemView.findViewById(R.id.audio_play);
+            audio_pause = itemView.findViewById(R.id.audio_pause);
+            profile_img = itemView.findViewById(R.id.profile_img);
+            time = itemView.findViewById(R.id.time);
+
+            audio_play.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition() ;
+                    if (pos != RecyclerView.NO_POSITION) {
+                        // 리스너 객체의 메서드 호출.
+                        if (mListener != null) {
+                            mListener.onItemClick(v, itemView, pos) ;
+                        }
+                    }
+                }
+            });
+
+            audio_pause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition() ;
+                    if (pos != RecyclerView.NO_POSITION) {
+                        // 리스너 객체의 메서드 호출.
+                        if (mListener != null) {
+                            mListener.onItemClick(v, itemView, pos) ;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // 내 audio 뷰들을 바인딩 해주는 메서드.
+    public class ChatMessageViewHolder6 extends RecyclerView.ViewHolder {
+
+        TextView play_time, time, status;
+        ImageButton audio_play, audio_pause;
+
+        public ChatMessageViewHolder6(@NonNull final View itemView) {
+            super(itemView);
+            play_time = itemView.findViewById(R.id.play_time);
+            audio_play = itemView.findViewById(R.id.audio_play);
+            audio_pause = itemView.findViewById(R.id.audio_pause);
+            time = itemView.findViewById(R.id.time);
+            status = itemView.findViewById(R.id.status);
+
+            audio_play.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition() ;
+                    if (pos != RecyclerView.NO_POSITION) {
+                        // 리스너 객체의 메서드 호출.
+                        if (mListener != null) {
+                            mListener.onItemClick(v, itemView, pos) ;
+                        }
+                    }
+                }
+            });
+
+            audio_pause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition() ;
+                    if (pos != RecyclerView.NO_POSITION) {
+                        // 리스너 객체의 메서드 호출.
+                        if (mListener != null) {
+                            mListener.onItemClick(v, itemView, pos) ;
+                        }
+                    }
+                }
+            });
         }
     }
 

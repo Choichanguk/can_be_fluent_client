@@ -20,6 +20,15 @@ public class user_item implements Serializable {
     String UID;
     String token;
     File tmpFile;
+    String intro;
+
+    public String getIntro() {
+        return intro;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
+    }
 
     public String getToken() {
         return token;

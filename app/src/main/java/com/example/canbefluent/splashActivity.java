@@ -1,16 +1,25 @@
 package com.example.canbefluent;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.login_process.Login;
 import com.example.canbefluent.retrofit.RetrofitClient;
+import com.example.canbefluent.user_info.set_app_language;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +44,10 @@ public class splashActivity extends AppCompatActivity {
         sharedPreference = new sharedPreference();
         isLogin = sharedPreference.loadLoginStatus(getApplicationContext());
         Log.e(TAG, "isLogin: " + isLogin);
-//        isLogin = false;
+
+        set_language_code();
+
+
         if(isLogin){
             Log.e(TAG, "if true");
             user_id = sharedPreference.loadUserId(getApplicationContext());
@@ -58,6 +70,21 @@ public class splashActivity extends AppCompatActivity {
                     assert user_item != null;
                     String result = user_item.getResult();
                     sharedPreference.saveUserIndex(splashActivity.this, user_item.getUser_index());
+
+                    /**
+                     * 파이어베이스 토큰을 얻는 로직
+                     */
+                    FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            if(task.isSuccessful() && task.getResult() != null){
+                                String inviterToken = task.getResult().getToken();
+                                Log.e("get Token", "inviterToken: " + inviterToken);
+                                sharedPreference.saveFCMToken(splashActivity.this, inviterToken);
+                            }
+                        }
+                    });
+
                     if(result.equals("success")){
                         Log.e(TAG, "onResponse success");
                         // 결과 값이 success면
@@ -86,6 +113,12 @@ public class splashActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+        /**
+         * 언어 설정
+         */
+
+
     }
 
     public void alertDialog(String type) {
@@ -108,4 +141,20 @@ public class splashActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+
+    /**
+     * 앱에 설정된 언어코드에 해당되는 언어로 모든 택스트를 바꿔주는 메서드
+     */
+    public void set_language_code(){
+//        sharedPreference.saveLang_code(splashActivity.this, "ko");
+        String language_code = sharedPreference.loadLang_code(splashActivity.this);
+        Log.e(TAG, "언어코드: " + language_code);
+        Locale locale = new Locale(language_code);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+    }
+
+
 }

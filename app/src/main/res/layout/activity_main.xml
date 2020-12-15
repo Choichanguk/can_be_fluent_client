@@ -33,7 +33,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
             android:paddingLeft="20sp"
-            android:text="Community"
+            android:text="@string/community"
             android:textColor="#000000"
             android:textSize="25sp"
             android:textStyle="bold"

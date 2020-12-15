@@ -12,8 +12,17 @@ public class msg_item implements Serializable {
     String first_name;
     String status;
     String profile_img;
+    int play_time;
     ArrayList<String> img_list;
     long time;
+
+    public int getPlay_time() {
+        return play_time;
+    }
+
+    public void setPlay_time(int play_time) {
+        this.play_time = play_time;
+    }
 
     public ArrayList<String> getImg_list() {
         return img_list;

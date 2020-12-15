@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Can Be Fluent</string>
+    <string name="community">커뮤니티</string>
+    <string name="All">전체</string>
+    <string name="NEAR">내 주변</string>
+    <string name="my_location">내 위치</string>
+    <string name="chat">채팅</string>
+    <string name="random_call">랜덤 통화</string>
+    <string name="languages">언어</string>
+    <string name="native_in">모국어</string>
+    <string name="learning">학습언어</string>
+    <string name="video_call">영상통화</string>
+    <string name="message">메시지</string>
+    <string name="audio_call">음성통화</string>
+    <string name="following">팔로잉</string>
+    <string name="name">이름</string>
+    <string name="select_language">언어 선택</string>
+    <string name="im_native_in">모국어</string>
+    <string name="im_learning_in">학습 중인 언어</string>
+    <string name="app_language">앱 언어</string>
+    <string name="english">English</string>
+    <string name="korean">한국어</string>
+    <string name="japanese">日本語</string>
+    <string name="photos">사진들</string>
+    <string name="visitor">방문자</string>
+    <string name="about_me">내 소개</string>
+    <string name="edit">편집</string>
+    <string name="about_me_detail">프로필 사진 및 세부정보</string>
+    <string name="languages_detail">학습하고 싶은 언어를 입력하세요.</string>
+    <string name="following_detail">팔로잉 중인 사람 보기</string>
+    <string name="visitor_detail">프로필을 열람한 새 방문자 보기</string>
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+    <string name="dialog_text">적용을 위해 앱을 다시 시작 하시겠습니까?</string>
+    <string name="visitor_message">"지난 주 "</string>
+    <string name="visitor_message2">명의 새 방문자가 당신의 프로필을 열람했습니다.</string>
+    <string name="follow">팔로우</string>
+</resources>

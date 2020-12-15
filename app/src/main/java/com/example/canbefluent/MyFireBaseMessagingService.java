@@ -36,17 +36,52 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.e(TAG, "onMessageReceived");
-        Map<String, String> messageData = remoteMessage.getData();
-//        String messageBody = remoteMessage.getNotification().getBody();
-//        String messageTitle = remoteMessage.getNotification().getTitle();
 
-        Log.e(TAG, "data: " + messageData);
+        String type = remoteMessage.getData().get(Constants.REMOTE_MSG_TYPE);
+        if(type != null){
+            // 영상통화 알림일 경우
+            if(type.equals(Constants.REMOTE_MSG_INVITATION)){
+                Intent intent = new Intent(getApplicationContext(), IncomingInvitationActivity.class);
+                intent.putExtra(
+                        Constants.REMOTE_MSG_MEETING_TYPE,
+                        remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_TYPE)
+                );
+                intent.putExtra("user name", remoteMessage.getData().get("user name"));
+                intent.putExtra("user profile", remoteMessage.getData().get("user profile"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(
+                        Constants.REMOTE_MSG_INVITER_TOKEN,
+                        remoteMessage.getData().get(Constants.REMOTE_MSG_INVITER_TOKEN)
+                );
+                intent.putExtra(
+                        Constants.REMOTE_MSG_MEETING_ROOM,
+                        remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_ROOM)
+                );
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+            else if(type.equals(Constants.REMOTE_MSG_INVITATION_RESPONSE)){
+                Intent intent = new Intent(Constants.REMOTE_MSG_INVITATION_RESPONSE);
+                intent.putExtra(
+                        Constants.REMOTE_MSG_INVITATION_RESPONSE,
+                        remoteMessage.getData().get(Constants.REMOTE_MSG_INVITATION_RESPONSE)
+                );
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+            }
+        }
+        else{
+            Map<String, String> messageData = remoteMessage.getData();
 
-        sendNotification(messageData.get("Nick"), messageData.get("body"), messageData.get("room_index"));
+            Log.e(TAG, "data: " + messageData);
 
-        Log.e(TAG, "nick: " + messageData.get("Nick"));
-        Log.e(TAG, "body: " + messageData.get("body"));
-        Log.e(TAG, "room_index: " + messageData.get("room_index"));
+            sendNotification(messageData.get("Nick"), messageData.get("body"), messageData.get("room_index"));
+
+            Log.e(TAG, "nick: " + messageData.get("Nick"));
+            Log.e(TAG, "body: " + messageData.get("body"));
+            Log.e(TAG, "room_index: " + messageData.get("room_index"));
+        }
+
+
 
 
 //        Intent intent = new Intent("blackJinData");

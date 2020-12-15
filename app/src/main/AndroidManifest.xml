@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-feature android:name="android.hardware.camera2" />
 
@@ -21,17 +22,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".show_follow_activity"></activity>
+        <activity android:name=".user_info.show_visitor_acvitity" />
+        <activity android:name=".user_info.set_app_language" />
+        <activity android:name=".user_info.edit_config_language" />
+        <activity android:name=".viewpager_img" />
+        <activity android:name=".user_info.introduce_profile" />
+        <activity
+            android:name=".OutgoingInvitationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".IncomingInvitationActivity"
+            android:screenOrientation="portrait" />
+
         <service
             android:name=".socket_service"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".message_room"
-            android:windowSoftInputMode="adjustResize"
-            />
+        <activity
+            android:name=".message_room"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".fcm_exam" />
         <activity android:name=".practice.socket_practice" />
-        <activity android:name=".my_profile" />
+        <activity android:name=".user_info.my_profile" />
         <activity android:name=".practice.crop_practice" />
         <activity android:name=".practice.permission_practice" />
         <activity android:name=".login_process.choice_register_option" />
