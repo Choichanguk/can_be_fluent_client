@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.canbefluent.MainActivity;
 import com.example.canbefluent.R;
 import com.example.canbefluent.adapter.userListAdapter;
 import com.example.canbefluent.items.user_item;
@@ -28,7 +29,7 @@ public class practice_img_upload extends AppCompatActivity {
         setContentView(R.layout.activity_practice_img_upload);
 
         RetrofitClient retrofitClient = new RetrofitClient();
-        Call<ArrayList<user_item>> call = retrofitClient.service.get_allUserInfo();
+        Call<ArrayList<user_item>> call = retrofitClient.service.get_allUserInfo(MainActivity.user_item.getUser_index());
         call.enqueue(new Callback<ArrayList<user_item>>() {
             @Override
             public void onResponse(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Response<ArrayList<user_item>> response) {

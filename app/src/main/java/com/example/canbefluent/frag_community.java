@@ -96,7 +96,7 @@ public class frag_community extends Fragment {
          * 서버로부터 모든 유저의 정보를 불러온다.
          */
         retrofitClient = new RetrofitClient();
-        call_all_user = retrofitClient.service.get_allUserInfo();
+        call_all_user = retrofitClient.service.get_allUserInfo(MainActivity.user_item.getUser_index());
         call_all_user.enqueue(new Callback<ArrayList<com.example.canbefluent.items.user_item>>() {
             @Override
             public void onResponse(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Response<ArrayList<com.example.canbefluent.items.user_item>> response) {
@@ -513,7 +513,7 @@ public class frag_community extends Fragment {
     public void get_nearUser_from_server(double latitude, double longitude){
 
         // gpsTracker로부터 얻은 위도, 경도를 서버로 보내서 저장
-        call_near_user = retrofitClient.service.get_nearUserInfo(latitude, longitude, user_id);
+        call_near_user = retrofitClient.service.get_nearUserInfo(latitude, longitude, MainActivity.user_item.getUser_index());
         call_near_user.enqueue(new Callback<ArrayList<user_item>>() {
             @Override
             public void onResponse(Call<ArrayList<user_item>> call, Response<ArrayList<user_item>> response) {
@@ -527,8 +527,8 @@ public class frag_community extends Fragment {
                         Log.e(TAG, "for문 들어옴");
                         break;
                     }
+
                 }
-                Log.e(TAG, "near user list size: " + near_user_list.size());
 
                 recycler_nearUser = view.findViewById(R.id.recycler_NearUser);
                 nearUser_adapter = new userListAdapter(near_user_list);

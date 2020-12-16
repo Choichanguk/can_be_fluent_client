@@ -21,6 +21,15 @@ public class user_item implements Serializable {
     String token;
     File tmpFile;
     String intro;
+    String is_follow;
+
+    public String getIs_follow() {
+        return is_follow;
+    }
+
+    public void setIs_follow(String is_follow) {
+        this.is_follow = is_follow;
+    }
 
     public String getIntro() {
         return intro;

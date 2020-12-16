@@ -19,6 +19,7 @@ import com.example.canbefluent.MainActivity;
 import com.example.canbefluent.MyApplication;
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.user_item;
+import com.example.canbefluent.show_follow_activity;
 import com.example.canbefluent.viewpager_img;
 
 public class my_profile extends AppCompatActivity {
@@ -99,6 +100,18 @@ public class my_profile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(my_profile.this, show_visitor_acvitity.class);
+                startActivity(intent);
+            }
+        });
+
+        /**
+         * 팔로워 리스트 액티비티로 이동하는 버튼
+         */
+        config_following = findViewById(R.id.config_following);
+        config_following.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(my_profile.this, show_follow_activity.class);
                 startActivity(intent);
             }
         });

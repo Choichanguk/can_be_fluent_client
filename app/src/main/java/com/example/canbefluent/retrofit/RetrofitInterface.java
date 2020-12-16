@@ -1,5 +1,6 @@
 package com.example.canbefluent.retrofit;
 
+import com.example.canbefluent.items.follow_item;
 import com.example.canbefluent.items.img_item;
 import com.example.canbefluent.items.msg_item;
 import com.example.canbefluent.items.user_item;
@@ -44,10 +45,22 @@ public interface RetrofitInterface {
     Call<ArrayList<PostResult>> getPosts();
 
     @GET("get_user_info.php/")  // 모든 유저의 데이터를 받아오는 메서드(로그인 후 보여질 유저 목록을 만들기 위해)
-    Call<ArrayList<user_item>> get_allUserInfo();
+    Call<ArrayList<user_item>> get_allUserInfo(@Query("user_index") String user_index);
 
     @GET("get_visitor_info.php/")  // 모든 방문자의 데이터를 받아오는 메서드
     Call<ArrayList<visitor_item>> get_visitor_Info(@Query("user_index") String user_index);
+
+    @GET("update_login_time.php/")  // 로그인 시간을 업데이트 하는 메서드
+    Call<getResult> update_login_time(@Query("user_index") String user_index);
+
+    @GET("get_following.php/")  // following하는 유저 리스트를 가져오는 메서드
+    Call<ArrayList<follow_item>> get_following(@Query("user_index") String user_index);
+
+    @GET("get_follower.php/")  // 나를 follow하는 유저 리스트를 가져오는 메서드
+    Call<ArrayList<follow_item>> get_follower(@Query("user_index") String user_index);
+
+    @GET("follow_unfollow.php/")  // 서버로 팔로우 신청 or 팔로우 취소 요청하는 메서드
+    Call<getResult> follow_unfollow(@Query("follower_index") String follower_index, @Query("followered_index") String followered_index, @Query("type") String type);
 
 //    @GET("get_user_info.php/")  // 모든 유저의 데이터를 받아오는 메서드(로그인 후 보여질 유저 목록을 만들기 위해)
 //    Call<ArrayList<user_item>> get_allUserInfo
@@ -86,7 +99,7 @@ public interface RetrofitInterface {
 
 
     @GET("update_address.php/")
-    Call<ArrayList<user_item>> get_nearUserInfo(@Query("latitude") double latitude, @Query("longitude") double longitude, @Query("user_id") String user_id);
+    Call<ArrayList<user_item>> get_nearUserInfo(@Query("latitude") double latitude, @Query("longitude") double longitude, @Query("user_index") String user_index);
 
     @GET("get_images.php/")
     Call<ArrayList<img_item>> get_images(@Query("user_index") String user_index);

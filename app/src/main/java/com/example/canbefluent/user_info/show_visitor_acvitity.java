@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import retrofit2.Response;
 public class show_visitor_acvitity extends AppCompatActivity {
     private static final String TAG = "show_visitor_acvitity";
     TextView visitor_num;
+    ImageButton btn_back;
 
     RecyclerView visitor_recycle;
     visitorAdapter adapter;
@@ -47,11 +49,11 @@ public class show_visitor_acvitity extends AppCompatActivity {
                             Log.e(TAG, "방문자 수 0");
                         }
                         else {
-
+                            visitor_recycle = findViewById(R.id.visitor_recycle);
                             visitor_recycle.setLayoutManager(new LinearLayoutManager(show_visitor_acvitity.this));
 
                             adapter = new visitorAdapter(list, show_visitor_acvitity.this);
-                            adapter.setOnItemClickListener(new userListAdapter.OnItemClickListener() {
+                            adapter.setOnItemClickListener(new visitorAdapter.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(View v, int position) {
                                     Toast.makeText(show_visitor_acvitity.this, "버튼 클릭: " + position, Toast.LENGTH_SHORT).show();
@@ -72,6 +74,15 @@ public class show_visitor_acvitity extends AppCompatActivity {
                     }
                 });
         visitor_recycle = findViewById(R.id.visitor_recycle);
+
+        // 뒤로가기 버튼
+        btn_back = findViewById(R.id.btn_back);
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     }
 }

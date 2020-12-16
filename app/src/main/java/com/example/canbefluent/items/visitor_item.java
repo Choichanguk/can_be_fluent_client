@@ -1,7 +1,7 @@
 package com.example.canbefluent.items;
 
 public class visitor_item {
-    String first_name, profile_image, visit_time, visitor_index;
+    String first_name, profile_img, visit_time, visitor_index;
 
     public String getFirst_name() {
         return first_name;
@@ -12,11 +12,11 @@ public class visitor_item {
     }
 
     public String getProfile_image() {
-        return profile_image;
+        return profile_img;
     }
 
     public void setProfile_image(String profile_image) {
-        this.profile_image = profile_image;
+        this.profile_img = profile_image;
     }
 
     public String getVisit_time() {

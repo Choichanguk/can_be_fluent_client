@@ -1,5 +1,6 @@
 package com.example.canbefluent;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.canbefluent.items.user_item;
@@ -19,6 +21,9 @@ import com.example.canbefluent.pojoClass.getChatList;
 import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.pojoClass.getRoomList;
 import com.example.canbefluent.retrofit.RetrofitClient;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -35,8 +40,8 @@ public class user_profile_activity extends AppCompatActivity {
     CircleImageView profile_img;
     String url = MyApplication.server_url + "/profile_img/";
     TextView name, native_lang1, native_lang2, practice_lang1, practice_lang2, practice_lang1_level, practice_lang2_level, age;
-    LinearLayout linearLayout;
-    ImageButton btn_back, btn_msg, btn_videoCall, btn_voiceCall;
+    LinearLayout linearLayout, view_unfollow, view_follow;
+    ImageButton btn_back, btn_msg, btn_videoCall, btn_voiceCall, btn_follow, btn_unfollow;
 
     RetrofitClient retrofitClient;
     Call<ArrayList<getRoomList>> call;
@@ -96,6 +101,24 @@ public class user_profile_activity extends AppCompatActivity {
         native_lang2 = findViewById(R.id.native_lang2);
         practice_lang2 = findViewById(R.id.practice_lang2);
         practice_lang2_level = findViewById(R.id.practice_lang2_level);
+
+
+        view_follow = findViewById(R.id.view_follow);
+        view_unfollow = findViewById(R.id.view_unfollow);
+
+        // 팔로우 체크 로직
+        // 팔로우 하고 있지 않은 경우
+        if(user_item.getIs_follow().equals("0")){
+            view_follow.setVisibility(View.VISIBLE);
+            view_unfollow.setVisibility(View.GONE);
+        }
+        // 팔로우 하고 있는 경우
+        else{
+            view_follow.setVisibility(View.GONE);
+            view_unfollow.setVisibility(View.VISIBLE);
+        }
+
+
 
 
         if(user_item.getNative_lang2() != null){
@@ -191,12 +214,134 @@ public class user_profile_activity extends AppCompatActivity {
                 }
         });
 
+        /**
+         * 팔로우 신청하는 버튼
+         */
+        view_follow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                retrofitClient.service.follow_unfollow(MainActivity.user_item.getUser_index(), user_item.getUser_index(), "follow")
+                        .enqueue(new Callback<getResult>() {
+                            @Override
+                            public void onResponse(Call<getResult> call, Response<getResult> response) {
+                                getResult result = response.body();
+                                if(result.toString().equals("success")){
+                                    // 팔로우 버튼 변경 -> 언팔로우 버튼
+                                    view_follow.setVisibility(View.GONE);
+                                    view_unfollow.setVisibility(View.VISIBLE);
+
+                                    // FCM 메시지 전송
+                                    initiateFollowFCM(user_item.getToken());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<getResult> call, Throwable t) {
+                                Log.e(TAG, "onFailure message: " + t.getMessage());
+                            }
+                        });
+            }
+        });
+
+        /**
+         * 팔로우 취소하는 버튼
+         */
+        view_unfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                retrofitClient.service.follow_unfollow(MainActivity.user_item.getUser_index(), user_item.getUser_index(), "unfollow")
+                        .enqueue(new Callback<getResult>() {
+                            @Override
+                            public void onResponse(Call<getResult> call, Response<getResult> response) {
+                                getResult result = response.body();
+                                if(result.toString().equals("success")){
+                                    // 언팔로우 버튼 변경 -> 팔로우 버튼
+                                    view_follow.setVisibility(View.VISIBLE);
+                                    view_unfollow.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<getResult> call, Throwable t) {
+                                Log.e(TAG, "onFailure message: " + t.getMessage());
+                            }
+                        });
+            }
+        });
+
 
         btn_back = findViewById(R.id.btn_back);
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+    }
+
+    /**
+     * FCM 메시지 보내기 위한 파라미터 만드는 메서드
+     */
+    private void initiateFollowFCM(String receiverToken){
+        try{
+
+            JSONArray tokens = new JSONArray();
+            tokens.put(receiverToken);
+
+            JSONObject body = new JSONObject();
+            JSONObject data = new JSONObject();
+
+            data.put(Constants.REMOTE_MSG_TYPE, "follow");
+//            data.put(Constants.REMOTE_MSG_MEETING_TYPE, meetingType);
+//            data.put(Constants.REMOTE_MSG_INVITER_TOKEN, inviterToken);
+            data.put("user name", MainActivity.user_item.getFirst_name());
+            data.put("user profile", MainActivity.user_item.getProfile_img());
+
+//            meetingRoom = "random num";
+//            data.put(Constants.REMOTE_MSG_MEETING_ROOM, meetingRoom);
+
+
+            body.put(Constants.REMOTE_MSG_DATA, data);
+            body.put("to", receiverToken);
+
+            Log.e("FCM", "data: " + data);
+            Log.e("FCM", "body: " + body);
+
+            sendRemoteMessage(body.toString());
+
+        }catch (Exception e){
+            Toast.makeText(user_profile_activity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    /**
+     * FCM 메시지 보내는 메서드
+     * @param remoteMessageBody
+     */
+    private void sendRemoteMessage(String remoteMessageBody) {
+        retrofitClient = new RetrofitClient();
+        retrofitClient.service3.sendRemoteMessage(
+                Constants.getRemoteMessageHeaders(), remoteMessageBody
+        ).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                if(response.isSuccessful()) {
+                    Log.e("FCM", "onResponse success");
+                }
+                else{
+                    Log.e("FCM", "onResponse fail");
+                    Toast.makeText(user_profile_activity.this, response.body(), Toast.LENGTH_SHORT).show();
+//                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                Log.e("FCM", "onFailure");
+                Toast.makeText(user_profile_activity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                finish();
             }
         });
     }
@@ -222,4 +367,11 @@ public class user_profile_activity extends AppCompatActivity {
         return Age;
     }
 
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(user_profile_activity.this, MainActivity.class);
+        intent.putExtra("user item", MainActivity.user_item);
+        startActivity(intent);
+        finish();
+    }
 }

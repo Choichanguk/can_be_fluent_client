@@ -34,6 +34,9 @@
     <string name="cancel">CANCEL</string>
     <string name="dialog_text">Do you want to relaunch to take effect?</string>
     <string name="visitor_message">"You had "</string>
-    <string name="visitor_message2">new visitors to your profile last week</string>
+    <string name="visitor_message2">New visitors to your profile last week</string>
     <string name="follow">follow</string>
+    <string name="follower">Follower</string>
+    <string name="active">Active</string>
+    <string name="unfollow">unfollow</string>
 </resources>

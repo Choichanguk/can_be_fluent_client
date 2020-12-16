@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.login_process.Login;
+import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.retrofit.RetrofitClient;
 import com.example.canbefluent.user_info.set_app_language;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,11 +50,13 @@ public class splashActivity extends AppCompatActivity {
 
 
         if(isLogin){
+
+
+            // 서버로부터 유저의 정보를 가져온다
             Log.e(TAG, "if true");
             user_id = sharedPreference.loadUserId(getApplicationContext());
             user_pw = sharedPreference.loadUserPw(getApplicationContext());
-            RetrofitClient retrofitClient = new RetrofitClient();
-
+            final RetrofitClient retrofitClient = new RetrofitClient();
             Call<user_item[]> call = retrofitClient.service.login_process(user_id, user_pw);
             call.enqueue(new Callback<user_item[]>() { // 서버로부터 결과 값을 받는 callback 함수
                 @Override
@@ -91,10 +94,28 @@ public class splashActivity extends AppCompatActivity {
                         // 1. shared에 유저의 아이디와 로그인 상태를 저장한다.
                         // 2. user_item 객체를 main activity에 넘겨준다.
 
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.putExtra("user item", user_item);
-                        startActivity(intent);
-                        finish();
+                        // 서버로 로그인 시간을 업데이트 시킨다.
+                        final com.example.canbefluent.items.user_item finalUser_item = user_item;
+                        retrofitClient.service.update_login_time(user_item.getUser_index())
+                                .enqueue(new Callback<getResult>() {
+                                    @Override
+                                    public void onResponse(Call<getResult> call, Response<getResult> response) {
+                                        getResult item = response.body();
+                                        Log.e(TAG, "onResponse message: " + item.toString());
+                                        if(item.toString().equals("success")){
+                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                            intent.putExtra("user item", finalUser_item);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<getResult> call, Throwable t) {
+                                        Log.e(TAG, "onFailure message: " + t.getMessage());
+                                    }
+                                });
                     }
                     else if(result.equals("fail")){ // 결과 값이 fail이면 로그인 실패 다이얼로그를 띄워준다.
 //                        alertDialog("login fail");

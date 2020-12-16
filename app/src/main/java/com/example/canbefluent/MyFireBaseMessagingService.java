@@ -39,8 +39,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
         String type = remoteMessage.getData().get(Constants.REMOTE_MSG_TYPE);
         if(type != null){
+            Log.e("FCM", "type not null");
             // 영상통화 알림일 경우
             if(type.equals(Constants.REMOTE_MSG_INVITATION)){
+                Log.e("FCM", "type invitation");
                 Intent intent = new Intent(getApplicationContext(), IncomingInvitationActivity.class);
                 intent.putExtra(
                         Constants.REMOTE_MSG_MEETING_TYPE,
@@ -68,8 +70,13 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 );
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
             }
+            else if(type.equals("follow")){
+                Log.e("FCM", "type follow");
+                sendFollowNotification(remoteMessage.getData().get("user name"));
+            }
         }
         else{
+            Log.e("FCM", "type null");
             Map<String, String> messageData = remoteMessage.getData();
 
             Log.e(TAG, "data: " + messageData);
@@ -80,64 +87,11 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             Log.e(TAG, "body: " + messageData.get("body"));
             Log.e(TAG, "room_index: " + messageData.get("room_index"));
         }
-
-
-
-
-//        Intent intent = new Intent("blackJinData");
-//        intent.putExtra("data1", "black");
-//        intent.putExtra("data2", "Jin");
-//        intent.putExtra("data3", "Data");
-
-//        LocalBroadcastManager.getInstance(MyFireBaseMessagingService.this).sendBroadcast(intent);
-
-        // [START_EXCLUDE]
-        // There are two types of messages data messages and notification messages. Data messages
-        // are handled
-        // here in onMessageReceived whether the app is in the foreground or background. Data
-        // messages are the type
-        // traditionally used with GCM. Notification messages are only received here in
-        // onMessageReceived when the app
-        // is in the foreground. When the app is in the background an automatically generated
-        // notification is displayed.
-        // When the user taps on the notification they are returned to the app. Messages
-        // containing both notification
-        // and data payloads are treated as notification messages. The Firebase console always
-        // sends notification
-        // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
-        // [END_EXCLUDE]
-
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-//        Log.d(TAG, "From: " + remoteMessage.getFrom());
-
-        // Check if message contains a data payload.
-//        if (remoteMessage.getData().size() > 0) {
-//            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-//
-//            if (/* Check if data needs to be processed by long running job */ true) {
-//                // For long-running tasks (10 seconds or more) use WorkManager.
-////                scheduleJob();
-//            } else {
-//                // Handle message within 10 seconds
-//                handleNow();
-//            }
-//
-//        }
-
-        // Check if message contains a notification payload.
-//        if (remoteMessage.getNotification() != null) {
-//            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-//        }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
     // [END receive_message]
 
 
     // [START on_new_token]
-
     /**
      * Called if InstanceID token is updated. This may occur if the security of
      * the previous token had been compromised. Note that this is called when the InstanceID token
@@ -230,6 +184,40 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.exchange_img)
                         .setContentTitle(nick)
                         .setContentText(message)
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void sendFollowNotification(String first_name) {
+        Log.e(TAG, "sendNotification");
+        Intent intent = new Intent(this, show_follow_activity.class);
+//        intent.putExtra("type", "from notification");
+//        intent.putExtra("room_index", room_index);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        String channelId = "choi";
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.exchange_img)
+                        .setContentTitle("팔로우 메세지")
+                        .setContentText(first_name + "님이 당신을 팔로우합니다.")
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);

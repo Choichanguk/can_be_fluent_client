@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//
     }
 
     @Override
@@ -172,52 +171,6 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
         
     }
-
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//
-//        //브로드캐스트 리시버 해제
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
-//
-//        // 클라리언트 소켓 서비스 종료 (실행중이라면)
-//        if(isRunningService()){
-//            Intent intent = new Intent(MainActivity.this, socket_service.class); // 이동할 컴포넌트
-//            stopService(intent); // 서비스 종료
-//        }
-//    }
-
-//    /**
-//     * 브로드캐스트 예제
-//     * 브로드캐스트 수신자
-//     */
-//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            // intent ..
-//            String data1 = intent.getStringExtra("data1");
-//            String data2 = intent.getStringExtra("data2");
-//            String data3 = intent.getStringExtra("data3");
-//            Log.e(TAG, "data1: " + data1 + " /data2: " + data2 + " /data3: " + data3);
-//            Log.e(TAG, "브로드캐스트 수신 완료");
-//        }
-//    };
-
-//    /**
-//     * 서비스가 실행중인지 알려주는 메서드
-//     * @return true or false
-//     */
-//    public Boolean isRunningService(){
-//        Log.e(TAG, "이름: " + socket_service.class.getName());
-//        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//
-//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-//            if (socket_service.class.getName().equals(service.service.getClassName())) {
-//                return true;
-//            }
-//        }
-//        return  false;
-//    }
 
 
     @Override

@@ -36,4 +36,7 @@
     <string name="visitor_message">지난 주</string>
     <string name="visitor_message2">명의 새 방문자가 당신의 프로필을 열람했습니다.</string>
     <string name="follow">팔로우</string>
+    <string name="follower">팔로워</string>
+    <string name="active">최근 활동</string>
+    <string name="unfollow">언팔로우</string>
 </resources>
