@@ -2,6 +2,7 @@ package com.example.canbefluent.retrofit;
 
 import com.example.canbefluent.items.follow_item;
 import com.example.canbefluent.items.img_item;
+import com.example.canbefluent.items.language_code_item;
 import com.example.canbefluent.items.msg_item;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.items.visitor_item;
@@ -68,6 +69,9 @@ public interface RetrofitInterface {
     @GET("languages.php/")
     Call<ArrayList<getLanguageNameResult>> getLanguageName();
 
+    @GET("languages2.php/")
+    Call<ArrayList<language_code_item>> getLanguageNameCode();
+
     // 일반 아이디로 로그인 할때
     @GET("login_process.php/")
     Call<user_item[]> login_process(@Query("user_id") String user_id, @Query("user_pw") String user_pw);
@@ -83,7 +87,6 @@ public interface RetrofitInterface {
     // 서버로 프로필 방문 체크 확인할 때
     @GET("check_visitor.php/")
     Call<getResult> check_visit(@Query("visitor_index") String visitor_index, @Query("visited_index") String visited_index);
-
 
     // 서버로부터 채팅방 목록 가져올 때
     @GET("room_list.php/")
@@ -145,4 +148,7 @@ public interface RetrofitInterface {
             @HeaderMap HashMap<String, String> headers,
             @Body String remoteBody
     );
+
+    @GET("update_translated_msg.php/")
+    Call<getResult> update_translated_msg(@Query("message_index") String message_index, @Query("translated_message") String translated_message);
 }

@@ -8,14 +8,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.user_item;
 
 public class edit_config_language extends AppCompatActivity {
     com.example.canbefluent.items.user_item user_item;
-    ImageView btn_config_app_lang, btn_config_practice_lang, btn_config_intro;
+    ImageView btn_config_app_lang, btn_config_practice_lang, btn_config_intro, btn_config_translate_lang;
     ImageButton btn_back;
+
+    TextView app_lang, translate_lang;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +36,19 @@ public class edit_config_language extends AppCompatActivity {
                 Intent intent = new Intent(edit_config_language.this, set_app_language.class);
 //                intent.putExtra("language code", "ko");
                 startActivity(intent);
+            }
+        });
+
+        /**
+         * 번역 언어 설정 액티비티로 이동하는 버튼
+         */
+        btn_config_translate_lang = findViewById(R.id.btn_config_translate_lang);
+        btn_config_translate_lang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(edit_config_language.this, set_translate_language.class);
+                startActivity(intent);
+
             }
         });
 

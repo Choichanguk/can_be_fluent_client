@@ -22,7 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".show_follow_activity"></activity>
+        <activity android:name=".user_info.set_translate_language"></activity>
+        <activity android:name=".practice.google_translationAPI"></activity>
+        <activity android:name=".show_follow_activity" />
         <activity android:name=".user_info.show_visitor_acvitity" />
         <activity android:name=".user_info.set_app_language" />
         <activity android:name=".user_info.edit_config_language" />

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class msg_item implements Serializable {
+    String message_index;
     String message;
     String type;
     String token;
@@ -12,9 +13,27 @@ public class msg_item implements Serializable {
     String first_name;
     String status;
     String profile_img;
+    String translated_message;
+
     int play_time;
     ArrayList<String> img_list;
     long time;
+
+    public String getMessage_index() {
+        return message_index;
+    }
+
+    public void setMessage_index(String message_index) {
+        this.message_index = message_index;
+    }
+
+    public String getTranslated_message() {
+        return translated_message;
+    }
+
+    public void setTranslated_message(String translated_message) {
+        this.translated_message = translated_message;
+    }
 
     public int getPlay_time() {
         return play_time;

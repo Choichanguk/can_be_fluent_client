@@ -23,6 +23,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'project.properties'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/INDEX.LIST'
+    }
 }
 
 dependencies {
@@ -84,5 +97,11 @@ dependencies {
     implementation 'me.relex:circleindicator:2.1.4'
 
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
+
+    implementation('com.google.cloud:google-cloud-translate:1.95.4') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'org.json', module: 'json'
+    }
+    annotationProcessor 'com.google.cloud:google-cloud-translate:1.95.4'
 
 }

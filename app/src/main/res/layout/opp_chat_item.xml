@@ -18,21 +18,41 @@
         app:layout_constraintVertical_bias="0.001"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/msg"
-        android:layout_width="240dp"
+    <LinearLayout
+        android:id="@+id/msg_linear"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/border_round_gray"
-        android:paddingVertical="5dp"
-        android:paddingHorizontal="15dp"
-        android:text="TextView"
-        android:textColor="#000000"
-        android:textSize="17sp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/profile_img"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="15dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/border_round_gray">
+        <TextView
+            android:id="@+id/msg"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="#000000"
+            android:textSize="17sp"
+             />
+        <TextView
+            android:id="@+id/translated_msg"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="#000000"
+            android:textSize="17sp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/border_top"
+            android:visibility="gone"
+            />
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/time"
@@ -42,7 +62,7 @@
         android:layout_marginLeft="7dp"
         android:text="TextView"
         android:textSize="10sp"
-        app:layout_constraintBottom_toBottomOf="@+id/msg"
-        app:layout_constraintStart_toEndOf="@+id/msg" />
+        app:layout_constraintBottom_toBottomOf="@+id/msg_linear"
+        app:layout_constraintStart_toEndOf="@+id/msg_linear" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

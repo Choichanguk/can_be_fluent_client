@@ -47,6 +47,20 @@ public class sharedPreference {
         editor.apply();
     }
 
+    public static void saveLang_code(Context context, String lang_code){
+        SharedPreferences sharedPreferences = getPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("lang_code", lang_code);
+        editor.apply();
+    }
+
+    public static void saveLangCode(Context context, String lang_code){
+        SharedPreferences sharedPreferences = getPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("lang trans code", lang_code);
+        editor.apply();
+    }
+
     public static String loadUserId(Context context) {
         SharedPreferences sharedPreferences = getPreferences(context);
         String user_id = sharedPreferences.getString("user_id", null);
@@ -93,19 +107,22 @@ public class sharedPreference {
         return token;
     }
 
-    public static void saveLang_code(Context context, String lang_code){
-        SharedPreferences sharedPreferences = getPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("lang_code", lang_code);
-        editor.apply();
-    }
-
     public static String loadLang_code(Context context) {
         SharedPreferences sharedPreferences = getPreferences(context);
         String lang_code = sharedPreferences.getString("lang_code", null);
 
         if(lang_code == null){
             lang_code = "ko";  // 기본 언어 코드 값
+        }
+        return lang_code;
+    }
+
+    public static String loadLangCode(Context context) {
+        SharedPreferences sharedPreferences = getPreferences(context);
+        String lang_code = sharedPreferences.getString("lang trans code", null);
+
+        if(lang_code == null){
+            lang_code = "ko";
         }
         return lang_code;
     }

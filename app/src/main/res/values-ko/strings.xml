@@ -39,4 +39,9 @@
     <string name="follower">팔로워</string>
     <string name="active">최근 활동</string>
     <string name="unfollow">언팔로우</string>
+    <string name="translate">수신한 메세지를 다음으로 번역</string>
+    <string name="comment">코멘트</string>
+    <string name="translate_msg">번역</string>
+    <string name="option">옵션</string>
+    <string name="correct">수정</string>
 </resources>

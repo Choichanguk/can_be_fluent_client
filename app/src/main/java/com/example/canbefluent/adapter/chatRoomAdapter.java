@@ -164,6 +164,13 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 Glide.with(mContext)
                         .load(url)
                         .into(holder1.profile_img);
+
+                if(item.getTranslated_message() != null){
+                    holder1.translated_msg.setText(item.getTranslated_message());
+                    holder1.translated_msg.setVisibility(View.VISIBLE);
+                }else{
+                    holder1.translated_msg.setVisibility(View.GONE);
+                }
             }
         }
         // 이미지 메세지
@@ -198,7 +205,8 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .into(holder3.profile_img);
             }
         }
-        else if(item.getType().equals("audio")){    // 음성 메시지
+        // 음성 메시지
+        else if(item.getType().equals("audio")){
             int play_time = item.getPlay_time();
             int sec = (play_time / 100) % 60;
             int min = (play_time / 100) / 60;
@@ -241,7 +249,9 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
         CircleImageView profile_img;
         TextView msg;
+        TextView translated_msg;
         TextView time;
+
 
 
         public ChatMessageViewHolder(@NonNull final View itemView) {
@@ -249,7 +259,23 @@ public class chatRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             profile_img = itemView.findViewById(R.id.profile_img);
             msg = itemView.findViewById(R.id.msg);
             time = itemView.findViewById(R.id.time);
+            translated_msg = itemView.findViewById(R.id.translated_msg);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition() ;
+                    if (pos != RecyclerView.NO_POSITION) {
+                        // 리스너 객체의 메서드 호출.
+                        if (mListener != null) {
+                            mListener.onItemClick(v, itemView, pos) ;
+                        }
+                    }
+                }
+            });
         }
+
+
     }
 
     // 내 채팅 뷰들을 바인딩 해주는 메서드.

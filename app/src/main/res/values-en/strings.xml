@@ -39,4 +39,9 @@
     <string name="follower">Follower</string>
     <string name="active">Active</string>
     <string name="unfollow">unfollow</string>
+    <string name="translate">Translate incoming messages to</string>
+    <string name="comment">Comment</string>
+    <string name="translate_msg">Translate</string>
+    <string name="option">Option</string>
+    <string name="correct">Correct</string>
 </resources>

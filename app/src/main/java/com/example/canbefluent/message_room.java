@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -24,6 +26,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -39,9 +43,11 @@ import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.getAudioFile;
 import com.example.canbefluent.pojoClass.getImgList;
 import com.example.canbefluent.pojoClass.getMsgList;
+import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.pojoClass.getRoomList;
 import com.example.canbefluent.pojoClass.getStatus;
 import com.example.canbefluent.retrofit.RetrofitClient;
+import com.example.canbefluent.user_info.introduce_profile;
 
 import org.w3c.dom.Text;
 
@@ -77,7 +83,7 @@ public class message_room extends AppCompatActivity {
     String my_user_index, user_id;
     getRoomList room_obj;   // frag_chat으로부터 전달받는 room 객체
 
-
+    String lang_code;
 
     DataInputStream is;
     DataOutputStream os;
@@ -146,6 +152,7 @@ public class message_room extends AppCompatActivity {
         record_layout = findViewById(R.id.record_layout);
         chat_layout = findViewById(R.id.chat_layout);
         my_user_index = sharedPreference.loadUserIndex(message_room.this);
+        lang_code = sharedPreference.loadLangCode(message_room.this);
         Intent intent = getIntent();
 
         String type = intent.getStringExtra("type");
@@ -1082,7 +1089,7 @@ public class message_room extends AppCompatActivity {
                                         if(v.getId() == R.id.audio_play){
                                             itemView.findViewById(R.id.audio_pause).setVisibility(View.VISIBLE);
                                             v.setVisibility(View.GONE);
-                                            String url = "http://52.78.58.117/audio_file_upload/" + msgLists.get(position).getMessage();
+                                            String url = "http://13.124.159.44/audio_file_upload/" + msgLists.get(position).getMessage();
                                             Log.e(TAG, "play url: " + url);
                                             playAudioChat(url);
                                             playAudioThread thread = new playAudioThread(msgLists.get(position).getPlay_time(), position, itemView);
@@ -1092,6 +1099,9 @@ public class message_room extends AppCompatActivity {
                                             itemView.findViewById(R.id.audio_play).setVisibility(View.VISIBLE);
                                             v.setVisibility(View.GONE);
                                             pauseAudioChat();
+                                        }
+                                        else {
+                                            Toast.makeText(message_room.this, "아이템 뷰 클릭: " + position, Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
@@ -1238,6 +1248,71 @@ public class message_room extends AppCompatActivity {
                 linearLayoutManager.setStackFromEnd(true);
                 chat_recycler.setLayoutManager(linearLayoutManager);
                 chat_recycler.setAdapter(chatRoomAdapter);
+
+                chatRoomAdapter.setOnItemClickListener(new chatRoomAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View v, final View itemView, final int position) {
+                        if(v.getId() == R.id.audio_play){
+                            itemView.findViewById(R.id.audio_pause).setVisibility(View.VISIBLE);
+                            v.setVisibility(View.GONE);
+                            String url = "http://13.124.159.44/audio_file_upload/" + msgLists.get(position).getMessage();
+                            Log.e(TAG, "play url: " + url);
+                            playAudioChat(url);
+                            playAudioThread thread = new playAudioThread(msgLists.get(position).getPlay_time(), position, itemView);
+                            thread.start();
+                        }
+                        else if(v.getId() == R.id.audio_pause){
+                            itemView.findViewById(R.id.audio_play).setVisibility(View.VISIBLE);
+                            v.setVisibility(View.GONE);
+                            pauseAudioChat();
+                        }
+                        else {
+//                            Toast.makeText(message_room.this, "아이템 뷰 클릭: " + position, Toast.LENGTH_SHORT).show();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(message_room.this);
+                            LayoutInflater inflater = getLayoutInflater();
+                            View view = inflater.inflate(R.layout.dialog_translate, null);
+                            builder.setView(view);
+                            final LinearLayout translate = view.findViewById(R.id.translate);
+                            final LinearLayout correct = view.findViewById(R.id.correct);
+                            final LinearLayout comment = view.findViewById(R.id.comment);
+
+                            final AlertDialog dialog = builder.create();
+
+                            // 번역하기 클릭 리스너
+                            translate.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    google_translate translation = new google_translate(message_room.this);
+                                    translation.getTranslateService();
+                                    final String translated_msg = translation.translate(lang_code, msgLists.get(position).getMessage());
+//                                    Toast.makeText(message_room.this, "번역된 메세지: " + translated_msg, Toast.LENGTH_SHORT).show();
+
+                                    retrofitClient.service.update_translated_msg(msgLists.get(position).getMessage_index(), translated_msg)
+                                            .enqueue(new Callback<getResult>() {
+                                                @Override
+                                                public void onResponse(Call<getResult> call, Response<getResult> response) {
+                                                        if(response.body().toString().equals("success")){
+                                                            // 번역된 메세지를 띄우는 뷰를 보여준다.
+                                                            TextView view = itemView.findViewById(R.id.translated_msg);
+                                                            view.setVisibility(View.VISIBLE);
+                                                            view.setText(translated_msg);
+                                                        }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<getResult> call, Throwable t) {
+
+                                                }
+                                            });
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            dialog.show();
+
+                        }
+                    }
+                });
 
                 Log.e(TAG, "msg list size: " + msgLists.size());
             }
