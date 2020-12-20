@@ -16,10 +16,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.canbefluent.MainActivity;
-import com.example.canbefluent.MyApplication;
+import com.example.canbefluent.utils.MyApplication;
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.user_item;
-import com.example.canbefluent.show_follow_activity;
 import com.example.canbefluent.viewpager_img;
 
 public class my_profile extends AppCompatActivity {

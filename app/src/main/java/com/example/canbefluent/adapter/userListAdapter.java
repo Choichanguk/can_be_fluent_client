@@ -3,7 +3,6 @@ package com.example.canbefluent.adapter;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +14,9 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.canbefluent.MyApplication;
+import com.example.canbefluent.utils.MyApplication;
 import com.example.canbefluent.R;
-import com.example.canbefluent.items.language_item;
 import com.example.canbefluent.items.user_item;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -86,8 +83,9 @@ public class userListAdapter extends RecyclerView.Adapter<userListAdapter.ViewHo
         }
 
         holder.intro.setText(item.getIntro());
-        holder.native_lang1.setText(item.getNative_lang1());
-        holder.practice_lang1.setText(item.getPractice_lang1());
+
+        holder.native_lang1.setText(MyApplication.lang_code_map.get(item.getNative_lang1()));
+        holder.practice_lang1.setText(MyApplication.lang_code_map.get(item.getPractice_lang1()));
         holder.practice_lang1_level.setText(item.getPractice_lang1_level());
     }
 

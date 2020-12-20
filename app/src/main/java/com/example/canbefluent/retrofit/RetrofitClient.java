@@ -1,6 +1,6 @@
 package com.example.canbefluent.retrofit;
 
-import com.example.canbefluent.MyApplication;
+import com.example.canbefluent.utils.MyApplication;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

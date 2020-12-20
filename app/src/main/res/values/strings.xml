@@ -43,5 +43,7 @@
     <string name="translate_msg">Translate</string>
     <string name="option">Option</string>
     <string name="correct">Correct</string>
+    <string name="NATIVE">NATIVE:</string>
+    <string name="PRACTICE">PRACTICE:</string>
 
 </resources>

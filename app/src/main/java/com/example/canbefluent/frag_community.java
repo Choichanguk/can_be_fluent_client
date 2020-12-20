@@ -1,7 +1,6 @@
 package com.example.canbefluent;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,20 +22,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import com.example.canbefluent.adapter.userListAdapter;
 import com.example.canbefluent.items.user_item;
-import com.example.canbefluent.login_process.Login;
 import com.example.canbefluent.practice.GpsTracker;
-import com.example.canbefluent.practice.gps_practice;
 import com.example.canbefluent.retrofit.RetrofitClient;
-import com.google.gson.annotations.SerializedName;
+import com.example.canbefluent.utils.sharedPreference;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,6 +53,7 @@ public class frag_community extends Fragment {
     RecyclerView recycler_allUser, recycler_nearUser;
     userListAdapter allUser_adapter, nearUser_adapter;
     ArrayList<user_item> all_user_list, near_user_list; //모든 유저의 데이터를 담는 ArrayList, 근처 유저의 데이터를 담는 ArrayList
+    SwipeRefreshLayout refreshLayout; // 새로고침 레이아웃
 
     RetrofitClient retrofitClient;
     Call<ArrayList<user_item>> call_all_user, call_near_user;
@@ -75,7 +72,7 @@ public class frag_community extends Fragment {
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
     String user_id;
-    sharedPreference sharedPreference;
+    com.example.canbefluent.utils.sharedPreference sharedPreference;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -91,66 +88,19 @@ public class frag_community extends Fragment {
         user_id = sharedPreference.loadUserId(getContext());    // 쉐어드에 저장된 유저의 id를 가져온다.
         Log.e(TAG, "user id: " + user_id);
 
+        refreshLayout = view.findViewById(R.id.refresh_layout);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                set_allUSerList("refresh");
+
+            }
+        });
 
         /**
          * 서버로부터 모든 유저의 정보를 불러온다.
          */
-        retrofitClient = new RetrofitClient();
-        call_all_user = retrofitClient.service.get_allUserInfo(MainActivity.user_item.getUser_index());
-        call_all_user.enqueue(new Callback<ArrayList<com.example.canbefluent.items.user_item>>() {
-            @Override
-            public void onResponse(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Response<ArrayList<com.example.canbefluent.items.user_item>> response) {
-                ArrayList<user_item> result = response.body();
-
-                // 서버로부터 받아온 유저 리스트를 all_user_list에 담아준다.
-                // 리사이클러뷰에 all_user_list를 보여준다.
-                assert result != null;
-                all_user_list.addAll(result);
-                for(int i=0; i<all_user_list.size(); i++){
-                    if(all_user_list.get(i).getUser_id().equals(user_id)){
-                        all_user_list.remove(i);
-                        break;
-                    }
-                }
-
-                //recycler
-                recycler_allUser = view.findViewById(R.id.recycler_allUser);
-
-                recycler_allUser.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                // define an adapter
-                allUser_adapter = new userListAdapter(all_user_list);
-
-                // 유저를 클릭하면 해당 유저의 정보를 객체에 담아 유저 프로필 액티비티로 이동시킨다.
-                allUser_adapter.setOnItemClickListener(new userListAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View v, int position) {
-//                        Log.e(TAG, "user id: " + all_user_list.get(position).getUser_id());
-
-                        // 유저 리스트에서 선택한 유저의 정보를 담은 객체를 인텐트에 담는다.
-                        user_item item = all_user_list.get(position);
-                        Intent intent = new Intent(getActivity(), user_profile_activity.class);
-                        intent.putExtra("user item", item);
-                        Log.e(TAG, "first: " + item.getFirst_name());
-                        Log.e(TAG, "last: " + item.getLast_name());
-                        Log.e(TAG, "sex: " + item.getSex());
-                        Log.e(TAG, "profile: " + item.getProfile_img());
-//                        Log.e(TAG, "year: " + item.getYear());
-                        Log.e(TAG, "year: " + item.getYear());
-                        Log.e(TAG, "month: " + item.getMonth());
-                        Log.e(TAG, "day: " + item.getDay());
-
-                        startActivity(intent);
-                    }
-                });
-                recycler_allUser.setAdapter(allUser_adapter);
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Throwable t) {
-
-            }
-        });
+        set_allUSerList("set first");
 
         all_view = view.findViewById(R.id.all_view);
         nearMe_view = view.findViewById(R.id.nearMe_view);
@@ -437,18 +387,6 @@ public class frag_community extends Fragment {
 
 
     public String getCurrentAddress( double latitude, double longitude) {
-        // geocoding: 주소나 지명을 좌표로 변환시키는 작업
-        // Geocoder: geocoding or reverst geocoding을 다루는 클래스
-        // A class for handling geocoding and reverse geocoding.
-        // The Geocoder class requires a backend service that is not included in the core android framework.
-        // The Geocoder query methods will return an empty list if there no backend service in the platform.
-        // Locale: object that represents a specific geographical, political, or cultural region.
-        // getDefault: getDefault 메소드는 JVM에 적용된 디폴트 세팅 값(Locale)을 출력
-
-        // 다른 언어로 정보를 받고 싶다면 Locale 객체를 직접 생성하면 됨
-        // Locale(String language, String country)
-        // Construct a locale from language and country.
-        // Locale locale = Locale.KOREA;
         Locale locale = Locale.ENGLISH;
         Geocoder geocoder = new Geocoder(getActivity(), locale);
 
@@ -550,6 +488,70 @@ public class frag_community extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<user_item>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void set_allUSerList(final String type){
+        retrofitClient = new RetrofitClient();
+        call_all_user = retrofitClient.service.get_allUserInfo(MainActivity.user_item.getUser_index());
+        call_all_user.enqueue(new Callback<ArrayList<com.example.canbefluent.items.user_item>>() {
+            @Override
+            public void onResponse(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Response<ArrayList<com.example.canbefluent.items.user_item>> response) {
+                ArrayList<user_item> result = response.body();
+                Log.e(TAG, "onResponse");
+                // 서버로부터 받아온 유저 리스트를 all_user_list에 담아준다.
+                // 리사이클러뷰에 all_user_list를 보여준다.
+                assert result != null;
+                all_user_list.addAll(result);
+                for(int i=0; i<all_user_list.size(); i++){
+                    if(all_user_list.get(i).getUser_id().equals(user_id)){
+                        all_user_list.remove(i);
+                        break;
+                    }
+                }
+
+                //recycler
+                recycler_allUser = view.findViewById(R.id.recycler_allUser);
+
+                recycler_allUser.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                // define an adapter
+                allUser_adapter = new userListAdapter(all_user_list);
+
+                // 유저를 클릭하면 해당 유저의 정보를 객체에 담아 유저 프로필 액티비티로 이동시킨다.
+                allUser_adapter.setOnItemClickListener(new userListAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View v, int position) {
+//                        Log.e(TAG, "user id: " + all_user_list.get(position).getUser_id());
+
+                        // 유저 리스트에서 선택한 유저의 정보를 담은 객체를 인텐트에 담는다.
+                        user_item item = all_user_list.get(position);
+                        Intent intent = new Intent(getActivity(), user_profile_activity.class);
+                        intent.putExtra("user item", item);
+                        Log.e(TAG, "first: " + item.getFirst_name());
+                        Log.e(TAG, "last: " + item.getLast_name());
+                        Log.e(TAG, "sex: " + item.getSex());
+                        Log.e(TAG, "profile: " + item.getProfile_img());
+//                        Log.e(TAG, "year: " + item.getYear());
+                        Log.e(TAG, "year: " + item.getYear());
+                        Log.e(TAG, "month: " + item.getMonth());
+                        Log.e(TAG, "day: " + item.getDay());
+
+                        startActivity(intent);
+                    }
+                });
+                recycler_allUser.setAdapter(allUser_adapter);
+
+                if(type.equals("refresh")){
+                    //새로고침 종료
+                    refreshLayout.setRefreshing(false);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Throwable t) {
 
             }
         });

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.canbefluent.items.img_item;
+import com.example.canbefluent.utils.MyApplication;
 
 public class ViewHolderPage extends RecyclerView.ViewHolder {
 

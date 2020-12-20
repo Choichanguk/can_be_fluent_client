@@ -9,11 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.ClipData;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -24,11 +21,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,29 +33,23 @@ import android.widget.Toast;
 
 import com.example.canbefluent.adapter.chatRoomAdapter;
 import com.example.canbefluent.items.msg_item;
-import com.example.canbefluent.items.user_item;
-import com.example.canbefluent.pojoClass.getAudioFile;
 import com.example.canbefluent.pojoClass.getImgList;
-import com.example.canbefluent.pojoClass.getMsgList;
 import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.pojoClass.getRoomList;
 import com.example.canbefluent.pojoClass.getStatus;
 import com.example.canbefluent.retrofit.RetrofitClient;
-import com.example.canbefluent.user_info.introduce_profile;
-
-import org.w3c.dom.Text;
+import com.example.canbefluent.utils.FileUtils;
+import com.example.canbefluent.utils.MyApplication;
+import com.example.canbefluent.utils.sharedPreference;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +93,7 @@ public class message_room extends AppCompatActivity {
     boolean isRunning=false;    // 어플 종료시 스레드 중지를 위해...
     Socket client_socket;     //클라이언트의 소켓
     ObjectInputStream ois;
-    sharedPreference sharedPreference = new sharedPreference();
+    com.example.canbefluent.utils.sharedPreference sharedPreference = new sharedPreference();
 
     MainActivity mainActivity = new MainActivity();
 //    user_item my_info = mainActivity.user_item;     // 내 아이디 정보를 담고 있는 객체

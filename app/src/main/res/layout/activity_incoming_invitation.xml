@@ -4,43 +4,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".IncomingInvitationActivity"
-    android:background="@drawable/background_meeting_invitation">
+    tools:context=".IncomingInvitationActivity">
 
-    <ImageView
-        android:id="@+id/imageMeetingType"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="64dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_videocam_24"
-        />
-
-    <TextView
-        android:id="@+id/textIncomingMeetingInvitation"
-        android:layout_width="401dp"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:gravity="center"
-        android:text="영상 통화"
-        android:textColor="#ffffff"
-        android:textSize="20sp"
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageMeetingType" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <org.webrtc.SurfaceViewRenderer
+            android:id="@+id/surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <org.webrtc.SurfaceViewRenderer
+            android:id="@+id/surface_view2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout8"
         android:layout_width="401dp"
         android:layout_height="0dp"
-        android:layout_marginTop="136dp"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textIncomingMeetingInvitation">
+        app:layout_constraintTop_toTopOf="@+id/frameLayout">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_img"
@@ -58,30 +64,38 @@
             android:textSize="25sp" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imageAcceptInvitation"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="92dp"
-        android:background="@drawable/background_accept_invitation"
-        android:tint="#ffffff"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="500dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.249"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout8"
-        app:srcCompat="@drawable/ic_accept" />
+        app:layout_constraintTop_toTopOf="@+id/frameLayout">
 
-    <ImageView
-        android:id="@+id/imageRejectInvitation"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="92dp"
-        android:background="@drawable/background_reject_invitation"
-        android:tint="#ffffff"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.747"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout8"
-        app:srcCompat="@drawable/ic_reject" />
+        <ImageView
+            android:id="@+id/imageAcceptInvitation"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/background_accept_invitation"
+            android:tint="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_accept" />
+
+        <ImageView
+            android:id="@+id/imageRejectInvitation"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="60dp"
+            android:background="@drawable/background_reject_invitation"
+            android:tint="#ffffff"
+            app:layout_constraintBottom_toBottomOf="@+id/imageAcceptInvitation"
+            app:layout_constraintStart_toEndOf="@+id/imageAcceptInvitation"
+            app:layout_constraintTop_toTopOf="@+id/imageAcceptInvitation"
+            app:srcCompat="@drawable/ic_reject" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

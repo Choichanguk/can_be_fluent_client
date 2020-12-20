@@ -10,16 +10,20 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.canbefluent.items.language_code_item;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.login_process.Login;
 import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.retrofit.RetrofitClient;
-import com.example.canbefluent.user_info.set_app_language;
+import com.example.canbefluent.utils.MyApplication;
+import com.example.canbefluent.utils.sharedPreference;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -28,7 +32,7 @@ import retrofit2.Response;
 
 public class splashActivity extends AppCompatActivity {
     private static final String TAG = "splashActivity";
-    sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
+    com.example.canbefluent.utils.sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
     boolean isLogin = false;
     String user_id, user_pw;
 
@@ -114,6 +118,30 @@ public class splashActivity extends AppCompatActivity {
                                     @Override
                                     public void onFailure(Call<getResult> call, Throwable t) {
                                         Log.e(TAG, "onFailure message: " + t.getMessage());
+                                    }
+                                });
+
+                        // 서버로 언어이름과 언어코드를 가져오는 통신
+
+                        retrofitClient.service.getLanguageNameCode()
+                                .enqueue(new Callback<ArrayList<language_code_item>>() {
+                                    @Override
+                                    public void onResponse(Call<ArrayList<language_code_item>> call, Response<ArrayList<language_code_item>> response) {
+                                        final ArrayList<language_code_item> list = response.body();
+
+                                        HashMap<String,String> lang_code_map = new HashMap<>();
+                                        for (int i = 0; i < list.size(); i++){
+                                            lang_code_map.put(list.get(i).getLang_code(), list.get(i).getLang_name() + " (" + list.get(i).getLang_ko_name() + ")");
+                                        }
+
+                                        MyApplication.list = list;
+                                        MyApplication.lang_code_map = lang_code_map;
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ArrayList<language_code_item>> call, Throwable t) {
+                                        Log.e(TAG, "onFailure: " + t.getMessage());
                                     }
                                 });
                     }

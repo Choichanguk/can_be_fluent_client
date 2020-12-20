@@ -17,7 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.canbefluent.MyApplication;
+import com.example.canbefluent.utils.MyApplication;
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.msg_item;
 

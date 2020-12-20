@@ -43,45 +43,49 @@
 
     </LinearLayout>
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/all_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="@+id/nearMe_view"
-            app:layout_constraintEnd_toEndOf="@+id/nearMe_view"
-            app:layout_constraintStart_toStartOf="@+id/nearMe_view"
-            app:layout_constraintTop_toTopOf="@+id/nearMe_view">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_allUser"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/nearMe_view"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            >
 
             <LinearLayout
+                android:id="@+id/all_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="@+id/nearMe_view"
+                app:layout_constraintEnd_toEndOf="@+id/nearMe_view"
+                app:layout_constraintStart_toStartOf="@+id/nearMe_view"
+                app:layout_constraintTop_toTopOf="@+id/nearMe_view">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_allUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/nearMe_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
 
                     <TextView
@@ -92,42 +96,45 @@
                         android:layout_gravity="center"/>
 
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="10dp">
-
-                    <TextView
-                        android:id="@+id/address"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="20dp"
                         android:layout_gravity="center"
-                        android:text="Osan-si, Korea, Republic Of"
-                        android:textStyle="bold"/>
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="10dp">
 
-                    <ImageButton
-                        android:layout_marginLeft="5dp"
-                        android:id="@+id/btn_refresh"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:adjustViewBounds="true"
-                        android:background="@drawable/btn_shape"
-                        android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_baseline_refresh_24" />
+                        <TextView
+                            android:id="@+id/address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:text="Osan-si, Korea, Republic Of"
+                            android:textStyle="bold"/>
+
+                        <ImageButton
+                            android:layout_marginLeft="5dp"
+                            android:id="@+id/btn_refresh"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/btn_shape"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/ic_baseline_refresh_24" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_NearUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
             </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_NearUser"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

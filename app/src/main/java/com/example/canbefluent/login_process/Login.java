@@ -14,13 +14,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.canbefluent.MainActivity;
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.retrofit.RetrofitClient;
-import com.example.canbefluent.sharedPreference;
+import com.example.canbefluent.utils.sharedPreference;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

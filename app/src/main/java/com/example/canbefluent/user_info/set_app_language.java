@@ -6,24 +6,21 @@ import androidx.core.app.ActivityCompat;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
 import com.example.canbefluent.R;
-import com.example.canbefluent.items.user_item;
-import com.example.canbefluent.sharedPreference;
+import com.example.canbefluent.utils.sharedPreference;
 import com.example.canbefluent.splashActivity;
 
 public class set_app_language extends AppCompatActivity {
     ImageButton btn_back;
     String language_code;
     RadioButton english, korean, japanese;
-    com.example.canbefluent.sharedPreference sharedPreference = new sharedPreference();
+    com.example.canbefluent.utils.sharedPreference sharedPreference = new sharedPreference();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

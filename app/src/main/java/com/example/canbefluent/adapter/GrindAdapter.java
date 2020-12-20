@@ -6,11 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.canbefluent.GridItemView;
-import com.example.canbefluent.MyApplication;
-import com.example.canbefluent.R;
+import com.example.canbefluent.utils.MyApplication;
 import com.example.canbefluent.items.img_item;
 
 import java.util.ArrayList;

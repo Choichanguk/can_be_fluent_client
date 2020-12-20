@@ -10,13 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
-import com.example.canbefluent.MyApplication;
+import com.example.canbefluent.utils.MyApplication;
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.img_item;
 
 import java.util.ArrayList;
-
-import me.relex.circleindicator.CircleIndicator;
 
 public class viewpager_adapter extends PagerAdapter {
     private LayoutInflater inflater;

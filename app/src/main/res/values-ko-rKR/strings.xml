@@ -44,4 +44,6 @@
     <string name="translate_msg">번역</string>
     <string name="option">옵션</string>
     <string name="correct">수정</string>
+    <string name="NATIVE">모국어:</string>
+    <string name="PRACTICE">학습언어:</string>
 </resources>

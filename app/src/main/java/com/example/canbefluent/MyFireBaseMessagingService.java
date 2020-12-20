@@ -15,6 +15,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.retrofit.RetrofitClient;
+import com.example.canbefluent.user_info.show_follow_activity;
+import com.example.canbefluent.utils.Constants;
+import com.example.canbefluent.utils.sharedPreference;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -79,13 +82,13 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             Log.e("FCM", "type null");
             Map<String, String> messageData = remoteMessage.getData();
 
-            Log.e(TAG, "data: " + messageData);
+//            Log.e(TAG, "data: " + messageData);
 
             sendNotification(messageData.get("Nick"), messageData.get("body"), messageData.get("room_index"));
 
-            Log.e(TAG, "nick: " + messageData.get("Nick"));
-            Log.e(TAG, "body: " + messageData.get("body"));
-            Log.e(TAG, "room_index: " + messageData.get("room_index"));
+//            Log.e(TAG, "nick: " + messageData.get("Nick"));
+//            Log.e(TAG, "body: " + messageData.get("body"));
+//            Log.e(TAG, "room_index: " + messageData.get("room_index"));
         }
     }
     // [END receive_message]
@@ -100,7 +103,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
      */
     @Override
     public void onNewToken(String token) {
-        Log.e(TAG, "Refreshed token: " + token);
+//        Log.e(TAG, "Refreshed token: " + token);
         // 앱을 켤때마다 실행된다.
 
         // If you want to send messages to this application instance or

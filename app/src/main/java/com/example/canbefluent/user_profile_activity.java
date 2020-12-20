@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,10 +16,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.canbefluent.items.user_item;
-import com.example.canbefluent.pojoClass.getChatList;
 import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.pojoClass.getRoomList;
 import com.example.canbefluent.retrofit.RetrofitClient;
+import com.example.canbefluent.utils.Constants;
+import com.example.canbefluent.utils.MyApplication;
+import com.example.canbefluent.utils.sharedPreference;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,7 +46,7 @@ public class user_profile_activity extends AppCompatActivity {
 
     RetrofitClient retrofitClient;
     Call<ArrayList<getRoomList>> call;
-    sharedPreference sharedPreference = new sharedPreference();
+    com.example.canbefluent.utils.sharedPreference sharedPreference = new sharedPreference();
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -89,11 +90,14 @@ public class user_profile_activity extends AppCompatActivity {
 
         // 필수 언어 세팅
         native_lang1 = findViewById(R.id.native_lang1);
-        native_lang1.setText(user_item.getNative_lang1());
+//        native_lang1.setText(user_item.getNative_lang1());
         practice_lang1 = findViewById(R.id.practice_lang1);
-        practice_lang1.setText(user_item.getPractice_lang1());
+//        practice_lang1.setText(user_item.getPractice_lang1());
         practice_lang1_level = findViewById(R.id.practice_lang1_level);
         practice_lang1_level.setText(user_item.getPractice_lang1_level());
+
+        native_lang1.setText(MyApplication.lang_code_map.get(user_item.getNative_lang1()));
+        practice_lang1.setText(MyApplication.lang_code_map.get(user_item.getPractice_lang1()));
 
         linearLayout = findViewById(R.id.linearLayout5);
 
