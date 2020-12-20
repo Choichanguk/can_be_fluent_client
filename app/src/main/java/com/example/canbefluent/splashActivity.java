@@ -34,7 +34,7 @@ public class splashActivity extends AppCompatActivity {
     private static final String TAG = "splashActivity";
     com.example.canbefluent.utils.sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
     boolean isLogin = false;
-    String user_id, user_pw;
+    String user_id, user_pw,  hhhhh;
 
     // 쉐어드에 저장되어있는 로그인 상태를 가져온다.
     // 로그인 상태가 true값이면 쉐어드로부터 id, pw 도 불러온다.
