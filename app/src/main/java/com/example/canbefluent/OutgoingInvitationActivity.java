@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +20,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.canbefluent.app_rtc_sample.source.EglRenderer;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.retrofit.RetrofitClient;
 import com.example.canbefluent.tutorial.SimpleSdpObserver;
 import com.example.canbefluent.utils.Constants;
 import com.example.canbefluent.utils.MyApplication;
 import com.example.canbefluent.utils.sharedPreference;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.face.FaceDetector;
+import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +52,7 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
-import org.webrtc.SurfaceViewRenderer;
+//import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoRenderer;
 import org.webrtc.VideoSource;
@@ -52,6 +62,7 @@ import org.webrtc.voiceengine.WebRtcAudioUtils;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.socket.client.IO;
@@ -70,10 +81,12 @@ import static io.socket.client.Socket.EVENT_DISCONNECT;
 import static org.webrtc.SessionDescription.Type.ANSWER;
 import static org.webrtc.SessionDescription.Type.OFFER;
 
+import com.example.canbefluent.app_rtc_sample.source.SurfaceViewRenderer;
+
 public class OutgoingInvitationActivity extends AppCompatActivity {
     private static final String TAG = "OutgoingActivity";
     AudioManager audioManager;
-
+    
     /**
      * web rtc 관련 변수
      */
@@ -97,7 +110,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
     private SurfaceViewRenderer surfaceView_local;
     private SurfaceViewRenderer surfaceView_remote;
 
-
+    MediaStream localStream;
 
 
 
@@ -124,18 +137,45 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
 
         final String meetingType = getIntent().getStringExtra("type");
 
-//        if(meetingType != null){
-//            if(meetingType.equals("video")){
-//                imageMeetingType.setImageResource(R.drawable.ic_baseline_videocam_24);
-//            }
-//        }
-
         CircleImageView profileImg = findViewById(R.id.profile_img);
         TextView userName = findViewById(R.id.user_name);
 
         surfaceView_local = findViewById(R.id.surface_view);
         surfaceView_remote = findViewById(R.id.surface_view2);
         userInfo_view = findViewById(R.id.linearLayout8);
+
+        /**
+         * real time face detector 모델 옵션 객체 생성
+         */
+        FaceDetectorOptions realTimeOpts =
+                new FaceDetectorOptions.Builder()
+                        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+                        .build();
+
+        /**
+         * face detector 모델 생성
+         */
+        FaceDetector detector = FaceDetection.getClient(realTimeOpts);
+
+        /**
+         * surfaceView_local로부터 bitmap을 가져온다.
+         */
+//        surfaceView_local.addFrameListener(bitmap -> {
+//            Log.e("addFrameListener", String.valueOf(bitmap));
+//
+//            // 파라미터: bitmap, rotation degree
+//            InputImage image = InputImage.fromBitmap(bitmap, 0);
+//
+//            processImage(image, detector);
+////            processAndRecognize(bitmap);
+//        }, 1.f);
+
+        surfaceView_local.addFrameListener(new EglRenderer.FrameListener() {
+            @Override
+            public void onFrame(Bitmap bitmap) {
+                Log.e("addFrameListener", String.valueOf(bitmap));
+            }
+        }, 1.f);
 
         /**
          * user_item에 담긴 유저 정보를 세팅해준다. (상대방 user item)
@@ -201,9 +241,6 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
 
             body.put(Constants.REMOTE_MSG_DATA, data);
             body.put("to", receiverToken);
-//            Log.e("initiateMeeting", "data: " + data);
-//            Log.e("initiateMeeting", "data: " + data);
-//            Log.e("initiateMeeting", "body: " + body);
 
             sendRemoteMessage(body.toString(), Constants.REMOTE_MSG_INVITATION);
 
@@ -301,6 +338,27 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
         );
     }
 
+    public void processImage(InputImage image, FaceDetector detector){
+        Task<List<Face>> result =
+                detector.process(image)
+                        .addOnSuccessListener(
+                                new OnSuccessListener<List<Face>>() {
+                                    @Override
+                                    public void onSuccess(List<Face> faces) {
+                                        // Task completed successfully
+                                        Log.e("processImage", "이미지 처리 성공");
+                                    }
+                                })
+                        .addOnFailureListener(
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Task failed with an exception
+                                        Log.e("processImage", "이미지 처리 실패");
+                                    }
+                                });
+    }
+
 
     /**
      * web rtc 관련 메서드
@@ -386,7 +444,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
      * localStream을 RTCPeerConnection에 추가해준다.
      */
     private void startStreamingVideo() {
-        MediaStream localStream = factory.createLocalMediaStream("ARDAMS");
+        localStream = factory.createLocalMediaStream("ARDAMS");
         localStream.addTrack(localAudioTrack);
         localStream.addTrack(localVideoTrack);
 
@@ -719,6 +777,10 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
             sendMessage("bye");
             socket.disconnect();
         }
+
+
+        peerConnection.removeStream(localStream);
+        peerConnection.close();
         super.onDestroy();
     }
 

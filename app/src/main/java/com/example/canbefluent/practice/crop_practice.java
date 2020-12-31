@@ -1,9 +1,5 @@
 package com.example.canbefluent.practice;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,6 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.example.canbefluent.ImageResizeUtils;
 import com.example.canbefluent.R;

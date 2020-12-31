@@ -1,9 +1,11 @@
 package com.example.canbefluent;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -23,7 +25,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -33,6 +37,7 @@ import com.example.canbefluent.adapter.userListAdapter;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.practice.GpsTracker;
 import com.example.canbefluent.retrofit.RetrofitClient;
+import com.example.canbefluent.utils.MyApplication;
 import com.example.canbefluent.utils.sharedPreference;
 
 import java.io.IOException;
@@ -58,6 +63,8 @@ public class frag_community extends Fragment {
     RetrofitClient retrofitClient;
     Call<ArrayList<user_item>> call_all_user, call_near_user;
 
+    MainActivity instance = new MainActivity();
+
     /**
      * gps 관련 변수
      */
@@ -73,16 +80,28 @@ public class frag_community extends Fragment {
 
     String user_id;
     com.example.canbefluent.utils.sharedPreference sharedPreference;
+
+//    frag_randomCall.e;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
 
         view =  inflater.inflate(R.layout.fragment_community, container, false);
+
+//        if(MainActivity.socket != null){
+//            instance.visible_floating_view("visible");
+//        }
+//        else{
+//            instance.visible_floating_view("gone");
+//        }
+
         address_view = view.findViewById(R.id.address);
         all_user_list = new ArrayList<>();
         near_user_list = new ArrayList<>();
         Log.e(TAG, "onCreateView");
+
+
 
         sharedPreference = new sharedPreference();
         user_id = sharedPreference.loadUserId(getContext());    // 쉐어드에 저장된 유저의 id를 가져온다.
@@ -200,11 +219,6 @@ public class frag_community extends Fragment {
         Log.e(TAG, "onActivityCreated");
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.e(TAG, "onStart");
-    }
 
     @Override
     public void onResume() {
@@ -216,12 +230,6 @@ public class frag_community extends Fragment {
     public void onPause() {
         super.onPause();
         Log.e(TAG, "onPause");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.e(TAG, "onStop");
     }
 
     @Override
@@ -500,6 +508,7 @@ public class frag_community extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Response<ArrayList<com.example.canbefluent.items.user_item>> response) {
                 ArrayList<user_item> result = response.body();
+                MyApplication.user_list = result;
                 Log.e(TAG, "onResponse");
                 // 서버로부터 받아온 유저 리스트를 all_user_list에 담아준다.
                 // 리사이클러뷰에 all_user_list를 보여준다.
@@ -557,4 +566,58 @@ public class frag_community extends Fragment {
         });
     }
 
+
+    private BroadcastReceiver invitationResponseReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String type = intent.getStringExtra("type");
+            if(type.equals("find candidate")){
+                user_item item = (user_item) intent.getSerializableExtra("user item");
+
+                for (Fragment fragment: getActivity().getSupportFragmentManager().getFragments()) {
+                    if (fragment.isVisible()) {
+                        Log.e(TAG, "for문 실행");
+                        if(fragment instanceof frag_community){
+
+//                            e = new random_call_dialog(name, profile);
+                            frag_randomCall.e.show(getFragmentManager(), random_call_dialog.TAG_DIALOG);
+                        }
+                    }
+                }
+            }
+            else if(type.equals("cancel")){
+
+                frag_randomCall.e.dismissDialog();
+                Toast.makeText(getActivity(), "상대방이 매칭을 취소했습니다.", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
+                invitationResponseReceiver,
+                new IntentFilter("random call")
+        );
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(
+                invitationResponseReceiver
+        );
+    }
+
+
+    private void openDialog(String lang_code, String type) {
+
+        DialogFragment myDialogFragment = new MyDialogFragment(lang_code, type);
+
+        myDialogFragment.setTargetFragment(this, 0);
+
+        myDialogFragment.show(getFragmentManager(), "Search Filter");
+
+    }
 }

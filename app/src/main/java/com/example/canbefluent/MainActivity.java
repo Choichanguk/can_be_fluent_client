@@ -1,10 +1,13 @@
 package com.example.canbefluent;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.canbefluent.items.user_item;
@@ -23,6 +28,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+
+import static io.socket.client.Socket.EVENT_CONNECT;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -39,12 +51,31 @@ public class MainActivity extends AppCompatActivity {
     String url_file = "";
 
     Button btn_exam;
+    public static ConstraintLayout search_floating_view;
+    public static boolean isSearching = false;
+
+    public static Socket socket;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 랜덤통화 상대 찾기 플로팅 뷰
+        search_floating_view = findViewById(R.id.search_floating_view);
+        search_floating_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                title.setText(R.string.random_call);
+                if(frag_community != null) getSupportFragmentManager().beginTransaction().hide(frag_community).commit();
+                if(frag_chats != null) getSupportFragmentManager().beginTransaction().hide(frag_chats).commit();
+                if(frag_randomCall != null) getSupportFragmentManager().beginTransaction().show(frag_randomCall).commit();
+            }
+        });
+
+        ProgressBar progressBar = findViewById(R.id.indeterminateBar);
 
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -60,19 +91,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "token: " + token);
                     }
                 });
-
-
-//        /**
-//         * 브로드캐스트 리시버 등록
-//         */
-//        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
-//                new IntentFilter("blackJinData"));
-
-//        /**
-//         * client socket service 실행
-//         */
-//        Intent service_intent = new Intent(MainActivity.this, socket_service.class);
-//        startService(service_intent);
 
         Intent intent = getIntent();
         user_item = (user_item) intent.getSerializableExtra("user item");
@@ -125,8 +143,6 @@ public class MainActivity extends AppCompatActivity {
 
         //프래그먼트 생성
         frag_community = new frag_community();
-        frag_chats = new frag_chats();
-        frag_randomCall = new frag_randomCall();
 
         //제일 처음 띄워줄 뷰를 세팅해줍니다. commit();까지 해줘야 합니다.
         getSupportFragmentManager().beginTransaction().replace(R.id.Main_Frame,frag_community).commitAllowingStateLoss();
@@ -140,17 +156,41 @@ public class MainActivity extends AppCompatActivity {
                     //menu_bottom.xml에서 지정해줬던 아이디 값을 받아와서 각 아이디값마다 다른 이벤트를 발생시킵니다.
                     case R.id.community: {
                         title.setText(R.string.community);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.Main_Frame, frag_community).commitAllowingStateLoss();
+                        if(frag_community == null) {
+
+                            frag_community = new frag_community();
+                            getSupportFragmentManager().beginTransaction().add(R.id.Main_Frame, frag_community).commit();
+                        }
+
+                        if(frag_community != null) getSupportFragmentManager().beginTransaction().show(frag_community).commit();
+                        if(frag_chats != null) getSupportFragmentManager().beginTransaction().hide(frag_chats).commit();
+                        if(frag_randomCall != null) getSupportFragmentManager().beginTransaction().hide(frag_randomCall).commit();
                         return true;
                     }
                     case R.id.chats: {
                         title.setText(R.string.chat);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.Main_Frame, frag_chats).commitAllowingStateLoss();
+                        if(frag_chats == null) {
+                            frag_chats = new frag_chats();
+                            getSupportFragmentManager().beginTransaction().add(R.id.Main_Frame, frag_chats).commit();
+                        }
+
+                        if(frag_community != null) getSupportFragmentManager().beginTransaction().hide(frag_community).commit();
+                        if(frag_chats != null) getSupportFragmentManager().beginTransaction().show(frag_chats).commit();
+                        if(frag_randomCall != null) getSupportFragmentManager().beginTransaction().hide(frag_randomCall).commit();
+
                         return true;
+
                     }
                     case R.id.random_call: {
                         title.setText(R.string.random_call);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.Main_Frame, frag_randomCall).commitAllowingStateLoss();
+                        if(frag_randomCall == null) {
+                            frag_randomCall = new frag_randomCall();
+                            getSupportFragmentManager().beginTransaction().add(R.id.Main_Frame, frag_randomCall).commit();
+                        }
+
+                        if(frag_community != null) getSupportFragmentManager().beginTransaction().hide(frag_community).commit();
+                        if(frag_chats != null) getSupportFragmentManager().beginTransaction().hide(frag_chats).commit();
+                        if(frag_randomCall != null) getSupportFragmentManager().beginTransaction().show(frag_randomCall).commit();
                         return true;
                     }
                     default:
@@ -159,6 +199,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
 
     }
 
@@ -177,4 +220,48 @@ public class MainActivity extends AppCompatActivity {
                 .load(url + user_item.getProfile_img())
                 .into(profile_img);
     }
+
+    public void connect(String native_lang_code, String practice_lang_code){
+        try {
+            socket = IO.socket("http://canbefluent.xyz:8888/");
+            socket.on(EVENT_CONNECT, args -> {
+                Log.e(TAG, "connect 이벤트");
+                // 소켓 연결 후 유저의 정보를 서버로 넘겨준다.
+                socket.emit("set info", MainActivity.user_item.getUser_index(), native_lang_code, practice_lang_code);
+                socket.emit("create or join", "foo");
+            }).on("show dialog", args -> {
+                Log.e(TAG, "show dialog 이벤트 발생");
+            });
+            socket.connect();
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect(){
+        if (socket != null) {
+            sendMessage("bye");
+            socket.disconnect();
+            socket = null;
+
+        }
+    }
+
+    private void sendMessage(Object message) {
+        Log.e(TAG, "sendMessage");
+        socket.emit("message", message);
+    }
+
+    public void visible_floating_view(String status){
+        if(status.equals("visible")){
+            search_floating_view.setVisibility(View.VISIBLE);
+        }
+        else if(status.equals("gone")){
+            search_floating_view.setVisibility(View.GONE);
+        }
+
+    }
+
+
 }

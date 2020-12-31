@@ -1,6 +1,9 @@
 package com.example.canbefluent;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +13,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,11 +41,20 @@ public class frag_chats extends Fragment {
 
     String user_index = MainActivity.user_item.getUser_index();
 
+    MainActivity instance = new MainActivity();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         view = inflater.inflate(R.layout.fragment_chats,container,false);
+
+//        if(MainActivity.socket != null){
+//            instance.visible_floating_view("visible");
+//        }
+//        else{
+//            instance.visible_floating_view("gone");
+//        }
 
         /**
          * 서버로부터 모든 채팅방의 목록을 불러온다.
@@ -89,5 +103,59 @@ public class frag_chats extends Fragment {
         });
 
         return view;
+    }
+
+    private BroadcastReceiver invitationResponseReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String type = intent.getStringExtra("type");
+            if(type.equals("find candidate")){
+                String name = intent.getStringExtra("name");
+                String profile = intent.getStringExtra("profile");
+                Log.e(TAG, "test name: " + name);
+
+                for (Fragment fragment: getActivity().getSupportFragmentManager().getFragments()) {
+                    if (fragment.isVisible()) {
+                        Log.e(TAG, "for문 실행");
+                        if(fragment instanceof frag_chats){
+
+                            frag_randomCall.e.show(getFragmentManager(), random_call_dialog.TAG_DIALOG);
+                        }
+                    }
+                }
+            }
+            else if(type.equals("cancel")){
+
+                frag_randomCall.e.dismissDialog();
+                Toast.makeText(getActivity(), "상대방이 매칭을 취소했습니다.", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
+                invitationResponseReceiver,
+                new IntentFilter("random call")
+        );
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(
+                invitationResponseReceiver
+        );
+    }
+
+    private void openDialog(String lang_code, String type) {
+
+        DialogFragment myDialogFragment = new MyDialogFragment(lang_code, type);
+
+        myDialogFragment.setTargetFragment(this, 0);
+
+        myDialogFragment.show(getFragmentManager(), "Search Filter");
+
     }
 }

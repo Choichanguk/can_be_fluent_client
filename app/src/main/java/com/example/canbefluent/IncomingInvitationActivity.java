@@ -2,6 +2,7 @@ package com.example.canbefluent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
@@ -9,16 +10,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.canbefluent.app_rtc_sample.source.EglRenderer;
+import com.example.canbefluent.databinding.ActivityIncomingInvitationBinding;
+import com.example.canbefluent.ml_kit.FaceContourGraphic;
+import com.example.canbefluent.practice.OutgoingInvitationActivity2;
 import com.example.canbefluent.retrofit.RetrofitClient;
 import com.example.canbefluent.tutorial.SimpleSdpObserver;
 import com.example.canbefluent.utils.Constants;
@@ -42,8 +51,9 @@ import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
+import org.webrtc.RendererCommon;
 import org.webrtc.SessionDescription;
-import org.webrtc.SurfaceViewRenderer;
+//import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoRenderer;
 import org.webrtc.VideoSource;
@@ -53,6 +63,7 @@ import org.webrtc.voiceengine.WebRtcAudioUtils;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.socket.client.IO;
@@ -70,6 +81,15 @@ import static io.socket.client.Socket.EVENT_CONNECT;
 import static io.socket.client.Socket.EVENT_DISCONNECT;
 import static org.webrtc.SessionDescription.Type.ANSWER;
 import static org.webrtc.SessionDescription.Type.OFFER;
+
+import com.example.canbefluent.app_rtc_sample.source.SurfaceViewRenderer;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.face.FaceDetector;
+import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 public class IncomingInvitationActivity extends AppCompatActivity {
     private static final String TAG = "IncomingActivity";
@@ -95,39 +115,139 @@ public class IncomingInvitationActivity extends AppCompatActivity {
     private PeerConnectionFactory factory;
     private VideoTrack videoTrackFromCamera;
 
-    private SurfaceViewRenderer surfaceView_local;
-    private SurfaceViewRenderer surfaceView_remote;
+    MediaStream mediaStream;
+
+//    private SurfaceViewRenderer surfaceView_local;
+//    private SurfaceViewRenderer surfaceView_remote;
 
     RetrofitClient retrofitClient;
-    LinearLayout userInfo_view;
+//    LinearLayout userInfo_view;
+
+    ActivityIncomingInvitationBinding binding;
+
+    /**
+     * 마스크 기능 관련 변수 & 메서드
+     */
+    EglRenderer.FrameListener frameListener_remote;
+    EglRenderer.FrameListener frameListener_local;
+    boolean isFrameListen = false;
+    int bitmap_count = 1;
+
+    FaceContourGraphic faceGraphic_mask;
+    FaceContourGraphic faceGraphic_beard;
+
+    int local_view_width;
+    int local_view_height;
+    int remote_view_width;
+    int remote_view_height;
+
+    String remote_mask_type;
+    String local_mask_type;
+
+    FaceDetector detector;
+
+    FaceDetectorOptions realTimeOpts;
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getScreenHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
+    }
+
+    /**
+     * 레이아웃 크기를 구해주
+     * @param hasFocus
+     */
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        remote_view_width = binding.frame2.getWidth();
+        remote_view_height = binding.frame2.getHeight();
+        local_view_width = binding.frameLayout.getWidth();
+        local_view_height = binding.frameLayout.getHeight();
+        Log.e(TAG, "리모트뷰 크기: ("+remote_view_width+", " + remote_view_height+")" );
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_incoming_invitation);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-        String meetingType = getIntent().getStringExtra(Constants.REMOTE_MSG_MEETING_TYPE);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_incoming_invitation);
+        binding.maskOptionView.setVisibility(View.GONE);
 
+
+
+
+
+        /**
+         * 영상 통화 시 스피커 설정 (스피커 on, 에코 캔슬링)
+         */
         audioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
         setSpeakerphoneOn(true);
         WebRtcAudioUtils.setWebRtcBasedAcousticEchoCanceler(true);
 
-        CircleImageView profile = findViewById(R.id.profile_img);
-        TextView user_name = findViewById(R.id.user_name);
 
+        /**
+         * 유저 정보 세팅
+         */
         String profile_url = MyApplication.server_url + "/profile_img/" + getIntent().getStringExtra("user profile");
         String userName = getIntent().getStringExtra("user name");
         Log.e("IncomingInvitation", "profile_url: " + profile_url);
         Glide.with(this)
                 .load(profile_url)
-                .into(profile);
+                .into(binding.profileImg);
 
-        user_name.setText(userName);
+        binding.userName.setText(userName);
 
-        surfaceView_local = findViewById(R.id.surface_view);
-        surfaceView_remote = findViewById(R.id.surface_view2);
+        /**
+         * real time face detector 모델 옵션 객체 생성
+         */
+        realTimeOpts =
+                new FaceDetectorOptions.Builder()
+                        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+                        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+                        .setMinFaceSize(0.9f)
+                        .build();
 
-        userInfo_view = findViewById(R.id.linearLayout8);
+        /**
+         * face detector 모델 생성
+         */
+        detector = FaceDetection.getClient(realTimeOpts);
+
+        initializeSurfaceViews(); // surfaceView 초기화
+
+        /**
+         * 탐지된 얼굴 위치에 마스크를 그려주는 클래스의 객체생성
+         */
+        faceGraphic_mask = new FaceContourGraphic(binding.graphicOverlay, IncomingInvitationActivity.this, "sunglasses");
+        faceGraphic_beard = new FaceContourGraphic(binding.graphicOverlay, IncomingInvitationActivity.this, "beard");
+
+        /**
+         * surfaceViewRenderer 프레임을 가져올 수 있는 리스너
+         */
+        frameListener_remote = new EglRenderer.FrameListener() {
+            @Override
+            public void onFrame(Bitmap var1) {
+                if(bitmap_count == 1){
+                    Log.e(TAG, "count 성공");
+                    faceGraphic_mask.setScale(var1.getWidth(), var1.getHeight());
+                    faceGraphic_beard.setScale(var1.getWidth(), var1.getHeight());
+//                    Bitmap resizedBmp = Bitmap.createScaledBitmap(var1, remote_view_width, remote_view_height, false);
+                }
+
+                if(bitmap_count % 4 == 0){
+                    InputImage image = InputImage.fromBitmap(var1, 0);
+                    processImage(image, detector);
+                }
+
+                bitmap_count++;
+            }
+        };
 
         // video rendering 시작
         start();
@@ -135,15 +255,17 @@ public class IncomingInvitationActivity extends AppCompatActivity {
         /**
          * 통화 요청 수락 버튼
          */
-        ImageView imageAcceptInvitation = findViewById(R.id.imageAcceptInvitation);
-        imageAcceptInvitation.setOnClickListener(new View.OnClickListener() {
+//        ImageView imageAcceptInvitation = findViewById(R.id.imageAcceptInvitation);
+
+        binding.imageAcceptInvitation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendInvitationResponse(Constants.REMOTE_MSG_INVITATION_ACCEPTED,
                 getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN));
 
-                userInfo_view.setVisibility(View.GONE);
-                imageAcceptInvitation.setVisibility(View.GONE);
+                binding.linearLayout8.setVisibility(View.GONE);
+                binding.imageAcceptInvitation.setVisibility(View.GONE);
+                binding.maskOptionView.setVisibility(View.VISIBLE);
                 connectToSignallingServer();
                 startStreamingVideo();
             }
@@ -161,6 +283,108 @@ public class IncomingInvitationActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * 안경 씌우기 버튼
+         */
+        binding.sunglasses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                faceGraphic_mask.setViewScale(local_view_width, local_view_height);
+                local_mask_type = "sunglasses";
+                if(!isFrameListen){
+                    binding.surfaceView.addFrameListener(frameListener_remote, 1.f);
+                    isFrameListen = true;
+                }
+
+            }
+        });
+
+        /**
+         * 턱수염 씌우기 버튼
+         */
+        binding.beard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                faceGraphic_beard.setViewScale(local_view_width, local_view_height);
+                local_mask_type = "beard";
+                if(!isFrameListen){
+                    binding.surfaceView.addFrameListener(frameListener_remote, 1.f);
+                    isFrameListen = true;
+                }
+            }
+        });
+
+        /**
+         * 마스크 씌우기 취소 버튼
+         */
+        binding.cancelMask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isFrameListen){
+                    Log.e(TAG, "프레임 리스너 제거");
+                    binding.surfaceView.removeFrameListener(frameListener_local);
+                    detector.close();
+                    isFrameListen = false;
+                    binding.graphicOverlay.clear();
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 이미지 detection 시작 메서드
+     * @param image
+     * @param detector
+     */
+    public void processImage(InputImage image, FaceDetector detector){
+
+        detector.process(image)
+                .addOnSuccessListener(
+                        new OnSuccessListener<List<Face>>() {
+                            @Override
+                            public void onSuccess(List<Face> faces) {
+                                // Task completed successfully
+                                Log.e("processImage", "이미지 처리 성공");
+                                processFaceContourDetectionResult(faces);
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Task failed with an exception
+                                Log.e("processImage", "이미지 처리 실패");
+                            }
+                        });
+    }
+
+    /**
+     * 모델이 탐지한 결과를 처리해주는 메서드 (Image overlay)
+     * @param faces
+     */
+    private void processFaceContourDetectionResult(List<Face> faces) {
+        Log.e(TAG, "탐지한 얼굴개수: " + faces.size());
+        // Task completed successfully
+        if (faces.size() == 0) {
+            Log.e(TAG, "No face found");
+            return;
+        }
+        binding.graphicOverlay2.clear();
+//        for (int i = 0; i < faces.size(); ++i) {
+        Face face = faces.get(0);
+
+        if(remote_mask_type.equals("sunglasses"))
+        {
+            binding.graphicOverlay2.add(faceGraphic_mask);
+            faceGraphic_mask.updateFace(face);
+        }
+        else if(remote_mask_type.equals("beard")){
+            binding.graphicOverlay2.add(faceGraphic_beard);
+            faceGraphic_beard.updateFace(face);
+        }
+
+//        }
     }
 
     private void sendInvitationResponse(String type, String receiverToken){
@@ -274,7 +498,7 @@ public class IncomingInvitationActivity extends AppCompatActivity {
 //            startStreamingVideo();
 
 
-            initializeSurfaceViews();
+//            initializeSurfaceViews();
 
             initializePeerConnectionFactory();
 
@@ -376,6 +600,45 @@ public class IncomingInvitationActivity extends AppCompatActivity {
                 public void call(Object... args) {
                     Log.d(TAG, "connectToSignallingServer: disconnect");
                 }
+            }).on("mask", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    String message = (String) args[0];
+                    Log.e(TAG, "mask 메시지: " + message);
+                    if(message.equals("sunglasses")){
+                        if(detector == null){
+                            detector = FaceDetection.getClient(realTimeOpts);
+                        }
+                        faceGraphic_mask.setViewScale(remote_view_width, remote_view_height);
+                        remote_mask_type = "sunglasses";
+                        if(!isFrameListen){
+                            binding.surfaceView2.addFrameListener(frameListener_remote, 1f);
+                            isFrameListen = true;
+                        }
+                    }
+                    else if(message.equals("beard")){
+                        if(detector == null){
+                            detector = FaceDetection.getClient(realTimeOpts);
+                        }
+                        faceGraphic_beard.setViewScale(remote_view_width, remote_view_height);
+                        remote_mask_type = "beard";
+                        if(!isFrameListen){
+                            binding.surfaceView2.addFrameListener(frameListener_remote, 1f);
+                            isFrameListen = true;
+                        }
+                    }
+                    else if(message.equals("cancel")){
+                        Log.e(TAG, "프레임 리스너 제거");
+                        binding.surfaceView2.removeFrameListener(frameListener_remote);
+                        if(detector != null){
+                            detector.close();
+                            detector = null;
+                        }
+                        isFrameListen = false;
+                        binding.graphicOverlay2.clear();
+                    }
+
+                }
             });
             socket.connect();
         } catch (URISyntaxException e) {
@@ -436,13 +699,19 @@ public class IncomingInvitationActivity extends AppCompatActivity {
 
     private void initializeSurfaceViews() {
         rootEglBase = EglBase.create();
-        surfaceView_local.init(rootEglBase.getEglBaseContext(), null);
-        surfaceView_local.setEnableHardwareScaler(true);
-        surfaceView_local.setMirror(true);
 
-        surfaceView_remote.init(rootEglBase.getEglBaseContext(), null);
-        surfaceView_remote.setEnableHardwareScaler(true);
-        surfaceView_remote.setMirror(true);
+        //binding.frameLayout.setPosition(0, 0, 100, 100);
+        binding.surfaceView.init(rootEglBase.getEglBaseContext(), null);
+        binding.surfaceView.setEnableHardwareScaler(true);
+        binding.surfaceView.setMirror(true);
+        binding.surfaceView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
+
+
+        binding.surfaceView2.init(rootEglBase.getEglBaseContext(), null);
+        binding.surfaceView2.setEnableHardwareScaler(true);
+        binding.surfaceView2.setMirror(true);
+        binding.surfaceView2.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
+        binding.surfaceView2.setZOrderMediaOverlay(true);
     }
 
     private void initializePeerConnectionFactory() {
@@ -457,13 +726,18 @@ public class IncomingInvitationActivity extends AppCompatActivity {
 
         VideoCapturer videoCapturer = createVideoCapturer();
         VideoSource videoSource = factory.createVideoSource(videoCapturer);
+        videoSource.adaptOutputFormat(1000, 2000, 15);
+
+        // 높이, 넓이, fps
+        videoCapturer.startCapture(local_view_width, local_view_height, 5);
+
 
         audioSource = factory.createAudioSource(audioConstraints);
-        videoCapturer.startCapture(1280, 720, 30);
         localAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
+
         videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
         videoTrackFromCamera.setEnabled(true);
-        videoTrackFromCamera.addRenderer(new VideoRenderer(surfaceView_local));
+        videoTrackFromCamera.addRenderer(new VideoRenderer(binding.surfaceView));
     }
 
     private void initializePeerConnections() {
@@ -471,7 +745,7 @@ public class IncomingInvitationActivity extends AppCompatActivity {
     }
 
     private void startStreamingVideo() {
-        MediaStream mediaStream = factory.createLocalMediaStream("ARDAMS");
+        mediaStream = factory.createLocalMediaStream("ARDAMS");
         mediaStream.addTrack(localAudioTrack);
         mediaStream.addTrack(videoTrackFromCamera);
         peerConnection.addStream(mediaStream);
@@ -540,7 +814,7 @@ public class IncomingInvitationActivity extends AppCompatActivity {
 //                Log.e(TAG, "onAddStream remote audio track: " + remoteAudioTrack);
 //                remoteAudioTrack.setEnabled(true);
                 remoteVideoTrack.setEnabled(true);
-                remoteVideoTrack.addRenderer(new VideoRenderer(surfaceView_remote));
+                remoteVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView2));
 
             }
 
@@ -609,6 +883,11 @@ public class IncomingInvitationActivity extends AppCompatActivity {
             sendMessage("bye");
             socket.disconnect();
         }
+        if(mediaStream != null){
+            peerConnection.removeStream(mediaStream);
+            peerConnection.close();
+        }
+
         super.onDestroy();
     }
 

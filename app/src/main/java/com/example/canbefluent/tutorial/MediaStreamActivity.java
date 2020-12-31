@@ -1,12 +1,17 @@
 //package com.example.canbefluent.tutorial;
 //
-//import android.databinding.DataBindingUtil;
+////import android.databinding.DataBindingUtil;
 //import android.os.Bundle;
-//import android.support.v7.app.AppCompatActivity;
+////import android.support.v7.app.AppCompatActivity;
 //import android.util.Log;
 //
-//import com.myhexaville.androidwebrtc.R;
-//import com.myhexaville.androidwebrtc.databinding.ActivitySamplePeerConnectionBinding;
+//import androidx.appcompat.app.AppCompatActivity;
+//import androidx.databinding.DataBindingUtil;
+//
+////import com.myhexaville.androidwebrtc.R;
+////import com.myhexaville.androidwebrtc.databinding.ActivitySamplePeerConnectionBinding;
+//
+//import com.example.canbefluent.R;
 //
 //import org.webrtc.Camera1Enumerator;
 //import org.webrtc.Camera2Enumerator;
@@ -26,7 +31,7 @@
 //
 //import java.util.ArrayList;
 //
-//import static com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
+//import static com.example.canbefluent.app_rtc_sample.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
 //
 ///*
 //* Shows how to use PeerConnection to connect clients and stream video using MediaStream

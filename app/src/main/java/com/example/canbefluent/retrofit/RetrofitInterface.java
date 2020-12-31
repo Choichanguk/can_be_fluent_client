@@ -1,5 +1,6 @@
 package com.example.canbefluent.retrofit;
 
+import com.example.canbefluent.items.callLog_item;
 import com.example.canbefluent.items.follow_item;
 import com.example.canbefluent.items.img_item;
 import com.example.canbefluent.items.language_code_item;
@@ -80,6 +81,10 @@ public interface RetrofitInterface {
     @GET("login_process.php/")
     Call<user_item[]> login_process(@Query("UID") String UID);
 
+    // 유저 정보 하나만 가져올 때
+    @GET("get_random_user_info.php/")
+    Call<user_item> get_random_user_info(@Query("user_index") String user_index);
+
     // 서버로부터 선택한 채팅방 정보를 가져올 때
     @GET("chat_room.php/")
     Call<ArrayList<getRoomList>> get_room_info(@Query("sender_index") String sender_index, @Query("receiver_index") String receiver_index);
@@ -151,4 +156,11 @@ public interface RetrofitInterface {
 
     @GET("update_translated_msg.php/")
     Call<getResult> update_translated_msg(@Query("message_index") String message_index, @Query("translated_message") String translated_message);
+
+    @GET("save_call_log.php/")
+    Call<getResult> save_call_log(@Query("index1") String index1, @Query("index2") String index2, @Query("call_time") int call_time);
+
+    @GET("get_call_log.php/")
+    Call<ArrayList<callLog_item>> get_call_log(@Query("user_index") String user_index);
+
 }

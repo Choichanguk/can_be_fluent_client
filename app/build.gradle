@@ -51,6 +51,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -104,8 +108,13 @@ dependencies {
 
 //    implementation "com.android.support:support-compat:28.0.0"
 
-    implementation 'com.google.firebase:firebase-messaging:21.0.0'
-    implementation 'com.google.firebase:firebase-analytics:17.6.0'
+    /**
+     * fcm 관련
+     */
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
+//    implementation 'com.google.firebase:firebase-analytics:17.6.0'
+    implementation 'com.google.firebase:firebase-analytics'
+//    implementation platform('com.google.firebase:firebase-bom:26.2.0')
 
     // Jitsi Meet
 //    implementation ('org.jitsi.react:jitsi-meet-sdk:2.8.2') { transitive = true }
@@ -138,6 +147,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.0.5'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
-
+    implementation 'com.google.mlkit:face-detection:16.0.3'
 
 }

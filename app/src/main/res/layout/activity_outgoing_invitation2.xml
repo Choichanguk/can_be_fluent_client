@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".practice.OutgoingInvitationActivity2">
+
+    <ImageView
+        android:id="@+id/example_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+            <com.example.canbefluent.app_rtc_sample.source.SurfaceViewRenderer
+                android:id="@+id/surface_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.canbefluent.ml_kit.GraphicOverlay
+                android:id="@+id/graphic_overlay"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+        </FrameLayout>
+
+        <FrameLayout
+        android:id="@+id/remote_video_layout"
+        android:layout_width="170dp"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+            <com.example.canbefluent.app_rtc_sample.source.SurfaceViewRenderer
+                android:id="@+id/surface_view2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.example.canbefluent.ml_kit.GraphicOverlay
+                android:id="@+id/graphic_overlay2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout8"
+            android:layout_width="401dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="400dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/frameLayout">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_img"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="user name"
+                android:textColor="#ffffff"
+                android:textSize="25sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/mask_option_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/cancel_mask"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:background="@drawable/ic_reject" />
+
+            <ImageView
+                android:id="@+id/sunglasses"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:background="@drawable/sunglasses2" />
+
+            <ImageView
+                android:id="@+id/beard"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:background="@drawable/beard" />
+
+
+        </LinearLayout>
+
+        <ImageView
+        android:id="@+id/imageStopInvitation"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/background_reject_invitation"
+        android:tint="#ffffff"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="@+id/frameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_reject" />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/btn_mute"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="70dp"-->
+<!--            android:src="@drawable/ic_baseline_mic_24"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/imageStopInvitation"-->
+<!--            android:layout_marginTop="400dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/btn_unmute"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="70dp"-->
+<!--            android:src="@drawable/ic_baseline_mic_off_24"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/imageStopInvitation"-->
+<!--            android:layout_marginTop="400dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:visibility="gone"/>-->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

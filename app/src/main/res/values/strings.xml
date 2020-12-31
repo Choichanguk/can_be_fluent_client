@@ -45,5 +45,10 @@
     <string name="correct">Correct</string>
     <string name="NATIVE">NATIVE:</string>
     <string name="PRACTICE">PRACTICE:</string>
+    <string name="start">Start</string>
+    <string name="find_partner">Looking for a new partner</string>
+    <string name="wait_txt">Please wait a moment...</string>
+    <string name="random_set">Set Random Call</string>
+    <string name="call_log">Call Log</string>
 
 </resources>

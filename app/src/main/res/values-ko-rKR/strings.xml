@@ -46,4 +46,9 @@
     <string name="correct">수정</string>
     <string name="NATIVE">모국어:</string>
     <string name="PRACTICE">학습언어:</string>
+    <string name="start">시작</string>
+    <string name="find_partner">새로운 대화상대 찾는 중</string>
+    <string name="wait_txt">잠시만 기다려 주세요...</string>
+    <string name="random_set">랜덤통화 설정</string>
+    <string name="call_log">랜덤통화 기록</string>
 </resources>

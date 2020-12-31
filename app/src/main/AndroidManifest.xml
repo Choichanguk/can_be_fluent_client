@@ -12,11 +12,11 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -27,9 +27,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".practice.webrtc_exam">
+        <service
+            android:name=".randomCall_service"
+            android:enabled="true"
+            android:exported="true"></service>
 
-        </activity>
+        <activity android:name=".random_call" />
+        <activity android:name=".practice.OutgoingInvitationActivity2" />
+        <activity android:name=".app_rtc_sample.main.AppRTCMainActivity" />
+        <activity android:name=".app_rtc_sample.call.CallActivity" />
+        <activity android:name=".practice.webrtc_exam" />
         <activity android:name=".user_info.set_translate_language" />
         <activity android:name=".practice.google_translationAPI" />
         <activity android:name=".user_info.show_follow_activity" />

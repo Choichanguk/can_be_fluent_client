@@ -1,9 +1,5 @@
 package com.example.canbefluent.practice;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.CursorLoader;
-
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -12,32 +8,19 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
+
 import com.example.canbefluent.R;
-import com.example.canbefluent.pojoClass.PostResult;
-import com.example.canbefluent.pojoClass.imgUploadResult;
-import com.example.canbefluent.retrofit.RetrofitClient;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.http.Url;
 
 public class img_upload_exam extends AppCompatActivity {
     private static final String TAG = "img_upload_exam";
@@ -73,7 +56,7 @@ public class img_upload_exam extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
-                intent. setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                intent. setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 startActivityForResult(intent, GALLERY_ACCESS_REQUEST_CODE);
             }
         });

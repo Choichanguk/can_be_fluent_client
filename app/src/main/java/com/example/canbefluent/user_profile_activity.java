@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.getResult;
 import com.example.canbefluent.pojoClass.getRoomList;
+import com.example.canbefluent.practice.OutgoingInvitationActivity2;
 import com.example.canbefluent.retrofit.RetrofitClient;
 import com.example.canbefluent.utils.Constants;
 import com.example.canbefluent.utils.MyApplication;
@@ -188,7 +189,7 @@ public class user_profile_activity extends AppCompatActivity {
         btn_videoCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), OutgoingInvitationActivity.class);
+                Intent intent = new Intent(getApplicationContext(), OutgoingInvitationActivity2.class);
                 intent.putExtra("user item", user_item);
                 intent.putExtra("type", "video");
                 startActivity(intent);

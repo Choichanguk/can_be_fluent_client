@@ -1,13 +1,12 @@
 package com.example.canbefluent.practice;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.canbefluent.R;
 
@@ -19,7 +18,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class socket_practice extends AppCompatActivity {
     private static final String TAG = "socket_practice";

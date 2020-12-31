@@ -1,11 +1,11 @@
 package com.example.canbefluent.practice;
 
+import android.os.Bundle;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
-import android.util.Log;
 
 import com.example.canbefluent.MainActivity;
 import com.example.canbefluent.R;
@@ -21,7 +21,7 @@ import retrofit2.Response;
 
 public class practice_img_upload extends AppCompatActivity {
     RecyclerView recyclerView;
-    userListAdapter userListAdapter;
+    com.example.canbefluent.adapter.userListAdapter userListAdapter;
     ArrayList<user_item> list = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class practice_img_upload extends AppCompatActivity {
         Call<ArrayList<user_item>> call = retrofitClient.service.get_allUserInfo(MainActivity.user_item.getUser_index());
         call.enqueue(new Callback<ArrayList<user_item>>() {
             @Override
-            public void onResponse(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Response<ArrayList<user_item>> response) {
+            public void onResponse(Call<ArrayList<user_item>> call, Response<ArrayList<user_item>> response) {
                 ArrayList<user_item> result = response.body();
 
                 // 서버로부터 받아온 유저 리스트를 all_user_list에 담아준다.
@@ -52,7 +52,7 @@ public class practice_img_upload extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<com.example.canbefluent.items.user_item>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<user_item>> call, Throwable t) {
 
             }
         });
