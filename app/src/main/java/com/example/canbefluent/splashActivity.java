@@ -35,7 +35,7 @@ public class splashActivity extends AppCompatActivity {
     com.example.canbefluent.utils.sharedPreference sharedPreference; // 유저의 id, 로그인 상태를 shared preference에 저장하는 클래스
     boolean isLogin = false;
     String user_id, user_pw,  hhhhh;
-
+    RetrofitClient retrofitClient = new RetrofitClient();
     // 쉐어드에 저장되어있는 로그인 상태를 가져온다.
     // 로그인 상태가 true값이면 쉐어드로부터 id, pw 도 불러온다.
     // 불러온 id, pw 값을 서버로 보낸 후 id에 맞는 유저의 데이터를 불러온다.
@@ -48,9 +48,33 @@ public class splashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         sharedPreference = new sharedPreference();
         isLogin = sharedPreference.loadLoginStatus(getApplicationContext());
+//        isLogin = false;
         Log.e(TAG, "isLogin: " + isLogin);
 
         set_language_code();
+
+        // 서버로 언어이름과 언어코드를 가져오는 통신
+        retrofitClient.service.getLanguageNameCode()
+                .enqueue(new Callback<ArrayList<language_code_item>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<language_code_item>> call, Response<ArrayList<language_code_item>> response) {
+                        final ArrayList<language_code_item> list = response.body();
+
+                        HashMap<String,String> lang_code_map = new HashMap<>();
+                        for (int i = 0; i < list.size(); i++){
+                            lang_code_map.put(list.get(i).getLang_code(), list.get(i).getLang_name() + " (" + list.get(i).getLang_ko_name() + ")");
+                        }
+
+                        MyApplication.list = list;
+                        MyApplication.lang_code_map = lang_code_map;
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<language_code_item>> call, Throwable t) {
+                        Log.e(TAG, "onFailure: " + t.getMessage());
+                    }
+                });
 
 
         if(isLogin){
@@ -60,7 +84,7 @@ public class splashActivity extends AppCompatActivity {
             Log.e(TAG, "if true");
             user_id = sharedPreference.loadUserId(getApplicationContext());
             user_pw = sharedPreference.loadUserPw(getApplicationContext());
-            final RetrofitClient retrofitClient = new RetrofitClient();
+            retrofitClient = new RetrofitClient();
             Call<user_item[]> call = retrofitClient.service.login_process(user_id, user_pw);
             call.enqueue(new Callback<user_item[]>() { // 서버로부터 결과 값을 받는 callback 함수
                 @Override
@@ -121,29 +145,6 @@ public class splashActivity extends AppCompatActivity {
                                     }
                                 });
 
-                        // 서버로 언어이름과 언어코드를 가져오는 통신
-
-                        retrofitClient.service.getLanguageNameCode()
-                                .enqueue(new Callback<ArrayList<language_code_item>>() {
-                                    @Override
-                                    public void onResponse(Call<ArrayList<language_code_item>> call, Response<ArrayList<language_code_item>> response) {
-                                        final ArrayList<language_code_item> list = response.body();
-
-                                        HashMap<String,String> lang_code_map = new HashMap<>();
-                                        for (int i = 0; i < list.size(); i++){
-                                            lang_code_map.put(list.get(i).getLang_code(), list.get(i).getLang_name() + " (" + list.get(i).getLang_ko_name() + ")");
-                                        }
-
-                                        MyApplication.list = list;
-                                        MyApplication.lang_code_map = lang_code_map;
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ArrayList<language_code_item>> call, Throwable t) {
-                                        Log.e(TAG, "onFailure: " + t.getMessage());
-                                    }
-                                });
                     }
                     else if(result.equals("fail")){ // 결과 값이 fail이면 로그인 실패 다이얼로그를 띄워준다.
 //                        alertDialog("login fail");

@@ -40,80 +40,55 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.e(TAG, "onMessageReceived");
 
-//        String type = remoteMessage.getData().get(Constants.REMOTE_MSG_TYPE);
-//        if(type != null){
-//            Log.e("FCM", "type not null");
-//            // 영상통화 알림일 경우
-//            if(type.equals(Constants.REMOTE_MSG_INVITATION)){
-//                Log.e("FCM", "type invitation");
-//                Intent intent = new Intent(getApplicationContext(), IncomingInvitationActivity.class);
-//                intent.putExtra(
-//                        Constants.REMOTE_MSG_MEETING_TYPE,
-//                        remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_TYPE)
-//                );
-//                intent.putExtra("user name", remoteMessage.getData().get("user name"));
-//                intent.putExtra("user profile", remoteMessage.getData().get("user profile"));
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                intent.putExtra(
-//                        Constants.REMOTE_MSG_INVITER_TOKEN,
-//                        remoteMessage.getData().get(Constants.REMOTE_MSG_INVITER_TOKEN)
-//                );
-//                intent.putExtra(
-//                        Constants.REMOTE_MSG_MEETING_ROOM,
-//                        remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_ROOM)
-//                );
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(intent);
-//            }
-//            else if(type.equals(Constants.REMOTE_MSG_INVITATION_RESPONSE)){
-//                Intent intent = new Intent(Constants.REMOTE_MSG_INVITATION_RESPONSE);
-//                intent.putExtra(
-//                        Constants.REMOTE_MSG_INVITATION_RESPONSE,
-//                        remoteMessage.getData().get(Constants.REMOTE_MSG_INVITATION_RESPONSE)
-//                );
-//                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-//            }
-//            else if(type.equals("follow")){
-//                Log.e("FCM", "type follow");
-//                sendFollowNotification(remoteMessage.getData().get("user name"));
-//            }
-//            else  if(type.equals("random call cancel")){
-//                Intent intent = new Intent("random call cancel");
-//                intent.putExtra("type", "random call cancel");
-//                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-//            }
-//        }
-//        else{
-//            Log.e("FCM", "type null");
-//            Map<String, String> messageData = remoteMessage.getData();
-//            sendNotification(messageData.get("Nick"), messageData.get("body"), messageData.get("room_index"));
-//        }
-
-        if (remoteMessage.getNotification() != null) {
-            Log.d("FCM Log", "알림 메시지: " + remoteMessage.getNotification().getBody());
-            String messageBody = remoteMessage.getNotification().getBody();
-            String messageTitle = remoteMessage.getNotification().getTitle();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-            String channelId = "Channel ID";
-            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(this, channelId)
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle(messageTitle)
-                            .setContentText(messageBody)
-                            .setAutoCancel(true)
-                            .setSound(defaultSoundUri)
-                            .setContentIntent(pendingIntent);
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                String channelName = "Channel Name";
-                NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(channel);
+        String type = remoteMessage.getData().get(Constants.REMOTE_MSG_TYPE);
+        if(type != null){
+            Log.e("FCM", "type not null");
+            // 영상통화 알림일 경우
+            if(type.equals(Constants.REMOTE_MSG_INVITATION)){
+                Log.e("FCM", "type invitation");
+                Intent intent = new Intent(getApplicationContext(), IncomingInvitationActivity.class);
+                intent.putExtra(
+                        Constants.REMOTE_MSG_MEETING_TYPE,
+                        remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_TYPE)
+                );
+                intent.putExtra("user name", remoteMessage.getData().get("user name"));
+                intent.putExtra("user profile", remoteMessage.getData().get("user profile"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(
+                        Constants.REMOTE_MSG_INVITER_TOKEN,
+                        remoteMessage.getData().get(Constants.REMOTE_MSG_INVITER_TOKEN)
+                );
+                intent.putExtra(
+                        Constants.REMOTE_MSG_MEETING_ROOM,
+                        remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_ROOM)
+                );
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
-            notificationManager.notify(0, notificationBuilder.build());
+            else if(type.equals(Constants.REMOTE_MSG_INVITATION_RESPONSE)){
+                Intent intent = new Intent(Constants.REMOTE_MSG_INVITATION_RESPONSE);
+                intent.putExtra(
+                        Constants.REMOTE_MSG_INVITATION_RESPONSE,
+                        remoteMessage.getData().get(Constants.REMOTE_MSG_INVITATION_RESPONSE)
+                );
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+            }
+            else if(type.equals("follow")){
+                Log.e("FCM", "type follow");
+                sendFollowNotification(remoteMessage.getData().get("user name"));
+            }
+            else  if(type.equals("random call cancel")){
+                Intent intent = new Intent("random call cancel");
+                intent.putExtra("type", "random call cancel");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+            }
         }
+        else{
+            Log.e("FCM", "type null");
+            Map<String, String> messageData = remoteMessage.getData();
+            sendNotification(messageData.get("Nick"), messageData.get("body"), messageData.get("room_index"));
+        }
+
     }
     // [END receive_message]
 

@@ -4,7 +4,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Binder;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -30,6 +32,7 @@ import org.webrtc.voiceengine.WebRtcAudioUtils;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 
 import io.socket.client.IO;
@@ -69,6 +72,9 @@ public class randomCall_service extends Service {
     RetrofitClient retrofitClient = new RetrofitClient();
     String native_lang_code, practice_lang_code;
     String candidate_index;
+
+    CountDownTimer countDownTimer = null;
+    count_down_thread countDownThread = null;
     public randomCall_service() {
     }
 
@@ -131,37 +137,61 @@ public class randomCall_service extends Service {
 
 
     private void connect(String native_lang_code, String practice_lang_code){
+        // 매칭 카운트다운 시작
+        if(countDownThread == null){
+            countDownThread = new count_down_thread();
+            countDownThread.start();
+        };
+
         try {
             socket = IO.socket("http://canbefluent.xyz:8888/");
             socket.on(EVENT_CONNECT, args -> {
                 Log.e(TAG, "connect 이벤트");
+
                 // 소켓 연결 후 유저의 정보를 서버로 넘겨준다.
                 socket.emit("set info", MainActivity.user_item.getUser_index(), native_lang_code, practice_lang_code);
 //                socket.emit("create or join", "foo");
             }).on("find candidate", args -> {
+                Log.e(TAG, "find candidate");
+
+                // 매칭 카운트다운 중지
+                if(countDownThread != null){
+                    Log.e(TAG, "스레드 interrupt");
+                    countDownThread.interrupt();
+                    countDownThread = null;
+                }
+
                 candidate_index = (String) args[0];
-
-
                 get_candidate_info(candidate_index);
 
                 Log.e(TAG, "candidate index: " + candidate_index);
 
             }).on("cancel match", args -> {
                 Log.e(TAG, "cancel match 이벤트 받음");
+
+                // 매칭 카운트다운 시작
+                if(countDownThread == null){
+                    countDownThread = new count_down_thread();
+                    countDownThread.start();
+                };
+
                 // 매칭 성공 후 상대방이 통화 연결 거부했을 때
                 Intent intent = new Intent("random call");
                 intent.putExtra("type", "cancel");
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
             }).on("created", args -> {  // initiator가 방 생성 시 발생되는 이벤트
                 Log.e(TAG, "created 이벤트");
+
                 isInitiator = true;
                 start();
                 sendMessage("got user media");
             }).on("joined", args -> {   // 방에 누가 들어오면 발생되는 이벤트 방생성자도 이벤트 발생함
                 Log.e(TAG, "joined 이벤트");
+
                 isChannelReady = true;
             }).on("join", args -> {   // 방에 참여 시 발생되는 이벤트 (방 생성자는 이벤트 발생 x)
                 Log.e(TAG, "join 이벤트");
+
                 isChannelReady = true;
                 start();
                 sendMessage("got user media");
@@ -221,7 +251,16 @@ public class randomCall_service extends Service {
      * 앱을 종료하거나 매칭 검색 중단 시 소켓 연결 종료
      */
     private void disconnect(){
+        if(countDownThread != null){
+            Log.e(TAG, "스레드 interrupt");
+            countDownThread.interrupt();
+            countDownThread = null;
+        };
+
+        Log.e(TAG, "disconnect");
         socket.emit("bye");
+
+
     }
 
     /**
@@ -234,6 +273,12 @@ public class randomCall_service extends Service {
     // 매칭 상대가 구해졌을 때 통화 연결 취소하는 경우
     void cancel_match(){
         socket.emit("cancel match", candidate_index);
+
+        // 매칭 카운트다운 시작
+        if(countDownThread == null){
+            countDownThread = new count_down_thread();
+            countDownThread.start();
+        };
     }
 
     /**
@@ -267,6 +312,7 @@ public class randomCall_service extends Service {
 
 
     private void doAnswer() {
+
         Log.e(TAG, "doAnswer");
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
@@ -496,5 +542,60 @@ public class randomCall_service extends Service {
         factory = null;
         mediaStream = null;
     }
+
+//    private void start_count_down(){
+//        countDownTimer = new CountDownTimer(10000, 1000) {
+//            public void onTick(long millisUntilFinished) {
+//
+//            }
+//
+//            // 매칭 타임 아웃. 매칭을 취소 시킨다.
+//            public void onFinish() {
+//                Intent intent = new Intent("random call");
+//                intent.putExtra("type", "time out");
+//                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+//                socket.emit("bye");
+//                countDownTimer = null;
+//            }
+//        }.start();
+//    }
+
+
+
+    private class count_down_thread extends Thread{
+
+        @Override
+        public void run() {
+            super.run();
+            Log.e(TAG, "스레드 시작");
+            int count = 0;
+            while(count < 60){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "스레드 중지");
+                    return;
+                }
+                count ++;
+            }
+
+            if(count == 60){
+                Intent intent = new Intent("random call");
+                intent.putExtra("type", "time out");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                socket.emit("bye");
+                countDownThread = null;
+            }
+
+
+        }
+    }
+
+//    private void change_pitch(){
+//        SoundPool sp ;
+////        sp = new SoundPool(1, audioManager.getMicrophones(), 1)
+////        audioManager
+//    }
 
 }

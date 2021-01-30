@@ -1,6 +1,8 @@
 package com.example.canbefluent.items;
 
-public class language_code_item {
+import java.io.Serializable;
+
+public class language_code_item implements Serializable {
     String lang_name, lang_ko_name, lang_code;
 
     public String getLang_name() {

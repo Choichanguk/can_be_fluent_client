@@ -16,18 +16,22 @@
             android:layout_height="match_parent"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            tools:context=".random_voice_activity">
+            tools:context=".random_voice_activity"
+            tools:layout_editor_absoluteY="0dp">
 
             <TextView
+                android:id="@+id/textView27"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="44dp"
                 android:gravity="center"
                 android:text="@string/random_call"
                 android:textSize="35sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/linearLayout11"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,13 +39,13 @@
                 android:id="@+id/linearLayout11"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="204dp"
+                android:layout_marginTop="28dp"
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/textView27">
 
                 <ImageView
                     android:id="@+id/profile_img"
@@ -63,51 +67,64 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:textSize="25sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btn_mute"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/ic_baseline_mic_24"
-                app:layout_constraintBottom_toTopOf="@+id/btn_cancel_call"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout11"
-                app:layout_constraintVertical_bias="0.823" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:visibility="gone"
-                android:id="@+id/btn_unmute"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/ic_baseline_mic_off_24"
-                app:layout_constraintBottom_toTopOf="@+id/btn_cancel_call"
+                android:layout_marginTop="36dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout11"
-                app:layout_constraintVertical_bias="0.823" />
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout11">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_mute"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/ic_baseline_mic_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_unmute"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/ic_baseline_mic_off_24"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <LinearLayout
 
 
+                android:id="@+id/linearLayout12"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
-                android:layout_marginBottom="48dp"
 
+                android:layout_marginBottom="48dp"
                 android:background="@drawable/border_round_red"
                 android:orientation="horizontal"
                 android:padding="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                app:layout_constraintVertical_bias="0.218">
 
                 <ImageButton
                     android:id="@+id/btn_finish_call"

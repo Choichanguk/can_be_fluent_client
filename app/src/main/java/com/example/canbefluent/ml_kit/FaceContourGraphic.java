@@ -37,10 +37,7 @@ public class FaceContourGraphic extends GraphicOverlay.Graphic {
   int width, height;
   int device_width, device_height;
   float width_ratio, height_ratio;
-
-  DecimalFormat form = new DecimalFormat("#.#");
-  double dNumber = 10.12345;
-    ; //10.12 출력
+  float image_ratio;
 
 
   public FaceContourGraphic(GraphicOverlay overlay, Context context, String type) {
@@ -57,11 +54,14 @@ public class FaceContourGraphic extends GraphicOverlay.Graphic {
       image = BitmapFactory.decodeResource(r, R.drawable.beard);
     }
 
+
     /**
      * 페인터 객체들을 초기화 시켜준다
      * 여기선, 얼굴박스, 얼굴 윤곽 위치, id 페인터 객체
      */
     facePositionPaint = new Paint();
+
+    image_ratio = image.getHeight()*1f / image.getWidth()*1f;
   }
 
   public void setScale(int width, int height){
@@ -81,9 +81,6 @@ public class FaceContourGraphic extends GraphicOverlay.Graphic {
     Log.e(TAG, "img_height: " + height);
     width_ratio = device_width / (float) width;
     height_ratio = device_height / (float) height;
-
-//    form.format(device_width / (float) width)
-
     Log.e(TAG, "넓이 비율: " + width_ratio + "/ 높이 비율: " + height_ratio);
   }
 
@@ -111,19 +108,18 @@ public class FaceContourGraphic extends GraphicOverlay.Graphic {
 
     // Draws a circle at the position of the detected face, with the face's track id below.
     float x = translateX(face.getBoundingBox().centerX());  //얼굴 박스의 가운데 좌표 x값
-//    float y = translateY(face.getBoundingBox().centerY());  //얼굴 박스의 가운데 좌표 y값
+    float y = translateY(face.getBoundingBox().centerY());  //얼굴 박스의 가운데 좌표 y값
 
 
     // Draws a bounding box around the face.
     float xOffset = scaleX(face.getBoundingBox().width() / 2.0f);
-//    float yOffset = scaleY(face.getBoundingBox().height() / 2.0f);
+    float yOffset = scaleY(face.getBoundingBox().height() / 2.0f);
     float left = x - xOffset;
 //    float top = y - yOffset;
 //    float right = x + xOffset;
 //    float bottom = y + yOffset;
 
     List<FaceContour> contour = face.getAllContours();
-    float image_ratio = image.getHeight()*1f / image.getWidth()*1f;  // 이미지 높이 : 넓이 비율
 
     if(type.equals("sunglasses")){
 
@@ -136,41 +132,40 @@ public class FaceContourGraphic extends GraphicOverlay.Graphic {
 
         if(faceContour.getFaceContourType() == 12){
           Log.e(TAG, "node bridge contour 개수: " + faceContour.getPoints().size());
-          for (int i = 0; i < faceContour.getPoints().size(); i++){
-            if(i == 0){
-              float py = translateY(faceContour.getPoints().get(i).y);
-              canvas.drawBitmap(resizedBmp, left * width_ratio , (py * height_ratio - 50), null);
-            }
-          }
+
+          float py = translateY(faceContour.getPoints().get(0).y);
+          canvas.drawBitmap(resizedBmp, left * width_ratio , (py * height_ratio * 0.9f), null);
+
+//          for (int i = 0; i < faceContour.getPoints().size(); i++){
+//            if(i == 0){
+//              float py = translateY(faceContour.getPoints().get(i).y);
+//              canvas.drawBitmap(resizedBmp, left * width_ratio , (py * height_ratio), null);
+//            }
+//          }
 
         }
       }
     }
     else if(type.equals("beard")){
-//      float nose_botX;
       float nose_botY = 0;
       float left_cheekX = 0;
-//      float left_cheekY;
       float right_cheekX = 0;
-//      float right_cheekY;
 
       for (FaceContour faceContour : contour) {
         // 12: node bridge contour
 
         // 코 밑 부분 좌표 추출
         if(faceContour.getFaceContourType() == 13){
-//          nose_botX = faceContour.getPoints().get(0).x;
           nose_botY = faceContour.getPoints().get(0).y;
         }
         // 왼쪽 뺨 좌표 추출
         else if(faceContour.getFaceContourType() == 14){
           left_cheekX = faceContour.getPoints().get(0).x;
-//          left_cheekY = faceContour.getPoints().get(0).y;
         }
         // 오른쪽 뺨 추출
         else if(faceContour.getFaceContourType() == 15){
           right_cheekX = faceContour.getPoints().get(0).x;
-//          right_cheekY = faceContour.getPoints().get(0).y;
+
         }
       }
 
@@ -182,7 +177,6 @@ public class FaceContourGraphic extends GraphicOverlay.Graphic {
         canvas.drawBitmap(resizedBmp, left_cheekX * width_ratio, nose_botY * height_ratio, null);
       }
     }
-
 
 
 

@@ -2,6 +2,7 @@ package com.example.canbefluent;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -85,7 +87,7 @@ public class frag_chats extends Fragment {
                         @Override
                         public void onItemClick(View v, int position) {
                             // 리사이클러뷰에 있는 방을 클릭 시 해당 방에 대한 정보를 담은 room 객체를 message_room 액티비티로 전해준다.
-                            Toast.makeText(getActivity(), "room index: " + roomLists.get(position).getRoom_index(), Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getActivity(), "room index: " + roomLists.get(position).getRoom_index(), Toast.LENGTH_LONG).show();
                             String room_index = roomLists.get(position).getRoom_index();
                             Intent intent = new Intent(getActivity(), message_room.class);
                             intent.putExtra("room obj", roomLists.get(position));
@@ -126,8 +128,30 @@ public class frag_chats extends Fragment {
             }
             else if(type.equals("cancel")){
 
-                frag_randomCall.e.dismissDialog();
-                Toast.makeText(getActivity(), "상대방이 매칭을 취소했습니다.", Toast.LENGTH_LONG).show();
+                for (Fragment fragment: getActivity().getSupportFragmentManager().getFragments()) {
+                    if (fragment.isVisible()) {
+                        Log.e(TAG, "for문 실행");
+                        if(fragment instanceof frag_chats){
+                            frag_randomCall.e.dismissDialog();
+                            Toast.makeText(getActivity(), "상대방이 매칭을 취소했습니다.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            }
+            else if(type.equals("time out")){
+                for (Fragment fragment: getActivity().getSupportFragmentManager().getFragments()) {
+                    if (fragment.isVisible()) {
+                        Log.e(TAG, "for문 실행");
+                        if(fragment instanceof frag_chats){
+
+                            MainActivity.search_floating_view.setVisibility(View.GONE);
+                            MainActivity.isSearching = false;
+                            show();
+
+//                            Toast.makeText(getActivity(), "매칭 타임아웃", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
             }
         }
     };
@@ -157,5 +181,18 @@ public class frag_chats extends Fragment {
 
         myDialogFragment.show(getFragmentManager(), "Search Filter");
 
+    }
+
+    public void show()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("매칭 타임아웃");
+        builder.setMessage("조건에 맞는 대화상대가 없습니다. 잠시 후 다시 매칭을 시도해주세요.");
+        builder.setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        builder.show();
     }
 }

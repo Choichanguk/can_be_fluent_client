@@ -587,8 +587,31 @@ public class frag_community extends Fragment {
             }
             else if(type.equals("cancel")){
 
-                frag_randomCall.e.dismissDialog();
-                Toast.makeText(getActivity(), "상대방이 매칭을 취소했습니다.", Toast.LENGTH_LONG).show();
+                for (Fragment fragment: getActivity().getSupportFragmentManager().getFragments()) {
+                    if (fragment.isVisible()) {
+                        Log.e(TAG, "for문 실행");
+                        if(fragment instanceof frag_community){
+
+                            frag_randomCall.e.dismissDialog();
+                            Toast.makeText(getActivity(), "상대방이 매칭을 취소했습니다.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            }
+            else if(type.equals("time out")){
+                for (Fragment fragment: getActivity().getSupportFragmentManager().getFragments()) {
+                    if (fragment.isVisible()) {
+                        Log.e(TAG, "for문 실행");
+                        if(fragment instanceof frag_community){
+
+                            MainActivity.search_floating_view.setVisibility(View.GONE);
+                            MainActivity.isSearching = false;
+
+                            show();
+//                            Toast.makeText(getActivity(), "매칭 타임아웃", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
             }
         }
     };
@@ -619,5 +642,21 @@ public class frag_community extends Fragment {
 
         myDialogFragment.show(getFragmentManager(), "Search Filter");
 
+    }
+
+    /**
+     * 매칭 타임아웃인 경우 보여주는 alert 다이얼로그
+     */
+    public void show()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("매칭 타임아웃");
+        builder.setMessage("조건에 맞는 대화상대가 없습니다. 잠시 후 다시 매칭을 시도해주세요.");
+        builder.setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        builder.show();
     }
 }

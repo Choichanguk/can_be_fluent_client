@@ -63,19 +63,19 @@ public class google_translationAPI extends AppCompatActivity {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        try (InputStream is = getResources().openRawResource(R.raw.canbefluent_437c34677353)) {
-
-            //Get credentials:
-            final GoogleCredentials myCredentials = GoogleCredentials.fromStream(is);
-
-            //Set credentials and get translate service:
-            TranslateOptions translateOptions = TranslateOptions.newBuilder().setCredentials(myCredentials).build();
-            translate = translateOptions.getService();
-
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-
-        }
+//        try (InputStream is = getResources().openRawResource(R.raw.canbefluent_437c34677353)) {
+//
+//            //Get credentials:
+//            final GoogleCredentials myCredentials = GoogleCredentials.fromStream(is);
+//
+//            //Set credentials and get translate service:
+//            TranslateOptions translateOptions = TranslateOptions.newBuilder().setCredentials(myCredentials).build();
+//            translate = translateOptions.getService();
+//
+//        } catch (IOException ioe) {
+//            ioe.printStackTrace();
+//
+//        }
     }
 
     public String translate(String lang_code) {

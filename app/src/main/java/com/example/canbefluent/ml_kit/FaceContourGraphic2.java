@@ -35,7 +35,9 @@ public class FaceContourGraphic2 extends GraphicOverlay.Graphic {
     String type;
 
     int width, height;
-
+    int device_width, device_height;
+    float width_ratio, height_ratio;
+    float image_ratio;
 
 
     public FaceContourGraphic2(GraphicOverlay overlay, Context context, String type) {
@@ -57,6 +59,27 @@ public class FaceContourGraphic2 extends GraphicOverlay.Graphic {
          * 여기선, 얼굴박스, 얼굴 윤곽 위치, id 페인터 객체
          */
         facePositionPaint = new Paint();
+        image_ratio = image.getHeight()*1f / image.getWidth()*1f;  // 이미지 높이 : 넓이 비율
+    }
+
+    public void setScale(int width, int height){
+        this.width = width;
+        this.height = height;
+    }
+
+    public void setViewScale(int width, int height){
+        this.device_width = width;
+        this.device_height = height;
+    }
+
+    public void cal_ratio(){
+        Log.e(TAG, "device_width: " + device_width);
+        Log.e(TAG, "device_height: " + device_height);
+        Log.e(TAG, "img_width: " + width);
+        Log.e(TAG, "img_height: " + height);
+        width_ratio = device_width / (float) width;
+        height_ratio = device_height / (float) height;
+        Log.e(TAG, "넓이 비율: " + width_ratio + "/ 높이 비율: " + height_ratio);
     }
 
     /**
@@ -92,7 +115,6 @@ public class FaceContourGraphic2 extends GraphicOverlay.Graphic {
 //    float bottom = y + yOffset;
 
         List<FaceContour> contour = face.getAllContours();
-        float image_ratio = image.getHeight()*1f / image.getWidth()*1f;  // 이미지 높이 : 넓이 비율
 
         if(type.equals("sunglasses")){
 
@@ -108,7 +130,7 @@ public class FaceContourGraphic2 extends GraphicOverlay.Graphic {
                     for (int i = 0; i < faceContour.getPoints().size(); i++){
                         if(i == 0){
                             float py = translateY(faceContour.getPoints().get(i).y);
-                            canvas.drawBitmap(resizedBmp, left , (py), null);
+                            canvas.drawBitmap(resizedBmp, left * width_ratio , (py * height_ratio), null);
                         }
                     }
 
@@ -116,30 +138,24 @@ public class FaceContourGraphic2 extends GraphicOverlay.Graphic {
             }
         }
         else if(type.equals("beard")){
-//      float nose_botX;
             float nose_botY = 0;
             float left_cheekX = 0;
-//      float left_cheekY;
             float right_cheekX = 0;
-//      float right_cheekY;
 
             for (FaceContour faceContour : contour) {
                 // 12: node bridge contour
 
                 // 코 밑 부분 좌표 추출
                 if(faceContour.getFaceContourType() == 13){
-//          nose_botX = faceContour.getPoints().get(0).x;
                     nose_botY = faceContour.getPoints().get(0).y;
                 }
                 // 왼쪽 뺨 좌표 추출
                 else if(faceContour.getFaceContourType() == 14){
                     left_cheekX = faceContour.getPoints().get(0).x;
-//          left_cheekY = faceContour.getPoints().get(0).y;
                 }
                 // 오른쪽 뺨 추출
                 else if(faceContour.getFaceContourType() == 15){
                     right_cheekX = faceContour.getPoints().get(0).x;
-//          right_cheekY = faceContour.getPoints().get(0).y;
                 }
             }
 
@@ -147,8 +163,8 @@ public class FaceContourGraphic2 extends GraphicOverlay.Graphic {
             if(right_cheekX !=  0 && left_cheekX != 0){
                 int resize_width = (int)(right_cheekX - left_cheekX);
                 int resize_height = (int)(resize_width * image_ratio);
-                Bitmap resizedBmp = Bitmap.createScaledBitmap(image, (int) (resize_width), (int) (resize_height), false);
-                canvas.drawBitmap(resizedBmp, left_cheekX, nose_botY, null);
+                Bitmap resizedBmp = Bitmap.createScaledBitmap(image, (int) (resize_width * width_ratio), (int) (resize_height * height_ratio), false);
+                canvas.drawBitmap(resizedBmp, left_cheekX * width_ratio, nose_botY * height_ratio, null);
             }
         }
     }

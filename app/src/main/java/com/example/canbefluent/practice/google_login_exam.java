@@ -43,39 +43,27 @@ public class google_login_exam extends AppCompatActivity{
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mAuth = FirebaseAuth.getInstance();
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.default_web_client_id))
+//                .requestEmail()
+//                .build();
+//
+//        mAuth = FirebaseAuth.getInstance();
 
         // Set the dimensions of the sign-in button.
-        SignInButton signInButton = findViewById(R.id.signInButton);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "signInButton click");
-                signIn();
-            }
-        });
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-//        //로그인 한 후 바로 다음 화면으로 이동하게 하는 로직
-//        if (mAuth.getCurrentUser() != null) {
-//            FirebaseUser account = mAuth.getCurrentUser();
+//        SignInButton signInButton = findViewById(R.id.signInButton);
+//        signInButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.e(TAG, "signInButton click");
+//                signIn();
+//            }
+//        });
+//        signInButton.setSize(SignInButton.SIZE_STANDARD);
 //
-//            Task<GetTokenResult> token = account.getIdToken(true);
-//            Log.e(TAG, "meta data: " + account.getUid());
-//            Intent intent = new Intent(getApplication(), google_logout_exam.class);
-//            token.toString();
-////            zzu@f16e492
-//            startActivity(intent);
-//            finish();
-//        }
+//        // Build a GoogleSignInClient with the options specified by gso.
+//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
     }
 
     @Override

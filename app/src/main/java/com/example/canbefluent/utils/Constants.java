@@ -26,7 +26,7 @@ public class Constants {
         HashMap<String, String> headers = new HashMap<>();
         headers.put(
                 Constants.REMOTE_MSG_AUTHORIZATION,
-                "key=AAAAyYJoNJ8:APA91bHzRSLA6dgS4hsAUzB9It8_icm3OYq-Q8qnSZu78Zfi53kycujk1fN2rQekJ2ta7wpqitkUuQY6z2lPhaSjYmtLGgyyzukccyBr4QgAygLVK5O5t20k809RIsZa9NeYchjmoUia"
+                "key=AAAA7Wetokw:APA91bEqiuvJ0acyjwLzhEYPuxbyWHqf8pOoiL8pI8s59SzPVTe5FSt3s6DeyEzqBd8X9fT9WCwAm7t5Gkb9gH2Ru4enoUgkU8IToD3H4L7xTQC8EuOI3Lxx8AF-Bkaf1OXuc9BXXTgA"
         );
         headers.put(Constants.REMOTE_MSG_CONTENT_TYPE, "application/json");
         return headers;

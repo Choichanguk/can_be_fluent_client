@@ -13,20 +13,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.canbefluent.R;
+import com.example.canbefluent.items.language_code_item;
 
 import java.util.ArrayList;
 
 public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.ViewHolder> implements Filterable {
     private static final String TAG = "countryListAdapter";
 
-    ArrayList<String> unFilteredlist;
-    ArrayList<String> filteredList;
+    ArrayList<language_code_item> unFilteredlist;
+    ArrayList<language_code_item> filteredList;
 //    private ArrayList<String> mDataClone = null ;
 
     // 리스너 객체 참조를 저장하는 변수
     private OnItemClickListener mListener = null ;
 
-    public countryListAdapter(ArrayList<String> list){
+    public countryListAdapter(ArrayList<language_code_item> list){
         Log.e(TAG, "countryListAdapter");
         this.filteredList = list;
         this.unFilteredlist = list;
@@ -39,7 +40,7 @@ public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View v, int positionm, String lang_name) ;
+        void onItemClick(View v, int positionm, language_code_item item) ;
     }
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
@@ -57,8 +58,8 @@ public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String name = filteredList.get(position) ;
-        holder.country_name.setText(name);
+        language_code_item item = filteredList.get(position) ;
+        holder.country_name.setText(item.getLang_name() + "(" + item.getLang_ko_name() + ")");
     }
 
     // getItemCount() - 전체 데이터 갯수 리턴.
@@ -130,10 +131,10 @@ public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.
                 if (charString.isEmpty()) {
                     filteredList = unFilteredlist;
                 } else {
-                    ArrayList<String> filteringList = new ArrayList<>();
-                    for (String name : unFilteredlist) {
-                        if (name.toLowerCase().contains(charString.toLowerCase())) {
-                            filteringList.add(name);
+                    ArrayList<language_code_item> filteringList = new ArrayList<>();
+                    for (language_code_item item : unFilteredlist) {
+                        if (item.getLang_name().toLowerCase().contains(charString.toLowerCase()) || item.getLang_ko_name().toLowerCase().contains(charString.toLowerCase())) {
+                            filteringList.add(item);
                         }
                     }
                     filteredList = filteringList;
@@ -146,7 +147,7 @@ public class countryListAdapter extends RecyclerView.Adapter<countryListAdapter.
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredList = (ArrayList<String>) results.values;
+                filteredList = (ArrayList<language_code_item>) results.values;
                 notifyDataSetChanged();
             }
         };

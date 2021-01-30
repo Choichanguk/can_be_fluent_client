@@ -77,20 +77,20 @@ public class MainActivity extends AppCompatActivity {
 
         ProgressBar progressBar = findViewById(R.id.indeterminateBar);
 
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e(TAG, "getInstanceId failed", task.getException());
-
-                            return;
-                        }
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-                        Log.e(TAG, "token: " + token);
-                    }
-                });
+//        FirebaseInstanceId.getInstance().getInstanceId()
+//                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+//                        if (!task.isSuccessful()) {
+//                            Log.e(TAG, "getInstanceId failed", task.getException());
+//
+//                            return;
+//                        }
+//                        // Get new Instance ID token
+//                        String token = task.getResult().getToken();
+//                        Log.e(TAG, "token: " + token);
+//                    }
+//                });
 
         Intent intent = getIntent();
         user_item = (user_item) intent.getSerializableExtra("user item");
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
-                        Log.e(TAG, "token: " + token);
+                        Log.e(TAG, "token2: " + token);
                     }
                 });
 
@@ -261,6 +261,22 @@ public class MainActivity extends AppCompatActivity {
             search_floating_view.setVisibility(View.GONE);
         }
 
+    }
+
+    /**
+     * 매칭 타임아웃인 경우 보여주는 alert 다이얼로그
+     */
+    public void show()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+        builder.setTitle("매칭 타임아웃");
+        builder.setMessage("조건에 맞는 대화상대가 없습니다. 잠시 후 다시 매칭을 시도해주세요.");
+        builder.setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        builder.show();
     }
 
 

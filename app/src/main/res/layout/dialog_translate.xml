@@ -16,53 +16,53 @@
 
 
 
-    <LinearLayout
-        android:id="@+id/correct"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="10dp"
-        android:background="@drawable/border_layout">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/correct"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:paddingVertical="10dp"-->
+<!--        android:background="@drawable/border_layout">-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_baseline_check_box_24"
-            android:layout_marginHorizontal="20dp"/>
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:srcCompat="@drawable/ic_baseline_check_box_24"-->
+<!--            android:layout_marginHorizontal="20dp"/>-->
 
-        <TextView
-            android:id="@+id/set_first_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/correct"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginLeft="20dp"/>
-    </LinearLayout>
+<!--        <TextView-->
+<!--            android:id="@+id/set_first_img"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/correct"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:layout_marginLeft="20dp"/>-->
+<!--    </LinearLayout>-->
 
-    <LinearLayout
-        android:id="@+id/comment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="10dp"
-        android:background="@drawable/border_layout"
-        >
+<!--    <LinearLayout-->
+<!--        android:id="@+id/comment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:paddingVertical="10dp"-->
+<!--        android:background="@drawable/border_layout"-->
+<!--        >-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_baseline_insert_comment_24"
-            android:layout_marginHorizontal="20dp"/>
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:srcCompat="@drawable/ic_baseline_insert_comment_24"-->
+<!--            android:layout_marginHorizontal="20dp"/>-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/comment"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginLeft="20dp"/>
-    </LinearLayout>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/comment"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:layout_marginLeft="20dp"/>-->
+<!--    </LinearLayout>-->
 
     <LinearLayout
         android:id="@+id/translate"

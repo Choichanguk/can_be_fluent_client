@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 //import com.example.canbefluent.MLkit.FaceContourGraphic;
+import com.example.canbefluent.frag_randomCall;
 import com.example.canbefluent.ml_kit.FaceContourGraphic;
 import com.example.canbefluent.MainActivity;
 import com.example.canbefluent.R;
@@ -116,6 +117,9 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
     private EglBase rootEglBase;
     private PeerConnectionFactory factory;
     private VideoTrack localVideoTrack;
+    private VideoTrack remoteVideoTrack;
+    private VideoRenderer local_renderer;
+    private VideoRenderer remote_renderer;
 
 
     private boolean iceConnected = false;
@@ -157,6 +161,7 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
 
     FaceContourGraphic faceGraphic_mask;        // 선글라스를 그려주기 위한 클래스의 객체
     FaceContourGraphic faceGraphic_beard;       // 수염을 그려주기 위한 클래스의 객체
+//    FaceContourGraphic faceGraphic_iron;        // 아이언맨 마스크를 그려주기 위한 클래스의 객체
 
     FaceDetector detector = null;               // 얼굴 탐지 모델 객체
     FaceDetectorOptions realTimeOpts = null;    // 모델 설정 옵션 객체
@@ -170,8 +175,8 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
      */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        local_view_width = binding.frameLayout.getWidth();
-        local_view_height = binding.frameLayout.getHeight();
+        local_view_width = binding.frameLayout2.getWidth();
+        local_view_height = binding.frameLayout2.getHeight();
         Log.e(TAG, "로컬 뷰 크기: ("+local_view_width+", " + local_view_height+")" );
     }
 
@@ -214,8 +219,9 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
          */
         detector = FaceDetection.getClient(realTimeOpts);
 
-           faceGraphic_mask = new FaceContourGraphic(binding.graphicOverlay, OutgoingInvitationActivity2.this, "sunglasses");
-           faceGraphic_beard = new FaceContourGraphic(binding.graphicOverlay, OutgoingInvitationActivity2.this, "beard");
+           faceGraphic_mask = new FaceContourGraphic(binding.graphicOverlay2, OutgoingInvitationActivity2.this, "sunglasses");
+           faceGraphic_beard = new FaceContourGraphic(binding.graphicOverlay2, OutgoingInvitationActivity2.this, "beard");
+
 
            initializeSurfaceViews();
 
@@ -230,16 +236,13 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
                 if(bitmap_count == 0){
                     faceGraphic_mask.setScale(var1.getWidth(), var1.getHeight());
                     faceGraphic_beard.setScale(var1.getWidth(), var1.getHeight());
+//                    faceGraphic_iron.setScale(var1.getWidth(), var1.getHeight());
                 }
 
                 Log.e(TAG, "비트맵 스케일 1.0 (" + var1.getWidth() + ", " + var1.getHeight() + ")");
                 InputImage image = InputImage.fromBitmap(var1, 0);
                 processImage(image, detector);
 
-
-//                }else {
-//                    Log.e(TAG, "count 실패");
-//                }
                 bitmap_count++;
             }
         };
@@ -290,50 +293,63 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
         /**
          * 안경 씌우기 버튼
          */
-        binding.sunglasses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        binding.sunglasses.setOnClickListener(v -> {
 
-                // faceGraphic 객체에 내 얼굴이 나오는 뷰의 크기를 set 시킨다.
-                faceGraphic_mask.setViewScale(local_view_width, local_view_height);
+            // faceGraphic 객체에 내 얼굴이 나오는 뷰의 크기를 set 시킨다.
+            faceGraphic_mask.setViewScale(local_view_width, local_view_height);
 
-                mask_type = "sunglasses";
-                if(detector == null){
-                    detector = FaceDetection.getClient(realTimeOpts);
-                }
-                else{
-                    if(!isFrameListen){
-                        binding.surfaceView.addFrameListener(frameListener, 1);
-                        isFrameListen = true;
-                    }
-                }
-                socket.emit("mask", "sunglasses");
-
+            mask_type = "sunglasses";
+            if(detector == null){
+                detector = FaceDetection.getClient(realTimeOpts);
             }
+            else{
+                if(!isFrameListen){
+                    binding.surfaceView2.addFrameListener(frameListener, 1);
+                    isFrameListen = true;
+                }
+            }
+            socket.emit("mask", "sunglasses");
+
         });
 
         /**
          * 턱수염 씌우기 버튼
          */
-        binding.beard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        binding.beard.setOnClickListener(v -> {
 
-                faceGraphic_beard.setViewScale(local_view_width, local_view_height);
+            faceGraphic_beard.setViewScale(local_view_width, local_view_height);
 
-                mask_type = "beard";
-                if(detector == null){
-                    detector = FaceDetection.getClient(realTimeOpts);
-                }
-                else{
-                    if(!isFrameListen){
-                        binding.surfaceView.addFrameListener(frameListener, 1);
-                        isFrameListen = true;
-                    }
-                }
-                socket.emit("mask", "beard");
+            mask_type = "beard";
+            if(detector == null){
+                detector = FaceDetection.getClient(realTimeOpts);
             }
+            else{
+                if(!isFrameListen){
+                    binding.surfaceView2.addFrameListener(frameListener, 1);
+                    isFrameListen = true;
+                }
+            }
+            socket.emit("mask", "beard");
         });
+
+           /**
+            * 아이언맨 마스트 버튼
+            */
+//           binding.ironman.setOnClickListener(v -> {
+//               faceGraphic_iron.setViewScale(local_view_width, local_view_height);
+//
+//               mask_type = "iron";
+//               if(detector == null){
+//                   detector = FaceDetection.getClient(realTimeOpts);
+//               }
+//               else{
+//                   if(!isFrameListen){
+//                       binding.surfaceView2.addFrameListener(frameListener, 1);
+//                       isFrameListen = true;
+//                   }
+//               }
+//               socket.emit("mask", "iron");
+//           });
 
         /**
          * 마스크 씌우기 취소 버튼
@@ -344,11 +360,12 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
                 if(detector != null){
                     if(isFrameListen){
                         Log.e(TAG, "프레임 리스너 제거");
-                        binding.surfaceView.removeFrameListener(frameListener);
+                        binding.surfaceView2.removeFrameListener(frameListener);
                         detector.close();
                         detector = null;
                         isFrameListen = false;
-                        binding.graphicOverlay.clear();
+                        binding.graphicOverlay2.clear();
+
                     }
                 }
 
@@ -357,6 +374,30 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
                 socket.emit("mask", "cancel");
             }
         });
+
+           /**
+            * 음소거 버튼
+            */
+           binding.btnMute.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   binding.btnMute.setVisibility(View.GONE);
+                   binding.btnUnmute.setVisibility(View.VISIBLE);
+                   localAudioTrack.setEnabled(false);
+               }
+           });
+
+           /**
+            * 음소거 해제 버튼
+            */
+           binding.btnUnmute.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   binding.btnMute.setVisibility(View.VISIBLE);
+                   binding.btnUnmute.setVisibility(View.GONE);
+                   localAudioTrack.setEnabled(true);
+               }
+           });
 
     }
 
@@ -385,8 +426,8 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
             sendRemoteMessage(body.toString(), Constants.REMOTE_MSG_INVITATION);
 
         } catch (Exception e){
-            Toast.makeText(OutgoingInvitationActivity2.this, "fcm 에러", Toast.LENGTH_SHORT).show();
-//            finish();
+            Toast.makeText(OutgoingInvitationActivity2.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -409,7 +450,7 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
                 }
                 else{
                     Log.e("sendRemoteMessage", "onResponse fail");
-                    Toast.makeText(OutgoingInvitationActivity2.this, "fcm 에러", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OutgoingInvitationActivity2.this, "fcm onResponse fail", Toast.LENGTH_SHORT).show();
 //                    finish();
                 }
             }
@@ -417,7 +458,7 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 Log.e("sendRemoteMessage", "onFailure");
-                Toast.makeText(OutgoingInvitationActivity2.this, "fcm 에러", Toast.LENGTH_SHORT).show();
+                Toast.makeText(OutgoingInvitationActivity2.this, t.getMessage(), Toast.LENGTH_SHORT).show();
 //                finish();
             }
         });
@@ -440,7 +481,7 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
             sendRemoteMessage(body.toString(), Constants.REMOTE_MSG_INVITATION_RESPONSE);
 
         }catch (Exception e){
-            Toast.makeText(this, "fcm 에러", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -453,12 +494,17 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
                     binding.linearLayout8.setVisibility(View.GONE);
 
                     binding.maskOptionView.setVisibility(View.VISIBLE);
+                    binding.btnMute.setVisibility(View.VISIBLE);
+
+                    localVideoTrack.removeRenderer(local_renderer);
+                    localVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView2));
+
 //                    userInfo_view.setVisibility(View.GONE);
 //                    Toast.makeText(context, "Invitation accepted", Toast.LENGTH_SHORT).show();
                 }
                 else if(type.equals(Constants.REMOTE_MSG_INVITATION_REJECTED)){
 //                    Toast.makeText(context, "Invitation rejected", Toast.LENGTH_SHORT).show();
-//                    finish();
+                    finish();
                 }
             }
         }
@@ -520,19 +566,23 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
             Log.e(TAG, "No face found");
             return;
         }
-        binding.graphicOverlay.clear();
+        binding.graphicOverlay2.clear();
 //        for (int i = 0; i < faces.size(); ++i) {
             Face face = faces.get(0);
 
             if(mask_type.equals("sunglasses"))
             {
-                binding.graphicOverlay.add(faceGraphic_mask);
+                binding.graphicOverlay2.add(faceGraphic_mask);
                 faceGraphic_mask.updateFace(face);
             }
             else if(mask_type.equals("beard")){
-                binding.graphicOverlay.add(faceGraphic_beard);
+                binding.graphicOverlay2.add(faceGraphic_beard);
                 faceGraphic_beard.updateFace(face);
             }
+//            else if(mask_type.equals("iron")){
+//                binding.graphicOverlay2.add(faceGraphic_iron);
+//                faceGraphic_iron.updateFace(face);
+//            }
 
 //        }
     }
@@ -600,18 +650,19 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
 
 
 //        binding.surfaceView.updateSurfaceSize();
-        videoSource.adaptOutputFormat(700, 1000, 10);
+        videoSource.adaptOutputFormat(490, 875, 10);
 
         // 높이, 넓이, fps
-        videoCapturer.startCapture(2500, 1400, 10);
+        videoCapturer.startCapture(875, 490, 10);
 
+        local_renderer = new VideoRenderer(binding.surfaceView);
 
         audioSource = factory.createAudioSource(audioConstraints);
         localAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
 
         localVideoTrack = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
         localVideoTrack.setEnabled(true);
-        localVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView));
+        localVideoTrack.addRenderer(local_renderer);
     }
 
     /**
@@ -890,7 +941,7 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
             public void onAddStream(MediaStream mediaStream) {
                 Log.d(TAG, "onAddStream: " + mediaStream.videoTracks.size());
                 Log.e(TAG, "상대방의 stream을 받아옴");
-                VideoTrack remoteVideoTrack = mediaStream.videoTracks.get(0);
+                remoteVideoTrack = mediaStream.videoTracks.get(0);
 
 //                remoteVideoTrack.dispose();
 //                AudioTrack remoteAudioTrack = mediaStream.audioTracks.get(0);
@@ -898,7 +949,7 @@ public class OutgoingInvitationActivity2 extends AppCompatActivity {
 //                Log.e(TAG, "onAddStream remote audio track: " + remoteAudioTrack);
 //                remoteAudioTrack.setEnabled(true);
                 remoteVideoTrack.setEnabled(true);
-                remoteVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView2));
+                remoteVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView));
 
             }
 

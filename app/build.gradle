@@ -111,10 +111,10 @@ dependencies {
     /**
      * fcm 관련
      */
-    implementation 'com.google.firebase:firebase-messaging:21.0.1'
-//    implementation 'com.google.firebase:firebase-analytics:17.6.0'
+    implementation platform('com.google.firebase:firebase-bom:26.2.0')
+    implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-analytics'
-//    implementation platform('com.google.firebase:firebase-bom:26.2.0')
+//    implementation 'com.google.firebase:firebase-admin:7.0.1'
 
     // Jitsi Meet
 //    implementation ('org.jitsi.react:jitsi-meet-sdk:2.8.2') { transitive = true }

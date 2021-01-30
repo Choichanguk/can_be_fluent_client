@@ -21,6 +21,7 @@ import com.example.canbefluent.items.user_item;
 import com.example.canbefluent.pojoClass.getLanguageNameResult;
 import com.example.canbefluent.pojoClass.getRegisterUserResult;
 import com.example.canbefluent.retrofit.RetrofitClient;
+import com.example.canbefluent.utils.MyApplication;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,6 +61,8 @@ public class Register_setLanguage extends AppCompatActivity {
         Intent intent = getIntent();
         user_item = (user_item) intent.getSerializableExtra("user item");
         type = intent.getStringExtra("type");
+
+
 
         /**
          * 서버로부터 전 세계 언어 종류 데이터를 받아온다.
@@ -109,7 +112,7 @@ public class Register_setLanguage extends AppCompatActivity {
                 }
                 else{
                     Intent intent = new Intent(getApplicationContext(), countryListActivity.class);
-                    intent.putExtra("country list", country_list);
+                    intent.putExtra("country list", MyApplication.list);
                     intent.putExtra("type", "native");
                     startActivityForResult(intent, GET_NATIVE);
                 }
@@ -121,7 +124,7 @@ public class Register_setLanguage extends AppCompatActivity {
             public void onClick(View v) {
 
                     Intent intent = new Intent(getApplicationContext(), countryListActivity.class);
-                    intent.putExtra("country list", country_list);
+                    intent.putExtra("country list", MyApplication.list);
                     intent.putExtra("type", "practice");
                     startActivityForResult(intent, GET_LEARN);
             }
@@ -178,20 +181,20 @@ public class Register_setLanguage extends AppCompatActivity {
                 if(native_list.size() !=0 && learn_list.size() !=0){
                     for(int i=0; i<native_list.size(); i++){
                         if(i==0){
-                            user_item.setNative_lang1(native_list.get(i).getLang_name());
+                            user_item.setNative_lang1(native_list.get(i).getLang_code());
                         }
                         else if (i==1){
-                            user_item.setNative_lang2(native_list.get(i).getLang_name());
+                            user_item.setNative_lang2(native_list.get(i).getLang_code());
                         }
                     }
 
                     for(int i=0; i<learn_list.size(); i++){
                         if(i==0){
-                            user_item.setPractice_lang1(learn_list.get(i).getLang_name());
+                            user_item.setPractice_lang1(learn_list.get(i).getLang_code());
                             user_item.setPractice_lang1_level(learn_list.get(i).getLevel());
                         }
                         else if (i==1){
-                            user_item.setPractice_lang2(learn_list.get(i).getLang_name());
+                            user_item.setPractice_lang2(learn_list.get(i).getLang_code());
                             user_item.setPractice_lang2_level(learn_list.get(i).getLevel());
                         }
                     }
@@ -274,9 +277,11 @@ public class Register_setLanguage extends AppCompatActivity {
         if(data != null){
             if(requestCode == GET_NATIVE){  // native language 선택 결과 코드
                 String country_name = data.getStringExtra("name");
+                String lang_code = data.getStringExtra("lang code");
 
                 language_item item = new language_item();
                 item.setLang_name(country_name);
+                item.setLang_code(lang_code);
 
                 native_list.add(item);
                 adapter2.notifyDataSetChanged();
@@ -289,10 +294,12 @@ public class Register_setLanguage extends AppCompatActivity {
             }
             else if(requestCode == GET_LEARN){ // practice language 선택 결과 코드
                 String country_name = data.getStringExtra("name");
+                String lang_code = data.getStringExtra("lang code");
                 String level = data.getStringExtra("level");
 
                 language_item item = new language_item();
                 item.setLang_name(country_name);
+                item.setLang_code(lang_code);
                 item.setLevel(level);
 
                 learn_list.add(item);

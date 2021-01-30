@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.canbefluent.R;
 import com.example.canbefluent.adapter.countryListAdapter;
+import com.example.canbefluent.items.language_code_item;
 
 import java.util.ArrayList;
 
@@ -23,10 +24,11 @@ public class countryListActivity extends AppCompatActivity {
 
     RecyclerView country_list;
     countryListAdapter adapter;
-    ArrayList<String> list;
+    ArrayList<language_code_item> list;
     SearchView search_country;
 
     String country_name;
+    String lang_code;
     String level;
     String type;
     @Override
@@ -34,7 +36,7 @@ public class countryListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_country_list);
         Intent intent = getIntent();
-        list = (ArrayList<String>) intent.getSerializableExtra("country list");
+        list = (ArrayList<language_code_item>) intent.getSerializableExtra("country list");
         type = intent.getStringExtra("type");
         Log.e("country", " " + list.size());
         Log.e("type", " " + type);
@@ -47,13 +49,16 @@ public class countryListActivity extends AppCompatActivity {
         if(type.equals("native")){
             adapter.setOnItemClickListener(new countryListAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(View v, int position, String lang_name) {
+                public void onItemClick(View v, int position, language_code_item item) {
 //                    Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
-                    country_name = lang_name;
+                    country_name = item.getLang_name() + "(" + item.getLang_ko_name() + ")";
+                    lang_code = item.getLang_code();
+
 
                     // 유저가 선택한 국가를 Register_setLanguage로 넘겨준다.
                     Intent intent = new Intent();
                     intent.putExtra("name", country_name);
+                    intent.putExtra("lang code", lang_code);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
@@ -62,9 +67,10 @@ public class countryListActivity extends AppCompatActivity {
         else if(type.equals("practice")){
             adapter.setOnItemClickListener(new countryListAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(View v, int position, String lang_name) {
+                public void onItemClick(View v, int position, language_code_item item) {
 //                    Toast.makeText(countryListActivity.this, list.get(position), Toast.LENGTH_SHORT).show();
-                    country_name = lang_name;
+                    country_name = item.getLang_name() + "(" + item.getLang_ko_name() + ")";
+                    lang_code = item.getLang_code();
 
                     // 난이도를 선택하는 lang_level_popup 팝업 액티비티로 이동한다.
                     Intent intent = new Intent(getApplicationContext(), lang_level_popup.class);
@@ -101,6 +107,7 @@ public class countryListActivity extends AppCompatActivity {
             Log.e(TAG, "level: " + level);
             Intent intent = new Intent();
             intent.putExtra("name", country_name);
+            intent.putExtra("lang code", lang_code);
             intent.putExtra("level", level);
             setResult(RESULT_OK, intent);
 

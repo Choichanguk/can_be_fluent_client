@@ -34,19 +34,19 @@
             android:textSize="25sp"
             android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/btn_shape"
-            app:srcCompat="@drawable/ic_baseline_videocam_24" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/imageButton"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@drawable/btn_shape"-->
+<!--            app:srcCompat="@drawable/ic_baseline_videocam_24" />-->
 
-        <ImageButton
-            android:id="@+id/option_btn"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/btn_shape"
-            app:srcCompat="@drawable/ic_baseline_videocam_24" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/option_btn"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@drawable/btn_shape"-->
+<!--            app:srcCompat="@drawable/ic_baseline_videocam_24" />-->
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

@@ -578,7 +578,7 @@ public class message_room extends AppCompatActivity {
             // 초시계 스레드 시작해야 함
 
 
-            Toast.makeText(this, "녹음 시작됨.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "녹음 시작됨.", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -594,7 +594,7 @@ public class message_room extends AppCompatActivity {
             recorder = null;
             isRecording = false;
             btn_send_audio.setEnabled(true);
-            Toast.makeText(this, "녹음 중지됨.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "녹음 중지됨.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -613,7 +613,7 @@ public class message_room extends AppCompatActivity {
             playThread thread = new playThread(i);
             thread.start();
 
-            Toast.makeText(this, "재생 시작됨.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "재생 시작됨.", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -626,7 +626,7 @@ public class message_room extends AppCompatActivity {
         if (player != null && player.isPlaying()) {
             player.stop();
 
-            Toast.makeText(this, "중지됨.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "중지됨.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -651,7 +651,7 @@ public class message_room extends AppCompatActivity {
 
             Log.e("창욱", "재생시간: " + sec);
 
-            Toast.makeText(this, "재생 시작됨.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "재생 시작됨.", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -662,7 +662,7 @@ public class message_room extends AppCompatActivity {
             position = player.getCurrentPosition();
             player.pause();
 
-            Toast.makeText(this, "일시정지됨.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "일시정지됨.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -671,7 +671,7 @@ public class message_room extends AppCompatActivity {
             player.seekTo(position);
             player.start();
 
-            Toast.makeText(this, "재시작됨.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "재시작됨.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1089,7 +1089,49 @@ public class message_room extends AppCompatActivity {
                                             pauseAudioChat();
                                         }
                                         else {
-                                            Toast.makeText(message_room.this, "아이템 뷰 클릭: " + position, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(message_room.this, "아이템 뷰 클릭: " + position, Toast.LENGTH_SHORT).show();
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(message_room.this);
+                                            LayoutInflater inflater = getLayoutInflater();
+                                            View view = inflater.inflate(R.layout.dialog_translate, null);
+                                            builder.setView(view);
+                                            final LinearLayout translate = view.findViewById(R.id.translate);
+//                                            final LinearLayout correct = view.findViewById(R.id.correct);
+//                                            final LinearLayout comment = view.findViewById(R.id.comment);
+
+                                            final AlertDialog dialog = builder.create();
+
+                                            // 번역하기 클릭 리스너
+                                            translate.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    google_translate translation = new google_translate(message_room.this);
+                                                    translation.getTranslateService();
+                                                    final String translated_msg = translation.translate(lang_code, msgLists.get(position).getMessage());
+//                                    Toast.makeText(message_room.this, "번역된 메세지: " + translated_msg, Toast.LENGTH_SHORT).show();
+
+                                                    retrofitClient.service.update_translated_msg(msgLists.get(position).getMessage_index(), translated_msg)
+                                                            .enqueue(new Callback<getResult>() {
+                                                                @Override
+                                                                public void onResponse(Call<getResult> call, Response<getResult> response) {
+                                                                    if(response.body().toString().equals("success")){
+                                                                        // 번역된 메세지를 띄우는 뷰를 보여준다.
+                                                                        TextView view = itemView.findViewById(R.id.translated_msg);
+                                                                        view.setVisibility(View.VISIBLE);
+                                                                        view.setText(translated_msg);
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onFailure(Call<getResult> call, Throwable t) {
+
+                                                                }
+                                                            });
+                                                    dialog.dismiss();
+                                                }
+                                            });
+
+                                            dialog.show();
+
                                         }
                                     }
                                 });
@@ -1261,8 +1303,8 @@ public class message_room extends AppCompatActivity {
                             View view = inflater.inflate(R.layout.dialog_translate, null);
                             builder.setView(view);
                             final LinearLayout translate = view.findViewById(R.id.translate);
-                            final LinearLayout correct = view.findViewById(R.id.correct);
-                            final LinearLayout comment = view.findViewById(R.id.comment);
+//                            final LinearLayout correct = view.findViewById(R.id.correct);
+//                            final LinearLayout comment = view.findViewById(R.id.comment);
 
                             final AlertDialog dialog = builder.create();
 
@@ -1310,5 +1352,9 @@ public class message_room extends AppCompatActivity {
                 Log.e(TAG, "onFailure");
             }
         });
+    }
+
+    public void show_msg_option_dialog(){
+
     }
 }

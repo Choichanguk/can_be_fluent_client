@@ -3,6 +3,7 @@ package com.example.canbefluent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -58,13 +60,15 @@ public class frag_randomCall extends Fragment implements MyDialogFragment.MyDial
 
     String native_lang_code, practice_lang_code;
 
-    ConstraintLayout set_option_view, find_call_view, call_log_view;
+    ConstraintLayout find_call_view, call_log_view;
+    LinearLayout set_option_view;
     RecyclerView call_log_recycle;
     callLogAdapter adapter;
 
     private Socket socket;
 
-    MainActivity instance = new MainActivity();
+//    MainActivity instance = new MainActivity();
+    MyApplication instance = new MyApplication();
 
     public static Intent serviceIntent;
     public static random_call_dialog e;
@@ -229,6 +233,7 @@ public class frag_randomCall extends Fragment implements MyDialogFragment.MyDial
         return view;
     }
 
+
     private void openDialog(String lang_code, String type) {
 
         DialogFragment myDialogFragment = new MyDialogFragment(lang_code, type);
@@ -291,8 +296,37 @@ public class frag_randomCall extends Fragment implements MyDialogFragment.MyDial
             }
             else if(type.equals("cancel")){
 
-                e.dismissDialog();
-                Toast.makeText(getActivity(), "상대방이 매칭을 취소했습니다.", Toast.LENGTH_LONG).show();
+                for (Fragment fragment: getActivity().getSupportFragmentManager().getFragments()) {
+                    if (fragment.isVisible()) {
+                        Log.e(TAG, "for문 실행");
+                        if(fragment instanceof frag_randomCall){
+
+                            e.dismissDialog();
+                            Toast.makeText(getActivity(), "상대방이 매칭을 취소했습니다.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+            }
+            else if(type.equals("time out")){
+                for (Fragment fragment: getActivity().getSupportFragmentManager().getFragments()) {
+                    if (fragment.isVisible()) {
+                        Log.e(TAG, "for문 실행");
+                        if(fragment instanceof frag_randomCall){
+
+                            MainActivity.search_floating_view.setVisibility(View.GONE);
+                            MainActivity.isSearching = false;
+
+
+                            show();
+//                            Toast.makeText(getActivity(), "매칭 타임아웃", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+                find_call_view.setVisibility(View.GONE);
+                call_log_view.setVisibility(View.GONE);
+                set_option_view.setVisibility(View.VISIBLE);
             }
 
 
@@ -385,5 +419,18 @@ public class frag_randomCall extends Fragment implements MyDialogFragment.MyDial
             set_option_view.setVisibility(View.VISIBLE);
             MainActivity.search_floating_view.setVisibility(View.GONE);
         }
+    }
+
+    public void show()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("매칭 타임아웃");
+        builder.setMessage("조건에 맞는 대화상대가 없습니다. 잠시 후 다시 매칭을 시도해주세요.");
+        builder.setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        builder.show();
     }
 }

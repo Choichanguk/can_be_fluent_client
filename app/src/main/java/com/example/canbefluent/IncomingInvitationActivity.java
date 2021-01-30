@@ -115,6 +115,9 @@ public class IncomingInvitationActivity extends AppCompatActivity {
     private PeerConnectionFactory factory;
     private VideoTrack videoTrackFromCamera;
 
+    private VideoRenderer local_renderer;
+    private VideoRenderer remote_renderer;
+
     MediaStream mediaStream;
 
 //    private SurfaceViewRenderer surfaceView_local;
@@ -131,7 +134,7 @@ public class IncomingInvitationActivity extends AppCompatActivity {
     EglRenderer.FrameListener frameListener_remote;
     EglRenderer.FrameListener frameListener_local;
     boolean isFrameListen = false;
-    int bitmap_count = 1;
+    int bitmap_count = 0;
 
     FaceContourGraphic faceGraphic_mask;
     FaceContourGraphic faceGraphic_beard;
@@ -162,10 +165,10 @@ public class IncomingInvitationActivity extends AppCompatActivity {
      */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        remote_view_width = binding.frame2.getWidth();
-        remote_view_height = binding.frame2.getHeight();
-        local_view_width = binding.frameLayout.getWidth();
-        local_view_height = binding.frameLayout.getHeight();
+        remote_view_width = binding.frameLayout.getWidth();
+        remote_view_height = binding.frameLayout.getHeight();
+        local_view_width = binding.frame2.getWidth();
+        local_view_height = binding.frame2.getHeight();
         Log.e(TAG, "리모트뷰 크기: ("+remote_view_width+", " + remote_view_height+")" );
     }
 
@@ -233,14 +236,15 @@ public class IncomingInvitationActivity extends AppCompatActivity {
         frameListener_remote = new EglRenderer.FrameListener() {
             @Override
             public void onFrame(Bitmap var1) {
-                if(bitmap_count == 1){
-                    Log.e(TAG, "count 성공");
+
+                if(bitmap_count == 0){
                     faceGraphic_mask.setScale(var1.getWidth(), var1.getHeight());
                     faceGraphic_beard.setScale(var1.getWidth(), var1.getHeight());
-//                    Bitmap resizedBmp = Bitmap.createScaledBitmap(var1, remote_view_width, remote_view_height, false);
                 }
 
                 if(bitmap_count % 4 == 0){
+                    Log.e(TAG, "비트맵 스케일 1.0 (" + var1.getWidth() + ", " + var1.getHeight() + ")");
+//                    Bitmap resized_bitmap = Bitmap.createScaledBitmap(var1, (int) (var1.getWidth() * 0.25), (int) (var1.getHeight() * 0.25), false);
                     InputImage image = InputImage.fromBitmap(var1, 0);
                     processImage(image, detector);
                 }
@@ -266,8 +270,12 @@ public class IncomingInvitationActivity extends AppCompatActivity {
                 binding.linearLayout8.setVisibility(View.GONE);
                 binding.imageAcceptInvitation.setVisibility(View.GONE);
                 binding.maskOptionView.setVisibility(View.VISIBLE);
+                binding.btnMute.setVisibility(View.VISIBLE);
                 connectToSignallingServer();
                 startStreamingVideo();
+
+                videoTrackFromCamera.removeRenderer(local_renderer);
+                videoTrackFromCamera.addRenderer(new VideoRenderer(binding.surfaceView2));
             }
         });
 
@@ -286,47 +294,63 @@ public class IncomingInvitationActivity extends AppCompatActivity {
         /**
          * 안경 씌우기 버튼
          */
-        binding.sunglasses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                faceGraphic_mask.setViewScale(local_view_width, local_view_height);
-                local_mask_type = "sunglasses";
-                if(!isFrameListen){
-                    binding.surfaceView.addFrameListener(frameListener_remote, 1.f);
-                    isFrameListen = true;
-                }
+        binding.sunglasses.setOnClickListener(v -> {
+            faceGraphic_mask.setViewScale(local_view_width, local_view_height);
 
+            local_mask_type = "sunglasses";
+            if(!isFrameListen){
+                binding.surfaceView.addFrameListener(frameListener_remote, 0.5f);
+                isFrameListen = true;
             }
+
         });
 
         /**
          * 턱수염 씌우기 버튼
          */
-        binding.beard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                faceGraphic_beard.setViewScale(local_view_width, local_view_height);
-                local_mask_type = "beard";
-                if(!isFrameListen){
-                    binding.surfaceView.addFrameListener(frameListener_remote, 1.f);
-                    isFrameListen = true;
-                }
+        binding.beard.setOnClickListener(v -> {
+            faceGraphic_beard.setViewScale(local_view_width, local_view_height);
+            local_mask_type = "beard";
+            if(!isFrameListen){
+                binding.surfaceView.addFrameListener(frameListener_remote, 0.5f);
+                isFrameListen = true;
             }
         });
 
         /**
          * 마스크 씌우기 취소 버튼
          */
-        binding.cancelMask.setOnClickListener(new View.OnClickListener() {
+        binding.cancelMask.setOnClickListener(v -> {
+            if(isFrameListen){
+                Log.e(TAG, "프레임 리스너 제거");
+                binding.surfaceView.removeFrameListener(frameListener_local);
+                detector.close();
+                isFrameListen = false;
+                binding.graphicOverlay.clear();
+            }
+        });
+
+        /**
+         * 음소거 버튼
+         */
+        binding.btnMute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isFrameListen){
-                    Log.e(TAG, "프레임 리스너 제거");
-                    binding.surfaceView.removeFrameListener(frameListener_local);
-                    detector.close();
-                    isFrameListen = false;
-                    binding.graphicOverlay.clear();
-                }
+                binding.btnMute.setVisibility(View.GONE);
+                binding.btnUnmute.setVisibility(View.VISIBLE);
+                localAudioTrack.setEnabled(false);
+            }
+        });
+
+        /**
+         * 음소거 해제 버튼
+         */
+        binding.btnUnmute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.btnMute.setVisibility(View.VISIBLE);
+                binding.btnUnmute.setVisibility(View.GONE);
+                localAudioTrack.setEnabled(true);
             }
         });
 
@@ -370,19 +394,20 @@ public class IncomingInvitationActivity extends AppCompatActivity {
             Log.e(TAG, "No face found");
             return;
         }
-        binding.graphicOverlay2.clear();
+        binding.graphicOverlay.clear();
 //        for (int i = 0; i < faces.size(); ++i) {
         Face face = faces.get(0);
 
         if(remote_mask_type.equals("sunglasses"))
         {
-            binding.graphicOverlay2.add(faceGraphic_mask);
+            binding.graphicOverlay.add(faceGraphic_mask);
             faceGraphic_mask.updateFace(face);
         }
         else if(remote_mask_type.equals("beard")){
-            binding.graphicOverlay2.add(faceGraphic_beard);
+            binding.graphicOverlay.add(faceGraphic_beard);
             faceGraphic_beard.updateFace(face);
         }
+
 
 //        }
     }
@@ -612,7 +637,7 @@ public class IncomingInvitationActivity extends AppCompatActivity {
                         faceGraphic_mask.setViewScale(remote_view_width, remote_view_height);
                         remote_mask_type = "sunglasses";
                         if(!isFrameListen){
-                            binding.surfaceView2.addFrameListener(frameListener_remote, 1f);
+                            binding.surfaceView.addFrameListener(frameListener_remote, 1f);
                             isFrameListen = true;
                         }
                     }
@@ -623,19 +648,20 @@ public class IncomingInvitationActivity extends AppCompatActivity {
                         faceGraphic_beard.setViewScale(remote_view_width, remote_view_height);
                         remote_mask_type = "beard";
                         if(!isFrameListen){
-                            binding.surfaceView2.addFrameListener(frameListener_remote, 1f);
+                            binding.surfaceView.addFrameListener(frameListener_remote, 1f);
                             isFrameListen = true;
                         }
                     }
+
                     else if(message.equals("cancel")){
                         Log.e(TAG, "프레임 리스너 제거");
-                        binding.surfaceView2.removeFrameListener(frameListener_remote);
+                        binding.surfaceView.removeFrameListener(frameListener_remote);
                         if(detector != null){
                             detector.close();
                             detector = null;
                         }
                         isFrameListen = false;
-                        binding.graphicOverlay2.clear();
+                        binding.graphicOverlay.clear();
                     }
 
                 }
@@ -731,13 +757,14 @@ public class IncomingInvitationActivity extends AppCompatActivity {
         // 높이, 넓이, fps
         videoCapturer.startCapture(local_view_width, local_view_height, 5);
 
+        local_renderer = new VideoRenderer(binding.surfaceView);
 
         audioSource = factory.createAudioSource(audioConstraints);
         localAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
 
         videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
         videoTrackFromCamera.setEnabled(true);
-        videoTrackFromCamera.addRenderer(new VideoRenderer(binding.surfaceView));
+        videoTrackFromCamera.addRenderer(local_renderer);
     }
 
     private void initializePeerConnections() {
@@ -814,7 +841,7 @@ public class IncomingInvitationActivity extends AppCompatActivity {
 //                Log.e(TAG, "onAddStream remote audio track: " + remoteAudioTrack);
 //                remoteAudioTrack.setEnabled(true);
                 remoteVideoTrack.setEnabled(true);
-                remoteVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView2));
+                remoteVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView));
 
             }
 

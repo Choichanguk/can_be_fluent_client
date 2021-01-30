@@ -1,5 +1,9 @@
 package com.example.canbefluent.utils;
 
+import android.content.DialogInterface;
+
+import androidx.appcompat.app.AlertDialog;
+
 import com.example.canbefluent.R;
 import com.example.canbefluent.items.language_code_item;
 import com.example.canbefluent.items.user_item;
@@ -25,6 +29,22 @@ public class MyApplication extends android.app.Application{
     @Override
     public void onCreate() {
         super.onCreate();
+    }
+
+    /**
+     * 매칭 타임아웃인 경우 보여주는 alert 다이얼로그
+     */
+    public void show()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+        builder.setTitle("매칭 타임아웃");
+        builder.setMessage("조건에 맞는 대화상대가 없습니다. 잠시 후 다시 매칭을 시도해주세요.");
+        builder.setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        builder.show();
     }
 
 }
